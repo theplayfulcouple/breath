@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Breath Rhythm Prototype</title>
+
+  <style>
+    html, body { width:100%; height:100%; margin:0; }
+
+    .scene{
+      position:relative;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      background:#2a0a0a;
+    }
+
+    .field{
+      position:absolute;
+      inset:-12%;
+      background-image: url("https://static.wixstatic.com/media/2a3958_ff2e3bfa846c4d7ebb7d4a9be59bf06d~mv2.png");
+      background-size: cover;
+      background-position: 50% 50%;
+      transform: translate3d(0,0,0) scale(1.05);
+      will-change: transform, background-position, filter;
+      filter: saturate(1.07) contrast(1.04) brightness(1.00);
+      z-index: 1;
+    }
+
+    .circle{
+      position:absolute;
+      left:50%;
+      border-radius:50%;
+      transform: translate(-50%, -50%) scale(0.10);
+      opacity: 0;
+      pointer-events:none;
+      will-change: transform, opacity;
+    }
+
+    .belly{
+      top: 62%;
+      width: 340px;
+      height: 340px;
+      background: rgba(255,255,255,0.22);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.10) inset;
+      z-index: 3;
+    }
+
+    .lungs{
+      top: 44%;
+      width: 320px;
+      height: 320px;
+      background: rgba(255,255,255,0.18);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset;
+      z-index: 4;
+    }
+
+    .vignette{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index: 5;
+      background:
+        radial-gradient(120% 100% at 50% 55%,
+          rgba(0,0,0,0) 35%,
+          rgba(0,0,0,0.26) 78%,
+          rgba(0,0,0,0.55) 100%);
+    }
+
+    /* ---- toggles ---- */
+    .toggle{
+      position:absolute;
+      left:18px;
+      z-index: 6;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.28);
+      color: rgba(255,255,255,0.88);
+      font: 14px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      backdrop-filter: blur(6px);
+    }
+    .toggleDot{
+      width:10px;
+      height:10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.30);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.10);
+      flex: 0 0 auto;
+    }
+    .toggle.isOn .toggleDot{
+      background: rgba(255,255,255,0.85);
+    }
+
+    #voiceToggle{ bottom:66px; }
+    #musicToggle{ bottom:18px; }
+
+    /* ---- session timer ---- */
+    .sessionTimer{
+      position:absolute;
+      bottom:18px;
+      right:18px;
+      z-index: 6;
+      padding:8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.28);
+      color: rgba(255,255,255,0.85);
+      font: 13px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.04em;
+      backdrop-filter: blur(6px);
+      user-select:none;
+    }
+
+    /* -----------------------------
+       Resonance bars (single source of truth)
+       ----------------------------- */
+    .resWrap{
+      position:absolute;
+      top:18px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:7;
+    }
+
+    .resBars{
+      display:flex;
+      align-items:flex-end;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(0,0,0,0.35);
+      border:1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(6px);
+    }
+
+    .resBar{
+      width:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.90);
+      opacity:0.12;
+      transform: translateZ(0);
+      transition: opacity 300ms ease, transform 300ms ease;
+    }
+
+    .resBar.on{ opacity:0.70; }
+
+    .resBar.top{
+      opacity:0.95;
+      transform:scaleY(1.12);
+    }
+
+    /* ---- start sensor button (minimal, does not touch existing UI) ---- */
+    .sensorBtn{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      z-index:8;
+      padding:14px 18px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(0,0,0,0.28);
+      color:rgba(255,255,255,0.90);
+      font: 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      backdrop-filter: blur(6px);
+      cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="scene">
+    <div class="field" id="field"></div>
+    <div class="circle belly" id="belly"></div>
+    <div class="circle lungs" id="lungs"></div>
+    <div class="vignette"></div>
+
+    <!-- Resonance bars -->
+    <div class="resWrap">
+      <div class="resBars" id="resBars"></div>
+    </div>
+
+    <div class="sessionTimer" id="sessionTimer">00:00</div>
+
+    <button class="toggle" id="voiceToggle" type="button" aria-pressed="false">
+      <span class="toggleDot" aria-hidden="true"></span>
+      <span id="voiceLabel">voice off</span>
+    </button>
+
+    <button class="toggle" id="musicToggle" type="button" aria-pressed="false">
+      <span class="toggleDot" aria-hidden="true"></span>
+      <span id="musicLabel">music off</span>
+    </button>
+
+    <!-- NEW: start sensor button (opens Netlify in a way that preserves window.opener on iPhone) -->
+    <button class="sensorBtn" id="sensorBtn" type="button">start sensor</button>
+  </div>
+
+  <script>
+    // =========================================================
+    // CROSS-PAGE COMMS (PPG page <-> Breath page)
+    // =========================================================
+    const TPC_CHANNEL = "TPC_HRV_PROTO_V1";
+    const STORAGE_KEY = `${TPC_CHANNEL}:last`;
+
+    const canBroadcast = typeof BroadcastChannel !== "undefined";
+    const bc = canBroadcast ? new BroadcastChannel(TPC_CHANNEL) : null;
+
+    // NEW: open the Netlify PPG page from INSIDE this HTML (Wix buttons can break window.opener on iPhone)
+    const PPG_URL = "https://ppg-prototype.netlify.app/";
+    let ppgWin = null;
+
+    function safeJsonParse(str){
+      try { return JSON.parse(str); } catch { return null; }
+    }
+
+    function isValidEnvelope(data){
+      return data && typeof data === "object" && data.channel === TPC_CHANNEL && typeof data.type === "string";
+    }
+
+    function publish(payload){
+      const envelope = {
+        channel: TPC_CHANNEL,
+        ...payload,
+        ts: Date.now(),
+      };
+
+      if (bc) {
+        try { bc.postMessage(envelope); } catch {}
+      }
+
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage(envelope, "*");
+        }
+      } catch {}
+
+      try {
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage(envelope, "*");
+        }
+      } catch {}
+
+      // NEW: if we opened the PPG tab from this page, message it directly too
+      try {
+        if (ppgWin && !ppgWin.closed) {
+          ppgWin.postMessage(envelope, "*");
+        }
+      } catch {}
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
+      } catch {}
+    }
+
+    function subscribe(handler){
+      if (bc) {
+        bc.onmessage = (e) => {
+          const data = e.data;
+          if (!isValidEnvelope(data)) return;
+          handler(data);
+        };
+      }
+
+      window.addEventListener("message", (event) => {
+        const data = event.data;
+        if (!isValidEnvelope(data)) return;
+        handler(data);
+      });
+
+      window.addEventListener("storage", (e) => {
+        if (e.key !== STORAGE_KEY || !e.newValue) return;
+        const data = safeJsonParse(e.newValue);
+        if (!isValidEnvelope(data)) return;
+        handler(data);
+      });
+    }
+
+    // NEW: wire the start sensor button (keeps everything else unchanged)
+    const sensorBtn = document.getElementById("sensorBtn");
+    if (sensorBtn){
+      sensorBtn.addEventListener("click", () => {
+        try{
+          ppgWin = window.open(PPG_URL, "_blank"); // user gesture → allowed on iPhone
+          // hide after opening (you can delete this line later)
+          sensorBtn.style.display = "none";
+        }catch(e){
+          // if blocked, do nothing
+        }
+      });
+    }
+
+    // =========================================================
+    // Breath animation (stable clock)
+    // =========================================================
+    const inhale = 5000;
+    const exhale = 5000;
+    const rest   = 1000;
+    const cycle  = inhale + exhale + rest;
+
+    const bgExpand = 5200;
+    const bgRelease = 5800;
+
+    const clamp01 = (x) => Math.max(0, Math.min(1, x));
+    const smoothstep = (t) => t*t*(3 - 2*t);
+
+    const field = document.getElementById("field");
+    const belly = document.getElementById("belly");
+    const lungs = document.getElementById("lungs");
+
+    const lungsBegin = 1400;
+    const minScale = 0.10;
+    const bellyMaxScale = 0.88;
+    const lungsMaxScale = 1.06;
+
+    function setCircle(el, scale, opacity){
+      el.style.transform = `translate(-50%, -50%) scale(${scale.toFixed(4)})`;
+      el.style.opacity = opacity.toFixed(3);
+    }
+
+    function bgWave(t){
+      if (t < bgExpand) return smoothstep(t / bgExpand);
+      const tr = (t - bgExpand) / bgRelease;
+      return smoothstep(1 - tr);
+    }
+
+    // =========================================================
+    // Audio (independent toggles)
+    // =========================================================
+    const musicUrl = "https://static.wixstatic.com/mp3/2a3958_3763516366fd407aa161448698e81dcd.mp3";
+    const voiceUrl = "https://static.wixstatic.com/mp3/2a3958_73c22d87f3a34cccbde19d6dc0c3eea7.mp3";
+
+    const voiceBreathStartSec = 108.0;
+    const voiceBreathStartMs  = voiceBreathStartSec * 1000;
+
+    const music = new Audio(musicUrl);
+    music.preload = "auto";
+    music.loop = true;
+
+    const voice = new Audio(voiceUrl);
+    voice.preload = "auto";
+    voice.loop = false;
+
+    let musicOn = false;
+    let voiceOn = false;
+
+    const start = performance.now();
+
+    const voiceBtn = document.getElementById("voiceToggle");
+    const voiceLabel = document.getElementById("voiceLabel");
+    const musicBtn = document.getElementById("musicToggle");
+    const musicLabel = document.getElementById("musicLabel");
+
+    function setToggle(btn, labelEl, isOn, onText, offText){
+      btn.classList.toggle("isOn", isOn);
+      btn.setAttribute("aria-pressed", String(isOn));
+      labelEl.textContent = isOn ? onText : offText;
+    }
+
+    setToggle(voiceBtn, voiceLabel, false, "voice on", "voice off");
+    setToggle(musicBtn, musicLabel, false, "music on", "music off");
+
+    let voiceStartTimeout = null;
+
+    function scheduleVoiceStart(){
+      if (voiceStartTimeout) clearTimeout(voiceStartTimeout);
+
+      const now = performance.now();
+      const currentPhase = (now - start) % cycle;
+
+      const desiredPhase = (cycle - (voiceBreathStartMs % cycle)) % cycle;
+      const delayMs = (desiredPhase - currentPhase + cycle) % cycle;
+
+      voiceStartTimeout = setTimeout(async () => {
+        voiceStartTimeout = null;
+        if (!voiceOn) return;
+
+        try{
+          voice.currentTime = 0;
+          await voice.play();
+        }catch(e){
+          voiceOn = false;
+          setToggle(voiceBtn, voiceLabel, false, "voice on", "voice off");
+        }
+      }, delayMs);
+    }
+
+    // =========================================================
+    // Resonance bars
+    // =========================================================
+    const BAR_COUNT = 10;
+    const resBarsEl = document.getElementById("resBars");
+    const bars = [];
+
+    if (resBarsEl){
+      for (let i = 0; i < BAR_COUNT; i++){
+        const b = document.createElement("div");
+        b.className = "resBar";
+        b.style.height = (8 + i * 3) + "px";
+        resBarsEl.appendChild(b);
+        bars.push(b);
+      }
+    }
+
+    const clearResonance = () => {
+      bars.forEach((bar) => {
+        bar.classList.remove("on");
+        bar.classList.remove("top");
+      });
+    };
+
+    const setResonanceLevel = (level) => {
+      bars.forEach((bar, i) => {
+        bar.classList.toggle("on", i < level);
+        bar.classList.toggle("top", i === level - 1);
+      });
+    };
+
+    // =========================================================
+    // RECEIVE: from PPG page -> update resonance bars
+    // =========================================================
+    function handleComms(msg){
+      if (msg.type === "PPG_HR"){
+        // null/undefined means "no reading"
+        if (msg.bpm == null) {
+          clearResonance();
+          return;
+        }
+
+        const bpm = Number(msg.bpm);
+        if (!Number.isFinite(bpm) || bpm <= 0) {
+          clearResonance();
+          return;
+        }
+
+        const level = Math.max(1, Math.min(10, Math.round(((bpm - 55) / 55) * 9 + 1)));
+        setResonanceLevel(level);
+        return;
+      }
+
+      if (msg.type === "PPG_HRV"){
+        return;
+      }
+
+      if (msg.type === "PPG_QUALITY"){
+        return;
+      }
+    }
+
+    subscribe(handleComms);
+
+    // =========================================================
+    // SEND: Breath phase -> PPG page
+    // =========================================================
+    let lastPhaseSent = "";
+    function getBreathPhase(t){
+      if (t < inhale) return "inhale";
+      if (t < inhale + exhale) return "exhale";
+      return "rest";
+    }
+
+    function maybeSendPhase(now){
+      const t = (now - start) % cycle;
+      const phase = getBreathPhase(t);
+
+      if (phase !== lastPhaseSent){
+        lastPhaseSent = phase;
+        publish({
+          type: "BREATH_PHASE",
+          phase,
+          tInCycleMs: Math.round(t),
+          cycleMs: cycle,
+          inhaleMs: inhale,
+          exhaleMs: exhale,
+          restMs: rest
+        });
+      }
+    }
+
+    // =========================================================
+    // Animation loop
+    // =========================================================
+    function frame(now){
+      const t = (now - start) % cycle;
+
+      maybeSendPhase(now);
+
+      if (t < inhale){
+        const bellyE = smoothstep(t / inhale);
+        const plRaw = (t - lungsBegin) / (inhale - lungsBegin);
+        const lungsE = smoothstep(clamp01(plRaw));
+
+        const bellyScale = minScale + (bellyMaxScale - minScale) * bellyE;
+        const lungsScale = minScale + (lungsMaxScale - minScale) * lungsE;
+
+        setCircle(belly, bellyScale, 0.15 + 0.70 * bellyE);
+        setCircle(lungs, lungsScale, 0.12 + 0.62 * lungsE);
+      }
+      else if (t < inhale + exhale){
+        const te = (t - inhale) / exhale;
+        const e = smoothstep(1 - te);
+
+        const scaleB = minScale + (bellyMaxScale - minScale) * e;
+        const scaleL = minScale + (lungsMaxScale - minScale) * e;
+
+        setCircle(belly, scaleB, 0.15 + 0.70 * e);
+        setCircle(lungs, scaleL, 0.12 + 0.62 * e);
+      }
+      else {
+        setCircle(belly, minScale, 0);
+        setCircle(lungs, minScale, 0);
+      }
+
+      const bg = bgWave(t);
+      const zoom = 1.05 + 0.070 * bg;
+      const driftX = 50 + 3.2 * bg;
+      const driftY = 50 - 3.4 * bg;
+
+      field.style.transform = `translate3d(0,0,0) scale(${zoom.toFixed(4)})`;
+      field.style.backgroundPosition = `${driftX.toFixed(3)}% ${driftY.toFixed(3)}%`;
+      field.style.filter = `saturate(1.07) contrast(1.04) brightness(${(1.00 + 0.085 * bg).toFixed(3)})`;
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    // Voice toggle
+    voiceBtn.addEventListener("click", async () => {
+      if (!voiceOn){
+        voiceOn = true;
+        setToggle(voiceBtn, voiceLabel, true, "voice on", "voice off");
+        scheduleVoiceStart();
+      }else{
+        voiceOn = false;
+        if (voiceStartTimeout) clearTimeout(voiceStartTimeout);
+        voiceStartTimeout = null;
+        voice.pause();
+        setToggle(voiceBtn, voiceLabel, false, "voice on", "voice off");
+      }
+    });
+
+    // Music toggle
+    musicBtn.addEventListener("click", async () => {
+      if (!musicOn){
+        musicOn = true;
+        setToggle(musicBtn, musicLabel, true, "music on", "music off");
+        try{
+          await music.play();
+        }catch(e){
+          musicOn = false;
+          setToggle(musicBtn, musicLabel, false, "music on", "music off");
+        }
+      }else{
+        musicOn = false;
+        music.pause();
+        setToggle(musicBtn, musicLabel, false, "music on", "music off");
+      }
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden){
+        if (voiceOn){
+          voiceOn = false;
+          if (voiceStartTimeout) clearTimeout(voiceStartTimeout);
+          voiceStartTimeout = null;
+          voice.pause();
+          setToggle(voiceBtn, voiceLabel, false, "voice on", "voice off");
+        }
+        if (musicOn){
+          musicOn = false;
+          music.pause();
+          setToggle(musicBtn, musicLabel, false, "music on", "music off");
+        }
+      }
+    });
+
+    // Session timer
+    const timerEl = document.getElementById("sessionTimer");
+    let elapsedMs = 0;
+    let lastTick = performance.now();
+
+    function updateTimer(now){
+      if (!document.hidden){
+        elapsedMs += now - lastTick;
+      }
+      lastTick = now;
+
+      const totalSeconds = Math.floor(elapsedMs / 1000);
+      const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+      const secs = String(totalSeconds % 60).padStart(2, "0");
+      timerEl.textContent = `${mins}:${secs}`;
+
+      requestAnimationFrame(updateTimer);
+    }
+    requestAnimationFrame(updateTimer);
+
+    publish({ type: "BREATH_READY" });
+  </script>
+</body>
+</html>
+
+
