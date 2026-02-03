@@ -156,7 +156,7 @@
       transform:scaleY(1.12);
     }
 
-    /* ---- start sensor button (minimal, does not touch existing UI) ---- */
+    /* ---- start sensor button (keeps your design) ---- */
     .sensorBtn{
       position:absolute;
       left:50%;
@@ -174,6 +174,10 @@
       -webkit-tap-highlight-color: transparent;
       user-select:none;
     }
+
+    /* hidden camera elements */
+    #ppgVideo { display:none; }
+    #ppgFrame { display:none; }
   </style>
 </head>
 
@@ -201,104 +205,15 @@
       <span id="musicLabel">music off</span>
     </button>
 
-    <!-- NEW: start sensor button (opens Netlify in a way that preserves window.opener on iPhone) -->
+    <!-- Start sensor -->
     <button class="sensorBtn" id="sensorBtn" type="button">start sensor</button>
+
+    <!-- hidden camera elements -->
+    <video id="ppgVideo" playsinline></video>
+    <canvas id="ppgFrame" width="160" height="120"></canvas>
   </div>
 
   <script>
-    // =========================================================
-    // CROSS-PAGE COMMS (PPG page <-> Breath page)
-    // =========================================================
-    const TPC_CHANNEL = "TPC_HRV_PROTO_V1";
-    const STORAGE_KEY = `${TPC_CHANNEL}:last`;
-
-    const canBroadcast = typeof BroadcastChannel !== "undefined";
-    const bc = canBroadcast ? new BroadcastChannel(TPC_CHANNEL) : null;
-
-    // NEW: open the Netlify PPG page from INSIDE this HTML (Wix buttons can break window.opener on iPhone)
-    const PPG_URL = "https://ppg-prototype.netlify.app/";
-    let ppgWin = null;
-
-    function safeJsonParse(str){
-      try { return JSON.parse(str); } catch { return null; }
-    }
-
-    function isValidEnvelope(data){
-      return data && typeof data === "object" && data.channel === TPC_CHANNEL && typeof data.type === "string";
-    }
-
-    function publish(payload){
-      const envelope = {
-        channel: TPC_CHANNEL,
-        ...payload,
-        ts: Date.now(),
-      };
-
-      if (bc) {
-        try { bc.postMessage(envelope); } catch {}
-      }
-
-      try {
-        if (window.parent && window.parent !== window) {
-          window.parent.postMessage(envelope, "*");
-        }
-      } catch {}
-
-      try {
-        if (window.opener && !window.opener.closed) {
-          window.opener.postMessage(envelope, "*");
-        }
-      } catch {}
-
-      // NEW: if we opened the PPG tab from this page, message it directly too
-      try {
-        if (ppgWin && !ppgWin.closed) {
-          ppgWin.postMessage(envelope, "*");
-        }
-      } catch {}
-
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
-      } catch {}
-    }
-
-    function subscribe(handler){
-      if (bc) {
-        bc.onmessage = (e) => {
-          const data = e.data;
-          if (!isValidEnvelope(data)) return;
-          handler(data);
-        };
-      }
-
-      window.addEventListener("message", (event) => {
-        const data = event.data;
-        if (!isValidEnvelope(data)) return;
-        handler(data);
-      });
-
-      window.addEventListener("storage", (e) => {
-        if (e.key !== STORAGE_KEY || !e.newValue) return;
-        const data = safeJsonParse(e.newValue);
-        if (!isValidEnvelope(data)) return;
-        handler(data);
-      });
-    }
-
-    // NEW: wire the start sensor button (keeps everything else unchanged)
-    const sensorBtn = document.getElementById("sensorBtn");
-    if (sensorBtn){
-      sensorBtn.addEventListener("click", () => {
-        try{
-          ppgWin = window.open(PPG_URL, "_blank"); // user gesture → allowed on iPhone
-          // hide after opening (you can delete this line later)
-          sensorBtn.style.display = "none";
-        }catch(e){
-          // if blocked, do nothing
-        }
-      });
-    }
-
     // =========================================================
     // Breath animation (stable clock)
     // =========================================================
@@ -334,7 +249,7 @@
     }
 
     // =========================================================
-    // Audio (independent toggles)
+    // Audio (your original toggles unchanged)
     // =========================================================
     const musicUrl = "https://static.wixstatic.com/mp3/2a3958_3763516366fd407aa161448698e81dcd.mp3";
     const voiceUrl = "https://static.wixstatic.com/mp3/2a3958_73c22d87f3a34cccbde19d6dc0c3eea7.mp3";
@@ -395,7 +310,7 @@
     }
 
     // =========================================================
-    // Resonance bars
+    // Resonance bars (unchanged)
     // =========================================================
     const BAR_COUNT = 10;
     const resBarsEl = document.getElementById("resBars");
@@ -426,73 +341,180 @@
     };
 
     // =========================================================
-    // RECEIVE: from PPG page -> update resonance bars
+    // PPG (camera) -> drives bars directly (no other page)
     // =========================================================
-    function handleComms(msg){
-      if (msg.type === "PPG_HR"){
-        // null/undefined means "no reading"
-        if (msg.bpm == null) {
-          clearResonance();
-          return;
-        }
+    const sensorBtn = document.getElementById("sensorBtn");
+    const video = document.getElementById("ppgVideo");
+    const frameCanvas = document.getElementById("ppgFrame");
+    const frameCtx = frameCanvas.getContext("2d", { willReadFrequently: true });
 
-        const bpm = Number(msg.bpm);
-        if (!Number.isFinite(bpm) || bpm <= 0) {
-          clearResonance();
-          return;
-        }
+    let ppgStream = null;
+    let ppgRaf = null;
 
-        const level = Math.max(1, Math.min(10, Math.round(((bpm - 55) / 55) * 9 + 1)));
-        setResonanceLevel(level);
-        return;
+    const fsTarget = 30;
+    const bufLen = 10 * fsTarget;
+    const sig = new Float32Array(bufLen);
+    let idx = 0;
+
+    const peakTimes = [];
+    let lastPeakT = 0;
+    let lastAbove = false;
+
+    function meanStd(arr) {
+      let m = 0;
+      for (let i = 0; i < arr.length; i++) m += arr[i];
+      m /= arr.length;
+      let v = 0;
+      for (let i = 0; i < arr.length; i++) {
+        const d = arr[i] - m;
+        v += d * d;
       }
+      v /= arr.length;
+      return { mean: m, std: Math.sqrt(v) };
+    }
 
-      if (msg.type === "PPG_HRV"){
-        return;
+    function computeFrameAverages(frameData) {
+      let r = 0, g = 0, b = 0;
+      const n = frameData.length / 4;
+      for (let i = 0; i < frameData.length; i += 4) {
+        r += frameData[i];
+        g += frameData[i + 1];
+        b += frameData[i + 2];
       }
+      r /= n; g /= n; b /= n;
 
-      if (msg.type === "PPG_QUALITY"){
-        return;
+      const brightness = (r + g + b) / 3;
+      const redness = r / (g + b + 1e-6);
+      return { brightness, redness, g };
+    }
+
+    function pushSample(v) {
+      sig[idx] = v;
+      idx = (idx + 1) % bufLen;
+    }
+
+    function detectPeaks() {
+      const ordered = new Float32Array(bufLen);
+      for (let i = 0; i < bufLen; i++) ordered[i] = sig[(idx + i) % bufLen];
+
+      const N = Math.min(bufLen, Math.floor(3 * fsTarget));
+      const tail = ordered.subarray(bufLen - N);
+      const { mean, std } = meanStd(tail);
+
+      const thr = mean + 0.6 * std;
+      const cur = ordered[bufLen - 1];
+      const now = performance.now();
+
+      const refractoryMs = 300;
+      const above = cur > thr;
+
+      if (!lastAbove && above && (now - lastPeakT) > refractoryMs) {
+        peakTimes.push(now);
+        lastPeakT = now;
+
+        const keepMs = 20000;
+        while (peakTimes.length && (now - peakTimes[0]) > keepMs) peakTimes.shift();
+      }
+      lastAbove = above;
+    }
+
+    function bpmToBars(bpm){
+      // same mapping you had: 55..110 -> 1..10 (clamped)
+      const level = Math.max(1, Math.min(10, Math.round(((bpm - 55) / 55) * 9 + 1)));
+      setResonanceLevel(level);
+    }
+
+    function estimateHRAndUpdateBars() {
+      const now = performance.now();
+      const windowMs = 8000;
+      const recent = peakTimes.filter(t => (now - t) <= windowMs);
+
+      if (recent.length < 2) return;
+
+      const ibis = [];
+      for (let i = 1; i < recent.length; i++) ibis.push(recent[i] - recent[i - 1]);
+
+      const filtered = ibis.filter(ms => ms >= 300 && ms <= 2000);
+      if (filtered.length < 2) return;
+
+      filtered.sort((a,b) => a-b);
+      const mid = Math.floor(filtered.length / 2);
+      const median = filtered.length % 2 ? filtered[mid] : (filtered[mid - 1] + filtered[mid]) / 2;
+
+      const bpm = 60000 / median;
+      const bpmRounded = Math.round(bpm);
+
+      if (Number.isFinite(bpmRounded) && bpmRounded > 0) {
+        bpmToBars(bpmRounded);
       }
     }
 
-    subscribe(handleComms);
+    function ppgLoop(){
+      const w = frameCanvas.width, h = frameCanvas.height;
 
-    // =========================================================
-    // SEND: Breath phase -> PPG page
-    // =========================================================
-    let lastPhaseSent = "";
-    function getBreathPhase(t){
-      if (t < inhale) return "inhale";
-      if (t < inhale + exhale) return "exhale";
-      return "rest";
+      frameCtx.drawImage(video, 0, 0, w, h);
+      const img = frameCtx.getImageData(0, 0, w, h);
+      const { brightness, redness, g } = computeFrameAverages(img.data);
+
+      pushSample(g);
+
+      // finger gate (prevents ghost readings)
+      const fingerLikely = (brightness < 140) && (redness > 1.05);
+      if (!fingerLikely) {
+        clearResonance();
+        peakTimes.length = 0;
+        lastAbove = false;
+        lastPeakT = 0;
+        ppgRaf = requestAnimationFrame(ppgLoop);
+        return;
+      }
+
+      detectPeaks();
+      estimateHRAndUpdateBars();
+
+      ppgRaf = requestAnimationFrame(ppgLoop);
     }
 
-    function maybeSendPhase(now){
-      const t = (now - start) % cycle;
-      const phase = getBreathPhase(t);
+    async function startSensor(){
+      if (ppgStream) return;
 
-      if (phase !== lastPhaseSent){
-        lastPhaseSent = phase;
-        publish({
-          type: "BREATH_PHASE",
-          phase,
-          tInCycleMs: Math.round(t),
-          cycleMs: cycle,
-          inhaleMs: inhale,
-          exhaleMs: exhale,
-          restMs: rest
+      try{
+        ppgStream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 640 },
+            height: { ideal: 480 }
+          }
         });
+
+        video.srcObject = ppgStream;
+        await video.play();
+
+        // hide button once running
+        if (sensorBtn) sensorBtn.style.display = "none";
+
+        // reset buffers
+        idx = 0;
+        sig.fill(0);
+        peakTimes.length = 0;
+        lastAbove = false;
+        lastPeakT = 0;
+
+        ppgLoop();
+      }catch(e){
+        clearResonance();
+        alert("camera permission failed. open this page in safari and allow camera.");
       }
     }
 
+    sensorBtn.addEventListener("click", startSensor);
+
     // =========================================================
-    // Animation loop
+    // Animation loop (your original)
     // =========================================================
     function frame(now){
       const t = (now - start) % cycle;
-
-      maybeSendPhase(now);
 
       if (t < inhale){
         const bellyE = smoothstep(t / inhale);
@@ -533,7 +555,7 @@
     }
     requestAnimationFrame(frame);
 
-    // Voice toggle
+    // Voice toggle (unchanged)
     voiceBtn.addEventListener("click", async () => {
       if (!voiceOn){
         voiceOn = true;
@@ -548,7 +570,7 @@
       }
     });
 
-    // Music toggle
+    // Music toggle (unchanged)
     musicBtn.addEventListener("click", async () => {
       if (!musicOn){
         musicOn = true;
@@ -566,24 +588,7 @@
       }
     });
 
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden){
-        if (voiceOn){
-          voiceOn = false;
-          if (voiceStartTimeout) clearTimeout(voiceStartTimeout);
-          voiceStartTimeout = null;
-          voice.pause();
-          setToggle(voiceBtn, voiceLabel, false, "voice on", "voice off");
-        }
-        if (musicOn){
-          musicOn = false;
-          music.pause();
-          setToggle(musicBtn, musicLabel, false, "music on", "music off");
-        }
-      }
-    });
-
-    // Session timer
+    // Session timer (unchanged)
     const timerEl = document.getElementById("sessionTimer");
     let elapsedMs = 0;
     let lastTick = performance.now();
@@ -603,9 +608,35 @@
     }
     requestAnimationFrame(updateTimer);
 
-    publish({ type: "BREATH_READY" });
+    // If the tab is hidden, stop the camera to avoid weird iOS behaviour
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden){
+        if (ppgRaf) cancelAnimationFrame(ppgRaf);
+        ppgRaf = null;
+        if (ppgStream){
+          ppgStream.getTracks().forEach(t => t.stop());
+          ppgStream = null;
+        }
+        clearResonance();
+        // show the button again when they come back
+        if (sensorBtn) sensorBtn.style.display = "";
+      }
+
+      if (document.hidden){
+        if (voiceOn){
+          voiceOn = false;
+          if (voiceStartTimeout) clearTimeout(voiceStartTimeout);
+          voiceStartTimeout = null;
+          voice.pause();
+          setToggle(voiceBtn, voiceLabel, false, "voice on", "voice off");
+        }
+        if (musicOn){
+          musicOn = false;
+          music.pause();
+          setToggle(musicBtn, musicLabel, false, "music on", "music off");
+        }
+      }
+    });
   </script>
 </body>
 </html>
-
-
