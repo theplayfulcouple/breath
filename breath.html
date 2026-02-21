@@ -101,6 +101,7 @@
 
     #voiceToggle{ bottom:66px; }
     #musicToggle{ bottom:18px; }
+    #torchToggle { bottom:114px; }
 
     /* ---- session timer ---- */
     .sessionTimer{
@@ -205,6 +206,11 @@
       <span class="toggleDot" aria-hidden="true"></span>
       <span id="musicLabel">music off</span>
     </button>
+
+    <button class="toggle" id="torchToggle" type="button" aria-pressed="false">
+  <span class="toggleDot" aria-hidden="true"></span>
+  <span id="torchLabel">torch off</span>
+</button>
 
     <!-- Start sensor -->
     <button class="sensorBtn" id="sensorBtn" type="button">start sensor</button>
@@ -354,6 +360,11 @@
     // PPG (camera) -> RESONANCE (1–10) based on breath phase
     // =========================================================
     const sensorBtn = document.getElementById("sensorBtn");
+
+    const torchBtn = document.getElementById("torchToggle");
+const torchLabel = document.getElementById("torchLabel");
+let torchOn = false;
+    
     const video = document.getElementById("ppgVideo");
     const frameCanvas = document.getElementById("ppgFrame");
     const frameCtx = frameCanvas.getContext("2d", { willReadFrequently: true });
@@ -578,6 +589,7 @@
 
         video.srcObject = ppgStream;
         await video.play();
+        torchBtn.disabled = false;
 
         // hide button once running
         if (sensorBtn) sensorBtn.style.display = "none";
@@ -677,6 +689,27 @@
         setToggle(musicBtn, musicLabel, false, "music on", "music off");
       }
     });
+
+    torchBtn.addEventListener("click", async () => {
+  if (!ppgStream) return;
+
+  torchOn = !torchOn;
+
+  const track = ppgStream.getVideoTracks()[0];
+  const capabilities = track.getCapabilities();
+
+  if (!capabilities.torch) {
+    alert("Torch not supported on this device.");
+    return;
+  }
+
+  await track.applyConstraints({
+    advanced: [{ torch: torchOn }]
+  });
+
+  torchBtn.classList.toggle("isOn", torchOn);
+  torchLabel.textContent = torchOn ? "torch on" : "torch off";
+});
 
     // Session timer (unchanged)
     const timerEl = document.getElementById("sessionTimer");
