@@ -378,13 +378,29 @@ let torchOn = false;
     let idx = 0;
 
     const peakTimes = [];
+
+    // Breath-phase beat buckets (per cycle)
+let inhaleIBIs = [];
+let exhaleIBIs = [];
+let prevPeakT = 0;
+
+// Track which breath cycle we're in
+let lastCycleIndex = -1;
+
+function breathPhase(nowMs){
+  const t = (nowMs - start) % cycle; // uses your existing breath clock
+  if (t < inhale) return "inhale";
+  if (t < inhale + exhale) return "exhale";
+  return "rest";
+}
+    
     let lastPeakT = 0;
     let lastAbove = false;
 
     // --- NEW: beat list used for resonance ---
     // Each entry: { t: perfNowMs, ibi: ms, phase: "inhale"|"exhale"|"rest" }
-    const beats = [];
-    let lastBeatT = 0;
+   
+   
 
     function meanStd(arr) {
       let m = 0;
@@ -419,24 +435,39 @@ let torchOn = false;
       idx = (idx + 1) % bufLen;
     }
 
-    function recordBeat(nowPerf){
-      if (!lastBeatT) {
-        lastBeatT = nowPerf;
-        return;
-      }
-      const ibi = nowPerf - lastBeatT;
-      lastBeatT = nowPerf;
+   // --- Resonance data (beat list with breath phase) ---
+const beats = [];
+let lastBeatT = 0;
 
-      // sanity window
-      if (ibi < 300 || ibi > 2000) return;
+function breathPhaseFromNow(nowMs){
+  const t = (nowMs - start) % cycle; // uses your existing breath clock
+  if (t < inhale) return "inhale";
+  if (t < inhale + exhale) return "exhale";
+  return "rest";
+}
 
-      const phase = getBreathPhaseFromNow(nowPerf);
-      beats.push({ t: nowPerf, ibi, phase });
+function recordBeat(nowPerf){
+  if (!lastBeatT){
+    lastBeatT = nowPerf;
+    return;
+  }
 
-      // keep last 25s (fast feedback without twitchiness)
-      const keepMs = 25000;
-      while (beats.length && (nowPerf - beats[0].t) > keepMs) beats.shift();
-    }
+  const ibi = nowPerf - lastBeatT;
+  lastBeatT = nowPerf;
+
+  // sanity window
+  if (ibi < 300 || ibi > 2000) return;
+
+  beats.push({
+    t: nowPerf,
+    ibi,
+    phase: breathPhaseFromNow(nowPerf)
+  });
+
+  // keep last 25 seconds
+  const keepMs = 25000;
+  while (beats.length && (nowPerf - beats[0].t) > keepMs) beats.shift();
+}
 
     // Simple correlation helper (phase -> IBI)
     function corrPhaseIbi(items){
@@ -524,13 +555,14 @@ let torchOn = false;
       if (!lastAbove && above && (now - lastPeakT) > refractoryMs) {
         peakTimes.push(now);
         lastPeakT = now;
+        recordBeat(now);
 
         // keep (still fine to keep, but resonance now uses beats[])
         const keepMs = 20000;
         while (peakTimes.length && (now - peakTimes[0]) > keepMs) peakTimes.shift();
 
         // NEW: record beat for resonance
-        recordBeat(now);
+      
 
         // NEW: update bars from resonance model
         const level = computeResonanceLevel(now);
