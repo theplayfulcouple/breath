@@ -331,10 +331,11 @@
     const resBarsEl = document.getElementById("resBars");
     const bars = [];
 
-   if (resBarsEl){
+if (resBarsEl){
   for (let i = 0; i < BAR_COUNT; i++){
     const b = document.createElement("div");
     b.className = "resBar";
+    if (i === 3) b.classList.add("thresholdBar");
     b.style.height = "14px";
     resBarsEl.appendChild(b);
     bars.push(b);
