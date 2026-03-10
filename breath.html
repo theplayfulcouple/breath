@@ -334,13 +334,11 @@
 
     if (resBarsEl){
       for (let i = 0; i < BAR_COUNT; i++){
-        const b = document.createElement("div");
-        b.className = "resBar";
-        b.style.height = (8 + i * 3) + "px";
-        resBarsEl.appendChild(b);
-        bars.push(b);
-      }
-    }
+  const b = document.createElement("div");
+  b.className = "resBar";
+  resBarsEl.appendChild(b);
+  bars.push(b);
+}
 
     const clearResonance = () => {
       bars.forEach((bar) => {
