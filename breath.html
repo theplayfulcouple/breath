@@ -331,15 +331,15 @@
     const resBarsEl = document.getElementById("resBars");
     const bars = [];
 
-    if (resBarsEl){
-      for (let i = 0; i < BAR_COUNT; i++){
-        const b = document.createElement("div");
-        b.className = "resBar";
-        b.style.height = (8 + i * 3) + "px";
-        resBarsEl.appendChild(b);
-        bars.push(b);
-      }
-    }
+   if (resBarsEl){
+  for (let i = 0; i < BAR_COUNT; i++){
+    const b = document.createElement("div");
+    b.className = "resBar";
+    b.style.height = "14px";
+    resBarsEl.appendChild(b);
+    bars.push(b);
+  }
+}
 
     const clearResonance = () => {
       bars.forEach((bar) => {
