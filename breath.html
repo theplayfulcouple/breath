@@ -379,6 +379,40 @@ let torchOn = false;
 
     const peakTimes = [];
 
+    // ===================== RESONANCE: beat list =====================
+const beats = [];
+let lastBeatT = 0;
+
+function breathPhase(nowMs){
+  const t = (nowMs - start) % cycle;
+  if (t < inhale) return "inhale";
+  if (t < inhale + exhale) return "exhale";
+  return "rest";
+}
+
+function recordBeat(nowPerf){
+  if (!lastBeatT){
+    lastBeatT = nowPerf;
+    return;
+  }
+
+  const ibi = nowPerf - lastBeatT;
+  lastBeatT = nowPerf;
+
+  if (ibi < 300 || ibi > 2000) return;
+
+  beats.push({
+    t: nowPerf,
+    ibi,
+    phase: breathPhase(nowPerf)
+  });
+
+  const keepMs = 25000;
+  while (beats.length && (nowPerf - beats[0].t) > keepMs) {
+    beats.shift();
+  }
+}
+
     // Breath-phase beat buckets (per cycle)
 let inhaleIBIs = [];
 let exhaleIBIs = [];
