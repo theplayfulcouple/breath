@@ -130,34 +130,37 @@
       transform:translateX(-50%);
       z-index:7;
     }
+.resBars{
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(0,0,0,0.35);
+  border:1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(6px);
+}
 
-    .resBars{
-      display:flex;
-      align-items:flex-end;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:999px;
-      background:rgba(0,0,0,0.35);
-      border:1px solid rgba(255,255,255,0.18);
-      backdrop-filter: blur(6px);
-    }
+.resBar{
+  width:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.90);
+  opacity:0.12;
+  transform: translateZ(0);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
 
-    .resBar{
-      width:10px;
-      border-radius:999px;
-      background:rgba(255,255,255,0.90);
-      opacity:0.12;
-      transform: translateZ(0);
-      transition: opacity 300ms ease, transform 300ms ease;
-    }
+/* ADD THIS BLOCK */
+.thresholdBar{
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.22);
+}
 
-    .resBar.on{ opacity:0.70; }
+.resBar.on{ opacity:0.70; }
 
-    .resBar.top{
-      opacity:0.95;
-      transform:scaleY(1.12);
-    }
-
+.resBar.top{
+  opacity:0.95;
+  transform:scaleY(1.12);
+}
     /* ---- start sensor button (keeps your design) ---- */
     .sensorBtn{
       position:absolute;
