@@ -449,6 +449,53 @@ function breathPhase(nowMs){
       return { mean: m, std: Math.sqrt(v) };
     }
 
+// ===================== RESONANCE MATH =====================
+function corrPhaseIbi(items){
+  const xs = [];
+  const ys = [];
+
+  for (const it of items){
+    if (it.phase === "rest") continue;
+    const x = (it.phase === "inhale") ? -1 : +1;
+    xs.push(x);
+    ys.push(it.ibi);
+  }
+
+  if (xs.length < 6) return 0;
+
+  let mx = 0, my = 0;
+  for (let i = 0; i < xs.length; i++){ mx += xs[i]; my += ys[i]; }
+  mx /= xs.length; my /= ys.length;
+
+  let num = 0, dx = 0, dy = 0;
+  for (let i = 0; i < xs.length; i++){
+    const a = xs[i] - mx;
+    const b = ys[i] - my;
+    num += a * b;
+    dx += a * a;
+    dy += b * b;
+  }
+
+  const den = Math.sqrt(dx * dy) + 1e-9;
+  return num / den;
+}
+
+let resSmooth = 1;
+
+function computeResonanceLevel(nowPerf){
+  const r = corrPhaseIbi(beats);
+
+  const rClamped = Math.max(0, Math.min(0.55, r));
+  const raw = 1 + (rClamped / 0.55) * 9;
+
+  resSmooth = resSmooth * 0.75 + raw * 0.25;
+
+  if (beats.length < 6) return 0;
+
+  return Math.max(1, Math.min(10, Math.round(resSmooth)));
+}
+    
+
     function computeFrameAverages(frameData) {
       let r = 0, g = 0, b = 0;
       const n = frameData.length / 4;
