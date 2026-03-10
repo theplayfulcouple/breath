@@ -517,10 +517,7 @@ function computeResonanceLevel(nowPerf){
     }
 
    // --- Resonance data (beat list with breath phase) ---
-const beats = [];
-let lastBeatT = 0;
 
-function breathPhaseFromNow(nowMs){
   const t = (nowMs - start) % cycle; // uses your existing breath clock
   if (t < inhale) return "inhale";
   if (t < inhale + exhale) return "exhale";
