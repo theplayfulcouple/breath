@@ -552,14 +552,16 @@ function recordBeat(nowPerf){
       const tail = ordered.subarray(bufLen - N);
       const { mean, std } = meanStd(tail);
 
-      const thr = mean + 0.6 * std;
-      const cur = ordered[bufLen - 1];
-      const now = performance.now();
+     const thr = mean + 0.6 * std;
+const prev2 = ordered[bufLen - 3];
+const prev1 = ordered[bufLen - 2];
+const cur = ordered[bufLen - 1];
+const now = performance.now();
 
-      const refractoryMs = 300;
-      const above = cur > thr;
+const refractoryMs = 300;
+const isPeak = (prev1 > thr) && (prev1 > prev2) && (prev1 >= cur);
 
-      if (!lastAbove && above && (now - lastPeakT) > refractoryMs) {
+if (isPeak && (now - lastPeakT) > refractoryMs) {
         peakTimes.push(now);
         lastPeakT = now;
         recordBeat(now);
