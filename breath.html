@@ -501,7 +501,7 @@ function recordBeat(nowPerf){
 
     function computeResonanceLevel(nowPerf){
       // need enough beats to be meaningful
-      if (beats.length < 8) return 1;
+      if (beats.length < 8) return 0;
 
       // means for inhale vs exhale
       const inh = [];
