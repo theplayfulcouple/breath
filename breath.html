@@ -143,13 +143,14 @@
     }
 
     .resBar{
-      width:10px;
-      border-radius:999px;
-      background:rgba(255,255,255,0.90);
-      opacity:0.12;
-      transform: translateZ(0);
-      transition: opacity 300ms ease, transform 300ms ease;
-    }
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.90);
+  opacity:0.12;
+  transform: translateZ(0) scale(1);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
 
     .resBar.on{ opacity:0.70; }
 
