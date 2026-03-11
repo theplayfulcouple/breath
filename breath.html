@@ -850,6 +850,16 @@ const level = updateCapacityFromCoherence(raw);
         lastAbove = false;
         lastPeakT = 0;
 
+        // decide mode
+if (!personalBaseline){
+  isCalibrating = true;
+  calibrationSamples.length = 0;
+  console.log("Calibration started");
+} else {
+  isCalibrating = false;
+  console.log("Live mode");
+}
+        
         ppgLoop();
       }catch(e){
         clearResonance();
