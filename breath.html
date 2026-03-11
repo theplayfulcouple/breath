@@ -219,6 +219,38 @@
       user-select:none;
     }
 
+    .calRing{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:8;
+  width:120px;
+  height:120px;
+  pointer-events:none;
+}
+
+.calRing svg{
+  width:100%;
+  height:100%;
+  transform:rotate(-90deg);
+}
+
+.calRingBg{
+  fill:none;
+  stroke:rgba(0,0,0,0.28);
+  stroke-width:10;
+}
+
+.calRingFg{
+  fill:none;
+  stroke:rgba(255,255,255,0.92);
+  stroke-width:8;
+  stroke-linecap:round;
+  stroke-dasharray:339.292;
+  stroke-dashoffset:339.292;
+}
+
     /* hidden camera elements */
     #ppgVideo { display:none; }
     #ppgFrame { display:none; }
