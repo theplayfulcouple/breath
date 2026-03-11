@@ -1008,6 +1008,21 @@ if (!personalBaseline){
       }
     });
 
+if (relearnBtn){
+  relearnBtn.addEventListener("click", () => {
+    localStorage.removeItem("personalBaseline");
+    personalBaseline = null;
+    isCalibrating = true;
+    calibrationSamples.length = 0;
+
+    const calLabel = document.getElementById("calibrationLabel");
+    if (calLabel) calLabel.style.display = "";
+
+    relearnBtn.style.display = "none";
+    console.log("Relearn started");
+  });
+}
+    
     torchBtn.addEventListener("click", async () => {
   if (!ppgStream) return;
 
