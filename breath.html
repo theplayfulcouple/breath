@@ -511,6 +511,39 @@ function recordBeat(nowPerf){
 
   return series;
 }
+    
+    function computeBreathLock(nowPerf){
+  const series = buildHrvSeries(nowPerf);
+  if (series.length < 20) return 0;
+
+  const stepSec = 0.25;
+  const freqHz = 1000 / cycle; // breath cycle from your pacer
+  const w = 2 * Math.PI * freqHz;
+
+  let mean = 0;
+  for (let i = 0; i < series.length; i++) mean += series[i];
+  mean /= series.length;
+
+  let s = 0, c = 0, power = 0;
+
+  for (let i = 0; i < series.length; i++){
+    const x = series[i] - mean;
+    const t = (i * stepSec);
+    s += x * Math.sin(w * t);
+    c += x * Math.cos(w * t);
+    power += x * x;
+  }
+
+  if (power <= 1e-9) return 0;
+
+  const peak = Math.sqrt(s * s + c * c);
+  const lock = peak / Math.sqrt(power);
+
+  return Math.max(0, Math.min(1, lock));
+}
+    
+    
+    
     function corrPhaseIbi(items){
       // inhale expects shorter IBI, exhale expects longer IBI
       // encode: inhale = -1, exhale = +1, rest = 0
