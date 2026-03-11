@@ -451,6 +451,7 @@ let capacityLevel = 1;
     let isCalibrating = false;
 let calibrationSamples = [];
 let personalBaseline = null;
+    personalBaseline = JSON.parse(localStorage.getItem("personalBaseline") || "null");
 
 function breathPhaseFromNow(nowMs){
   const t = (nowMs - start) % cycle; // uses your existing breath clock
