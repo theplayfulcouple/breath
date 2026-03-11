@@ -477,6 +477,40 @@ function recordBeat(nowPerf){
 }
 
     // Simple correlation helper (phase -> IBI)
+    
+    function buildHrvSeries(nowPerf){
+  const windowMs = 20000;
+  const stepMs = 250;
+
+  const recent = beats.filter(b => (nowPerf - b.t) <= windowMs);
+
+  if (recent.length < 8) return [];
+
+  const series = [];
+  let j = 0;
+
+  for (let t = nowPerf - windowMs; t <= nowPerf; t += stepMs){
+    while (j < recent.length - 1 && recent[j + 1].t < t){
+      j++;
+    }
+
+    const a = recent[j];
+    const b = recent[Math.min(j + 1, recent.length - 1)];
+
+    if (!a || !b) continue;
+
+    let ibi = a.ibi;
+
+    if (b.t > a.t){
+      const u = (t - a.t) / (b.t - a.t);
+      ibi = a.ibi + (b.ibi - a.ibi) * Math.max(0, Math.min(1, u));
+    }
+
+    series.push(ibi);
+  }
+
+  return series;
+}
     function corrPhaseIbi(items){
       // inhale expects shorter IBI, exhale expects longer IBI
       // encode: inhale = -1, exhale = +1, rest = 0
