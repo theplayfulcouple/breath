@@ -827,13 +827,19 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
         // NEW: update bars from resonance model
     const raw = computeSpectralCoherence(now);
 
-  if (isCalibrating){
+ if (isCalibrating){
   calibrationSamples.push(raw);
 
   if (calibrationSamples.length >= 240){
     personalBaseline = buildPersonalBaseline(calibrationSamples);
     localStorage.setItem("personalBaseline", JSON.stringify(personalBaseline));
     isCalibrating = false;
+
+    const calLabel = document.getElementById("calibrationLabel");
+    if (calLabel) calLabel.style.display = "none";
+
+    if (relearnBtn) relearnBtn.style.display = "";
+
     console.log("Calibration complete", personalBaseline);
   }
 }
