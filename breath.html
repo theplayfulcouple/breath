@@ -953,16 +953,22 @@ const level = updateCapacityFromCoherence(raw);
         lastPeakT = 0;
 
         // decide mode
+        
 const calLabel = document.getElementById("calibrationLabel");
+const calRing = document.getElementById("calRing");
+const calRingFg = document.querySelector(".calRingFg");
 
 if (!personalBaseline){
   isCalibrating = true;
   calibrationSamples.length = 0;
   if (calLabel) calLabel.style.display = "";
+  if (calRing) calRing.style.display = "";
+  if (calRingFg) calRingFg.style.strokeDashoffset = 339.292;
   console.log("Calibration started");
 } else {
   isCalibrating = false;
   if (calLabel) calLabel.style.display = "none";
+  if (calRing) calRing.style.display = "none";
   console.log("Live mode");
 }
         
