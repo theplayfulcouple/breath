@@ -618,7 +618,17 @@ function recordBeat(nowPerf){
       const den = Math.sqrt(dx*dy) + 1e-9;
       return num/den; // -1..+1
     }
+function computeSpectralResonance(nowPerf){
+  const coh = computeSpectralCoherence(nowPerf);
 
+  if (beats.length < 8) return 0;
+
+  if (coh < 0.12) return 1;
+  if (coh < 0.20) return 2;
+  if (coh < 0.30) return 3;
+  if (coh < 0.45) return 4;
+  return 5;
+}
 function computeHrvResonance(nowPerf){
   const lock = computeBreathLock(nowPerf);
 
