@@ -446,6 +446,8 @@ function breathPhase(nowMs){
 const beats = [];
 let lastBeatT = 0;
     let resonanceReservoir = 0; // 0..1 accumulated capacity
+    let smoothCoherence = 0;
+let capacityLevel = 1;
 
 function breathPhaseFromNow(nowMs){
   const t = (nowMs - start) % cycle; // uses your existing breath clock
