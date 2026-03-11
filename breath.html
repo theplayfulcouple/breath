@@ -883,12 +883,16 @@ const level = updateCapacityFromCoherence(raw);
         lastPeakT = 0;
 
         // decide mode
+const calLabel = document.getElementById("calibrationLabel");
+
 if (!personalBaseline){
   isCalibrating = true;
   calibrationSamples.length = 0;
+  if (calLabel) calLabel.style.display = "";
   console.log("Calibration started");
 } else {
   isCalibrating = false;
+  if (calLabel) calLabel.style.display = "none";
   console.log("Live mode");
 }
         
