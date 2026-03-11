@@ -728,7 +728,7 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
       
 
         // NEW: update bars from resonance model
-      const level = computeHrvResonance(now);
+      const level = computeSpectralResonance(now);
         setResonanceLevel(level);
       }
     }
@@ -761,7 +761,7 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
       // (keeps the ladder responsive but not twitchy)
       if (beats.length >= 8) {
         const now = performance.now();
-        const level = computeHrvResonance(now);
+        const level = computeSpectralResonance(now);
         setResonanceLevel(level);
       }
 
