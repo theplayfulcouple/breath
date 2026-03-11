@@ -573,6 +573,21 @@ function recordBeat(nowPerf){
       return num/den; // -1..+1
     }
 
+function computeHrvCoherence(nowPerf){
+  const lock = computeBreathLock(nowPerf);
+
+  // require enough recent data
+  if (beats.length < 8) return 0;
+
+  // map breath-lock strength to 1..5
+  if (lock < 0.25) return 1;
+  if (lock < 0.40) return 2;
+  if (lock < 0.55) return 3;
+  if (lock < 0.70) return 4;
+  return 5;
+}
+
+    
     function computeResonanceLevel(nowPerf){
       // need enough beats to be meaningful
       if (beats.length < 8) return 0;
