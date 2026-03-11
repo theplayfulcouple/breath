@@ -620,7 +620,34 @@ function recordBeat(nowPerf){
       const den = Math.sqrt(dx*dy) + 1e-9;
       return num/den; // -1..+1
     }
-function computeSpectralResonance(nowPerf){
+
+    function updateCapacityFromCoherence(raw){
+  // smooth the raw coherence signal
+  if (raw > smoothCoherence){
+    smoothCoherence += (raw - smoothCoherence) * 0.15;
+  } else {
+    smoothCoherence += (raw - smoothCoherence) * 0.08;
+  }
+
+  // choose the target level
+  let targetLevel = 1;
+  if (smoothCoherence > 0.15) targetLevel = 2;
+  if (smoothCoherence > 0.30) targetLevel = 3;
+  if (smoothCoherence > 0.50) targetLevel = 4;
+  if (smoothCoherence > 0.75) targetLevel = 5;
+
+  // move the visible level slowly
+  if (targetLevel > capacityLevel){
+    capacityLevel += 0.02;
+  } else if (targetLevel < capacityLevel){
+    capacityLevel -= 0.015;
+  }
+
+  capacityLevel = Math.max(1, Math.min(5, capacityLevel));
+
+  return Math.round(capacityLevel);
+}
+    function computeSpectralResonance(nowPerf){
   const coh = computeSpectralCoherence(nowPerf);
 
   if (beats.length < 8) return 0;
