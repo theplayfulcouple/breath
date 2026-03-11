@@ -630,11 +630,11 @@ function recordBeat(nowPerf){
   }
 
   // choose the target level
-  let targetLevel = 1;
-  if (smoothCoherence > 0.15) targetLevel = 2;
-  if (smoothCoherence > 0.30) targetLevel = 3;
-  if (smoothCoherence > 0.50) targetLevel = 4;
-  if (smoothCoherence > 0.75) targetLevel = 5;
+ let targetLevel = 1;
+if (smoothCoherence > 0.18) targetLevel = 2;
+if (smoothCoherence > 0.36) targetLevel = 3;
+if (smoothCoherence > 0.58) targetLevel = 4;
+if (smoothCoherence > 0.88) targetLevel = 5;
 
   // move the visible level slowly
   if (targetLevel > capacityLevel){
