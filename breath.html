@@ -579,38 +579,21 @@ function computeHrvResonance(nowPerf){
 
   if (beats.length < 8) return 0;
 
-  // how strongly rhythm is aligned (0..1)
   const strength = lock;
 
-  // slow fill when aligned
   if (strength > 0.55){
-    resonanceReservoir += 0.015 * (strength - 0.55);
+    resonanceReservoir += 0.004 * (strength - 0.55);
   }
-  // slow drain when weak
   else{
-    resonanceReservoir -= 0.010 * (0.55 - strength);
+    resonanceReservoir -= 0.002 * (0.55 - strength);
   }
 
-  // clamp 0..1
   resonanceReservoir = Math.max(0, Math.min(1, resonanceReservoir));
 
-  // map reservoir to 1..5 capacity levels
   if (resonanceReservoir < 0.15) return 1;
   if (resonanceReservoir < 0.35) return 2;
   if (resonanceReservoir < 0.55) return 3;
   if (resonanceReservoir < 0.75) return 4;
-  return 5;
-}
-  const lock = computeBreathLock(nowPerf);
-
-  // require enough recent data
-  if (beats.length < 8) return 0;
-
-  // map breath-lock strength to 1..5
-  if (lock < 0.25) return 1;
-  if (lock < 0.40) return 2;
-  if (lock < 0.55) return 3;
-  if (lock < 0.70) return 4;
   return 5;
 }
 
@@ -683,7 +666,7 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
       
 
         // NEW: update bars from resonance model
-        const level = computeResonanceLevel(now);
+      const level = computeHrvResonance(now);
         setResonanceLevel(level);
       }
     }
@@ -716,7 +699,7 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
       // (keeps the ladder responsive but not twitchy)
       if (beats.length >= 8) {
         const now = performance.now();
-        const level = computeResonanceLevel(now);
+        const level = computeHrvResonance(now);
         setResonanceLevel(level);
       }
 
