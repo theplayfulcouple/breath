@@ -445,6 +445,7 @@ function breathPhase(nowMs){
    // --- Resonance data (beat list with breath phase) ---
 const beats = [];
 let lastBeatT = 0;
+    let resonanceReservoir = 0; // 0..1 accumulated capacity
 
 function breathPhaseFromNow(nowMs){
   const t = (nowMs - start) % cycle; // uses your existing breath clock
@@ -574,6 +575,32 @@ function recordBeat(nowPerf){
     }
 
 function computeHrvResonance(nowPerf){
+  const lock = computeBreathLock(nowPerf);
+
+  if (beats.length < 8) return 0;
+
+  // how strongly rhythm is aligned (0..1)
+  const strength = lock;
+
+  // slow fill when aligned
+  if (strength > 0.55){
+    resonanceReservoir += 0.015 * (strength - 0.55);
+  }
+  // slow drain when weak
+  else{
+    resonanceReservoir -= 0.010 * (0.55 - strength);
+  }
+
+  // clamp 0..1
+  resonanceReservoir = Math.max(0, Math.min(1, resonanceReservoir));
+
+  // map reservoir to 1..5 capacity levels
+  if (resonanceReservoir < 0.15) return 1;
+  if (resonanceReservoir < 0.35) return 2;
+  if (resonanceReservoir < 0.55) return 3;
+  if (resonanceReservoir < 0.75) return 4;
+  return 5;
+}
   const lock = computeBreathLock(nowPerf);
 
   // require enough recent data
