@@ -869,13 +869,24 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
  if (isCalibrating){
   calibrationSamples.push(raw);
 
+  const calRingFg = document.querySelector(".calRingFg");
+  const progress = Math.min(1, calibrationSamples.length / 240);
+  const circumference = 339.292;
+
+  if (calRingFg){
+    calRingFg.style.strokeDashoffset = circumference * (1 - progress);
+  }
+
   if (calibrationSamples.length >= 240){
     personalBaseline = buildPersonalBaseline(calibrationSamples);
     localStorage.setItem("personalBaseline", JSON.stringify(personalBaseline));
     isCalibrating = false;
 
     const calLabel = document.getElementById("calibrationLabel");
+    const calRing = document.getElementById("calRing");
+
     if (calLabel) calLabel.style.display = "none";
+    if (calRing) calRing.style.display = "none";
 
     if (relearnBtn) relearnBtn.style.display = "";
 
