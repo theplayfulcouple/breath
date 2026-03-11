@@ -513,50 +513,36 @@ function recordBeat(nowPerf){
   return series;
 }
     
-    function computeSpectralCoherence(nowPerf){
+    function computeBreathLock(nowPerf){
   const series = buildHrvSeries(nowPerf);
-  if (series.length < 40) return 0;
+  if (series.length < 20) return 0;
 
-  const stepSec = 0.25; // matches buildHrvSeries step
-  const breathHz = 1000 / cycle;
+  const stepSec = 0.25;
+  const freqHz = 1000 / cycle; // breath cycle from your pacer
+  const w = 2 * Math.PI * freqHz;
 
   let mean = 0;
   for (let i = 0; i < series.length; i++) mean += series[i];
   mean /= series.length;
 
-  const centered = [];
+  let s = 0, c = 0, power = 0;
+
   for (let i = 0; i < series.length; i++){
-    centered.push(series[i] - mean);
+    const x = series[i] - mean;
+    const t = (i * stepSec);
+    s += x * Math.sin(w * t);
+    c += x * Math.cos(w * t);
+    power += x * x;
   }
 
-  function powerAtFreq(freq){
-    let s = 0, c = 0;
-    const w = 2 * Math.PI * freq;
-    for (let i = 0; i < centered.length; i++){
-      const t = i * stepSec;
-      const x = centered[i];
-      s += x * Math.sin(w * t);
-      c += x * Math.cos(w * t);
-    }
-    return s * s + c * c;
-  }
+  if (power <= 1e-9) return 0;
 
-  const targetPower = powerAtFreq(breathHz);
+  const peak = Math.sqrt(s * s + c * c);
+  const lock = peak / Math.sqrt(power);
 
-  let totalPower = 0;
-  const fMin = 0.04;
-  const fMax = 0.40;
-  const stepF = 0.01;
-
-  for (let f = fMin; f <= fMax; f += stepF){
-    totalPower += powerAtFreq(f);
-  }
-
-  if (totalPower <= 1e-9) return 0;
-
-  const ratio = targetPower / totalPower;
-  return Math.max(0, Math.min(1, ratio * 12));
+  return Math.max(0, Math.min(1, lock));
 }
+    
     
     
     function corrPhaseIbi(items){
