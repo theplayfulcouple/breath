@@ -887,8 +887,13 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
     const calLabel = document.getElementById("calibrationLabel");
     const calRing = document.getElementById("calRing");
 
-    if (calLabel) calLabel.style.display = "none";
-    if (calRing) calRing.style.display = "none";
+  if (calLabel) calLabel.style.opacity = "0";
+if (calRing) calRing.style.opacity = "0";
+
+setTimeout(() => {
+  if (calLabel) calLabel.style.display = "none";
+  if (calRing) calRing.style.display = "none";
+}, 600);
 
     if (relearnBtn) relearnBtn.style.display = "";
 
