@@ -624,6 +624,24 @@ function recordBeat(nowPerf){
       return num/den; // -1..+1
     }
 
+
+    function percentile(sorted, p){
+  if (!sorted.length) return 0;
+  const idx = Math.max(0, Math.min(sorted.length - 1, Math.floor(p * (sorted.length - 1))));
+  return sorted[idx];
+}
+
+function buildPersonalBaseline(samples){
+  if (!samples.length) return null;
+
+  const sorted = [...samples].sort((a, b) => a - b);
+
+  return {
+    low: percentile(sorted, 0.30),
+    mid: percentile(sorted, 0.60),
+    high: percentile(sorted, 0.85)
+  };
+}
     function updateCapacityFromCoherence(raw){
   // smooth the raw coherence signal
   if (raw > smoothCoherence){
