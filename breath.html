@@ -472,6 +472,11 @@ let calibrationSamples = [];
 let personalBaseline = null;
     personalBaseline = JSON.parse(localStorage.getItem("personalBaseline") || "null");
 
+    const relearnBtn = document.getElementById("relearnBtn");
+if (relearnBtn && personalBaseline){
+  relearnBtn.style.display = "";
+}
+
 function breathPhaseFromNow(nowMs){
   const t = (nowMs - start) % cycle; // uses your existing breath clock
   if (t < inhale) return "inhale";
