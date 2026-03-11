@@ -581,19 +581,26 @@ function computeHrvResonance(nowPerf){
 
   const strength = lock;
 
-  if (strength > 0.55){
-    resonanceReservoir += 0.004 * (strength - 0.55);
+  // only strong, sustained lock should fill
+  if (strength > 0.78){
+    resonanceReservoir += 0.0025 * (strength - 0.78);
   }
+  // middling lock should slowly leak
+  else if (strength > 0.60){
+    resonanceReservoir -= 0.0010 * (0.78 - strength);
+  }
+  // weak lock should drain more clearly
   else{
-    resonanceReservoir -= 0.002 * (0.55 - strength);
+    resonanceReservoir -= 0.0030 * (0.60 - strength);
   }
 
   resonanceReservoir = Math.max(0, Math.min(1, resonanceReservoir));
 
-  if (resonanceReservoir < 0.15) return 1;
-  if (resonanceReservoir < 0.35) return 2;
-  if (resonanceReservoir < 0.55) return 3;
-  if (resonanceReservoir < 0.75) return 4;
+  // make upper levels much harder to reach
+  if (resonanceReservoir < 0.20) return 1;
+  if (resonanceReservoir < 0.45) return 2;
+  if (resonanceReservoir < 0.68) return 3;
+  if (resonanceReservoir < 0.88) return 4;
   return 5;
 }
 
