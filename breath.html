@@ -653,10 +653,13 @@ function buildPersonalBaseline(samples){
 
   // choose the target level
  let targetLevel = 1;
-if (smoothCoherence > 0.18) targetLevel = 2;
-if (smoothCoherence > 0.36) targetLevel = 3;
-if (smoothCoherence > 0.58) targetLevel = 4;
-if (smoothCoherence > 0.88) targetLevel = 5;
+
+if (personalBaseline){
+  if (smoothCoherence > personalBaseline.low)  targetLevel = 2;
+  if (smoothCoherence > personalBaseline.mid)  targetLevel = 3;
+  if (smoothCoherence > personalBaseline.high) targetLevel = 4;
+  if (smoothCoherence > personalBaseline.high * 1.15) targetLevel = 5;
+}
 
   // move the visible level slowly
   if (targetLevel > capacityLevel){
@@ -780,6 +783,17 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
 
         // NEW: update bars from resonance model
     const raw = computeSpectralCoherence(now);
+
+  if (isCalibrating){
+  calibrationSamples.push(raw);
+
+  if (calibrationSamples.length >= 240){
+    personalBaseline = buildPersonalBaseline(calibrationSamples);
+    localStorage.setItem("personalBaseline", JSON.stringify(personalBaseline));
+    isCalibrating = false;
+    console.log("Calibration complete", personalBaseline);
+  }
+}
 const level = updateCapacityFromCoherence(raw);
         setResonanceLevel(level);
       }
