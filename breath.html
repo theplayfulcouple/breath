@@ -1221,7 +1221,7 @@ firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
 
 fireflyDelayTimeout = setTimeout(() => {
   if (!expandMode) return;
-  spawnFirefly();
+ spawnFirefly("first");
 }, 4000);
 
 } else {
@@ -1296,18 +1296,46 @@ function moveExpandBox(e){
 document.addEventListener("pointerdown", moveExpandBox);
 document.addEventListener("pointermove", moveExpandBox);
 
-function spawnFirefly(){
+function spawnFirefly(mode = "next"){
   const scene = document.querySelector(".scene");
   const rect = scene.getBoundingClientRect();
 
-  const minX = rect.width * 0.25;
-  const maxX = rect.width * 0.75;
+  const minX = rect.width * 0.18;
+  const maxX = rect.width * 0.82;
 
-  const minY = rect.height * 0.16;
-const maxY = rect.height * 0.42;
+  let minY;
+  let maxY;
 
-  const x = minX + Math.random() * (maxX - minX);
-  const y = minY + Math.random() * (maxY - minY);
+  if (mode === "first"){
+    minY = rect.height * 0.16;
+    maxY = rect.height * 0.42;
+  } else {
+    minY = rect.height * 0.18;
+    maxY = rect.height * 0.78;
+  }
+
+  const boxRect = expandBox.getBoundingClientRect();
+  const boxX = boxRect.left + boxRect.width / 2;
+  const boxY = boxRect.top + boxRect.height / 2;
+
+  const minDistance = 120;
+
+  let x = 0;
+  let y = 0;
+  let tries = 0;
+
+  do {
+    x = minX + Math.random() * (maxX - minX);
+    y = minY + Math.random() * (maxY - minY);
+
+    const dx = x - boxX;
+    const dy = y - boxY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance >= minDistance) break;
+
+    tries++;
+  } while (tries < 12);
 
   firefly.style.left = x + "px";
   firefly.style.top = y + "px";
@@ -1346,7 +1374,7 @@ function checkFireflyTouch(x, y){
 
     if (!expandMode) return;
 
-    spawnFirefly();
+  spawnFirefly("next");
 
   }, 1200);
 
