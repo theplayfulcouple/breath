@@ -68,6 +68,30 @@
           rgba(0,0,0,0.55) 100%);
     }
 
+    #expandBox{
+  position:absolute;
+  width:60px;
+  height:60px;
+  border-radius:12px;
+
+  border:1px solid rgba(255,255,255,0.35);
+
+  background:rgba(255,255,255,0.06);
+
+  box-shadow:
+    0 0 18px rgba(255,255,255,0.15);
+
+  pointer-events:none;
+
+  opacity:0;
+
+  transform:translate(-50%, -50%);
+
+  transition: opacity 400ms ease;
+
+  z-index:7;
+}
+
     /* ---- toggles ---- */
     .toggle{
       position:absolute;
@@ -291,6 +315,7 @@
     <div class="circle belly" id="belly"></div>
     <div class="circle lungs" id="lungs"></div>
     <div class="vignette"></div>
+    <div id="expandBox"></div>
 
     <!-- Resonance bars -->
     <div class="resWrap">
@@ -562,6 +587,7 @@ let personalBaseline = null;
 
    const relearnBtn = document.getElementById("relearnBtn");
 const expandBtn = document.getElementById("expandBtn");
+    const expandBox = document.getElementById("expandBox");
     
     let expandMode = false;
     
@@ -1141,8 +1167,17 @@ if (relearnBtn){
 
 if (expandBtn){
   expandBtn.addEventListener("click", () => {
+
     expandMode = !expandMode;
+
     expandBtn.classList.toggle("active", expandMode);
+
+    if (expandMode){
+      expandBox.style.opacity = "1";
+    } else {
+      expandBox.style.opacity = "0";
+    }
+
   });
 }
     
@@ -1185,6 +1220,16 @@ if (expandBtn){
 
       requestAnimationFrame(updateTimer);
     }
+    
+    document.addEventListener("pointermove", (e) => {
+
+  if (!expandMode) return;
+
+  expandBox.style.left = e.clientX + "px";
+  expandBox.style.top = e.clientY + "px";
+
+});
+    
     requestAnimationFrame(updateTimer);
 
     // If the tab is hidden, stop the camera to avoid weird iOS behaviour
