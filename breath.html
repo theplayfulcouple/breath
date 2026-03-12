@@ -122,7 +122,7 @@
   user-select:none;
   -webkit-tap-highlight-color: transparent;
 }
-    .expandBtn{
+.expandBtn{
   position:absolute;
   bottom:114px;
   right:18px;
@@ -138,6 +138,15 @@
   cursor:pointer;
   user-select:none;
   -webkit-tap-highlight-color: transparent;
+  transition: background 450ms ease, box-shadow 450ms ease, color 450ms ease;
+}
+
+.expandBtn.active{
+  background: rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.95);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.22) inset,
+    0 0 18px rgba(255,255,255,0.18);
 }
     
     .sessionTimer{
@@ -551,7 +560,11 @@ let calibrationSamples = [];
 let personalBaseline = null;
     personalBaseline = JSON.parse(localStorage.getItem("personalBaseline") || "null");
 
-    const relearnBtn = document.getElementById("relearnBtn");
+   const relearnBtn = document.getElementById("relearnBtn");
+const expandBtn = document.getElementById("expandBtn");
+    
+    let expandMode = false;
+    
 if (relearnBtn && personalBaseline){
   relearnBtn.style.display = "";
 }
@@ -1123,6 +1136,13 @@ if (relearnBtn){
 
     relearnBtn.style.display = "none";
     console.log("Relearn started");
+  });
+}
+
+if (expandBtn){
+  expandBtn.addEventListener("click", () => {
+    expandMode = !expandMode;
+    expandBtn.classList.toggle("active", expandMode);
   });
 }
     
