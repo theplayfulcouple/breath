@@ -1178,11 +1178,21 @@ if (expandBtn){
 
     expandBtn.classList.toggle("active", expandMode);
 
-    if (expandMode){
-      expandBox.style.opacity = "1";
-    } else {
-      expandBox.style.opacity = "0";
-    }
+   if (expandMode){
+
+  const startBtn = document.getElementById("sensorBtn");
+  const rect = startBtn.getBoundingClientRect();
+
+  expandBox.style.left = rect.left + rect.width / 2 + "px";
+  expandBox.style.top  = rect.bottom + 40 + "px";
+
+  expandBox.style.opacity = "1";
+
+} else {
+
+  expandBox.style.opacity = "0";
+
+}
 
   });
 }
