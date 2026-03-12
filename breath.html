@@ -1085,7 +1085,22 @@ if (relearnBtn){
     calibrationSamples.length = 0;
 
     const calLabel = document.getElementById("calibrationLabel");
-    if (calLabel) calLabel.style.display = "";
+    const calRing = document.getElementById("calRing");
+    const calRingFg = document.querySelector(".calRingFg");
+
+    if (calLabel){
+      calLabel.style.display = "";
+      calLabel.style.opacity = "1";
+    }
+
+    if (calRing){
+      calRing.style.display = "";
+      calRing.style.opacity = "1";
+    }
+
+    if (calRingFg){
+      calRingFg.style.strokeDashoffset = 339.292;
+    }
 
     relearnBtn.style.display = "none";
     console.log("Relearn started");
