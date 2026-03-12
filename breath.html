@@ -102,15 +102,15 @@
   width:22px;
   height:22px;
   border-radius:50%;
-  background:rgba(255,255,255,0.92);
+  background:rgba(255,210,140,0.92);
   box-shadow:
-    0 0 14px rgba(255,255,255,0.75),
-    0 0 32px rgba(255,255,255,0.45);
+    0 0 16px rgba(255,210,140,0.55),
+    0 0 34px rgba(255,190,110,0.28);
   opacity:0;
   transform:translate(-50%,-50%) scale(0.7);
   transition:
-    opacity 700ms ease,
-    transform 700ms ease;
+    opacity 1400ms ease,
+    transform 1400ms ease;
   pointer-events:none;
   z-index:9;
 }
@@ -614,6 +614,7 @@ const expandBtn = document.getElementById("expandBtn");
     const firefly = document.getElementById("firefly");
     
     let expandMode = false;
+    let fireflyDelayTimeout = null;
     
 if (relearnBtn && personalBaseline){
   relearnBtn.style.display = "";
@@ -1211,13 +1212,28 @@ if (expandBtn){
     expandBox.style.top  = sceneRect.top + sceneRect.height / 2 + 40 + "px";
   }
 
-  expandBox.style.opacity = "1";
-    spawnFirefly();
+expandBox.style.opacity = "1";
+
+if (fireflyDelayTimeout) clearTimeout(fireflyDelayTimeout);
+
+firefly.style.opacity = "0";
+firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
+
+fireflyDelayTimeout = setTimeout(() => {
+  if (!expandMode) return;
+  spawnFirefly();
+}, 4000);
 
 } else {
 
   expandBox.style.opacity = "0";
   firefly.style.opacity = "0";
+  firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
+
+  if (fireflyDelayTimeout) {
+    clearTimeout(fireflyDelayTimeout);
+    fireflyDelayTimeout = null;
+  }
 
 }
 
@@ -1282,8 +1298,8 @@ function spawnFirefly(){
   const minX = rect.width * 0.25;
   const maxX = rect.width * 0.75;
 
-  const minY = rect.height * 0.28;
-  const maxY = rect.height * 0.72;
+  const minY = rect.height * 0.16;
+const maxY = rect.height * 0.42;
 
   const x = minX + Math.random() * (maxX - minX);
   const y = minY + Math.random() * (maxY - minY);
