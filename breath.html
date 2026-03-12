@@ -107,7 +107,24 @@
 
 .relearnBtn{
   position:absolute;
-  bottom:58px;
+  bottom:66px;
+  right:18px;
+  z-index:6;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(0,0,0,0.28);
+  color:rgba(255,255,255,0.85);
+  font: 13px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing:0.02em;
+  backdrop-filter: blur(6px);
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+    .expandBtn{
+  position:absolute;
+  bottom:114px;
   right:18px;
   z-index:6;
   padding:8px 12px;
@@ -271,8 +288,10 @@
       <div class="resBars" id="resBars"></div>
     </div>
 
-    <button class="relearnBtn" id="relearnBtn" type="button" style="display:none;">relearn</button>
-    <div class="sessionTimer" id="sessionTimer">00:00</div>
+  <button class="expandBtn" id="expandBtn" type="button" style="display:none;">expand</button>
+<button class="relearnBtn" id="relearnBtn" type="button" style="display:none;">relearn</button>
+<div class="sessionTimer" id="sessionTimer">00:00</div>
+    
    <div class="calibrationLabel" id="calibrationLabel" style="display:none;">learning your rhythm…</div>
 
     <button class="toggle" id="voiceToggle" type="button" aria-pressed="false">
