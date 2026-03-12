@@ -1217,6 +1217,7 @@ if (expandBtn){
 } else {
 
   expandBox.style.opacity = "0";
+  firefly.style.opacity = "0";
 
 }
 
@@ -1260,26 +1261,6 @@ if (expandBtn){
       const secs = String(totalSeconds % 60).padStart(2, "0");
       timerEl.textContent = `${mins}:${secs}`;
 
-function spawnFirefly(){
-  const scene = document.querySelector(".scene");
-
-  const rect = scene.getBoundingClientRect();
-
-  const minX = rect.width * 0.25;
-  const maxX = rect.width * 0.75;
-
-  const minY = rect.height * 0.28;
-  const maxY = rect.height * 0.72;
-
-  const x = minX + Math.random() * (maxX - minX);
-  const y = minY + Math.random() * (maxY - minY);
-
-  firefly.style.left = x + "px";
-  firefly.style.top = y + "px";
-
-  firefly.style.opacity = "1";
-  firefly.style.transform = "translate(-50%,-50%) scale(1)";
-}
       
       requestAnimationFrame(updateTimer);
     }
@@ -1293,6 +1274,25 @@ function spawnFirefly(){
 
 document.addEventListener("pointerdown", moveExpandBox);
 document.addEventListener("pointermove", moveExpandBox);
+
+function spawnFirefly(){
+  const scene = document.querySelector(".scene");
+  const rect = scene.getBoundingClientRect();
+
+  const minX = rect.width * 0.25;
+  const maxX = rect.width * 0.75;
+
+  const minY = rect.height * 0.28;
+  const maxY = rect.height * 0.72;
+
+  const x = minX + Math.random() * (maxX - minX);
+  const y = minY + Math.random() * (maxY - minY);
+
+  firefly.style.left = x + "px";
+  firefly.style.top = y + "px";
+  firefly.style.opacity = "1";
+  firefly.style.transform = "translate(-50%,-50%) scale(1)";
+}
     
     requestAnimationFrame(updateTimer);
 
