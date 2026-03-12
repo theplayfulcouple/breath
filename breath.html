@@ -97,6 +97,32 @@
 
   z-index:7;
 }
+    #firefly{
+  position:absolute;
+
+  width:22px;
+  height:22px;
+
+  border-radius:50%;
+
+  background:rgba(255,255,255,0.85);
+
+  box-shadow:
+    0 0 12px rgba(255,255,255,0.65),
+    0 0 28px rgba(255,255,255,0.35);
+
+  opacity:0;
+
+  transform:translate(-50%,-50%) scale(0.7);
+
+  transition:
+    opacity 700ms ease,
+    transform 700ms ease;
+
+  pointer-events:none;
+
+  z-index:7;
+}
 
     /* ---- toggles ---- */
     .toggle{
@@ -322,6 +348,7 @@
     <div class="circle lungs" id="lungs"></div>
     <div class="vignette"></div>
     <div id="expandBox"></div>
+    <div id="firefly"></div>
 
     <!-- Resonance bars -->
     <div class="resWrap">
@@ -594,6 +621,7 @@ let personalBaseline = null;
    const relearnBtn = document.getElementById("relearnBtn");
 const expandBtn = document.getElementById("expandBtn");
     const expandBox = document.getElementById("expandBox");
+    const firefly = document.getElementById("firefly");
     
     let expandMode = false;
     
@@ -1194,6 +1222,7 @@ if (expandBtn){
   }
 
   expandBox.style.opacity = "1";
+    spawnFirefly();
 
 } else {
 
@@ -1241,6 +1270,24 @@ if (expandBtn){
       const secs = String(totalSeconds % 60).padStart(2, "0");
       timerEl.textContent = `${mins}:${secs}`;
 
+function spawnFirefly(){
+
+  const scene = document.querySelector(".scene");
+  const rect = scene.getBoundingClientRect();
+
+  const marginX = rect.width * 0.15;
+  const marginY = rect.height * 0.2;
+
+  const x = marginX + Math.random() * (rect.width - marginX * 2);
+  const y = marginY + Math.random() * (rect.height - marginY * 2);
+
+  firefly.style.left = rect.left + x + "px";
+  firefly.style.top  = rect.top + y + "px";
+
+  firefly.style.opacity = "1";
+  firefly.style.transform = "translate(-50%,-50%) scale(1)";
+}
+      
       requestAnimationFrame(updateTimer);
     }
     
