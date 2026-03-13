@@ -370,6 +370,19 @@
   pointer-events:auto;
 }
 
+    .summaryMetric{
+  margin-top:30px;
+  text-align:center;
+  opacity:0;
+  transform:translateY(10px);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+.summaryMetric.isVisible{
+  opacity:1;
+  transform:translateY(0);
+}
+    
 .summaryTopBar{
   position:absolute;
   top:22px;
@@ -426,11 +439,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-
-.summaryMetric{
-  margin-top:30px;
-  text-align:center;
-}
 
 .summaryLabel{
   font: 17px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -523,27 +531,27 @@
     <button class="summaryExit" id="summaryExit" type="button">exit</button>
   </div>
 
-  <div class="summaryContent">
-    <div class="summaryMetric">
-      <div class="summaryLabel">strength</div>
-      <div class="summaryBars">■■■■□</div>
-    </div>
-
-    <div class="summaryMetric">
-      <div class="summaryLabel">stability</div>
-      <div class="summaryBars">■■■□□</div>
-    </div>
-
-    <div class="summaryMetric">
-      <div class="summaryLabel">resilience</div>
-      <div class="summaryBars">■■■■□</div>
-    </div>
-
-    <div class="summaryMetric">
-      <div class="summaryLabel">duration</div>
-      <div class="summaryDuration">8 min</div>
-    </div>
+ <div class="summaryContent">
+  <div class="summaryMetric" id="metricStrength">
+    <div class="summaryLabel">strength</div>
+    <div class="summaryBars">■■■■□</div>
   </div>
+
+  <div class="summaryMetric" id="metricStability">
+    <div class="summaryLabel">stability</div>
+    <div class="summaryBars">■■■□□</div>
+  </div>
+
+  <div class="summaryMetric" id="metricResilience">
+    <div class="summaryLabel">resilience</div>
+    <div class="summaryBars">■■■■□</div>
+  </div>
+
+  <div class="summaryMetric" id="metricDuration">
+    <div class="summaryLabel">duration</div>
+    <div class="summaryDuration">8 min</div>
+  </div>
+</div>
 
   <div class="summaryBottomBar">
     <button class="summaryTab" type="button">week</button>
@@ -791,6 +799,11 @@ const expandBtn = document.getElementById("expandBtn");
     const endBtn = document.getElementById("endBtn");
 const summaryScreen = document.getElementById("summaryScreen");
 const summaryExit = document.getElementById("summaryExit");
+
+    const metricStrength = document.getElementById("metricStrength");
+const metricStability = document.getElementById("metricStability");
+const metricResilience = document.getElementById("metricResilience");
+const metricDuration = document.getElementById("metricDuration");
     
     let expandMode = false;
     let fireflyDelayTimeout = null;
@@ -1437,11 +1450,34 @@ fireflyDelayTimeout = setTimeout(() => {
 
   setTimeout(() => {
     if (summaryScreen){
-      summaryScreen.style.display = "flex";
-      requestAnimationFrame(() => {
-        summaryScreen.classList.add("isVisible");
-      });
-    }
+  summaryScreen.style.display = "flex";
+
+  [metricStrength, metricStability, metricResilience, metricDuration].forEach(el => {
+    if (el) el.classList.remove("isVisible");
+  });
+
+  requestAnimationFrame(() => {
+
+    summaryScreen.classList.add("isVisible");
+
+    setTimeout(() => {
+      if (metricStrength) metricStrength.classList.add("isVisible");
+    }, 0);
+
+    setTimeout(() => {
+      if (metricStability) metricStability.classList.add("isVisible");
+    }, 250);
+
+    setTimeout(() => {
+      if (metricResilience) metricResilience.classList.add("isVisible");
+    }, 500);
+
+    setTimeout(() => {
+      if (metricDuration) metricDuration.classList.add("isVisible");
+    }, 750);
+
+  });
+}
   }, 2000);
 }
 
