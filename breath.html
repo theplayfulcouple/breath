@@ -549,7 +549,7 @@
 
   <div class="summaryMetric" id="metricDuration">
     <div class="summaryLabel">duration</div>
-    <div class="summaryDuration">8 min</div>
+    <div class="summaryDuration" id="summaryDuration">8 min</div>
   </div>
 </div>
 
@@ -804,6 +804,7 @@ const summaryExit = document.getElementById("summaryExit");
 const metricStability = document.getElementById("metricStability");
 const metricResilience = document.getElementById("metricResilience");
 const metricDuration = document.getElementById("metricDuration");
+    const summaryDuration = document.getElementById("summaryDuration");
     
     let expandMode = false;
     let fireflyDelayTimeout = null;
@@ -1451,6 +1452,12 @@ fireflyDelayTimeout = setTimeout(() => {
   setTimeout(() => {
     if (summaryScreen){
   summaryScreen.style.display = "flex";
+
+      if (summaryDuration){
+  const totalSeconds = Math.floor(elapsedMs / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  summaryDuration.textContent = minutes + " min";
+}
 
   [metricStrength, metricStability, metricResilience, metricDuration].forEach(el => {
     if (el) el.classList.remove("isVisible");
