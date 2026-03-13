@@ -1381,24 +1381,32 @@ fireflyDelayTimeout = setTimeout(() => {
     function showSummaryScreen(){
   expandMode = false;
 
+  if (fireflyDelayTimeout) {
+    clearTimeout(fireflyDelayTimeout);
+    fireflyDelayTimeout = null;
+  }
+
   expandBtn.classList.remove("active");
   expandBox.style.opacity = "0";
   firefly.style.opacity = "0";
   firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
 
-  belly.style.opacity = "0";
-  lungs.style.opacity = "0";
-
   const resWrap = document.querySelector(".resWrap");
-  if (resWrap) resWrap.style.opacity = "0";
-
-  const sensorBtn = document.getElementById("sensorBtn");
-  if (sensorBtn) sensorBtn.style.opacity = "0";
-
   const calLabel = document.getElementById("calibrationLabel");
   const calRing = document.getElementById("calRing");
-  if (calLabel) calLabel.style.opacity = "0";
-  if (calRing) calRing.style.opacity = "0";
+
+  if (resWrap) resWrap.style.display = "none";
+  if (sensorBtn) sensorBtn.style.display = "none";
+  if (calLabel) calLabel.style.display = "none";
+  if (calRing) calRing.style.display = "none";
+
+  voiceBtn.style.display = "none";
+  musicBtn.style.display = "none";
+  torchBtn.style.display = "none";
+  expandBtn.style.display = "none";
+  relearnBtn.style.display = "none";
+  endBtn.style.display = "none";
+  timerEl.style.display = "none";
 
   setTimeout(() => {
     if (summaryScreen){
@@ -1407,7 +1415,7 @@ fireflyDelayTimeout = setTimeout(() => {
         summaryScreen.classList.add("isVisible");
       });
     }
-  }, 500);
+  }, 300);
 }
 
 if (endBtn){
