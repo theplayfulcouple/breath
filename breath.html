@@ -355,17 +355,17 @@
 
     <button class="toggle" id="voiceToggle" type="button" aria-pressed="false">
       <span class="toggleDot" aria-hidden="true"></span>
-      <span id="voiceLabel">voice off</span>
+      <span id="voiceLabel">voice</span>
     </button>
 
     <button class="toggle" id="musicToggle" type="button" aria-pressed="false">
       <span class="toggleDot" aria-hidden="true"></span>
-      <span id="musicLabel">music off</span>
+      <span id="musicLabel">music</span>
     </button>
 
     <button class="toggle" id="torchToggle" type="button" aria-pressed="false">
   <span class="toggleDot" aria-hidden="true"></span>
-  <span id="torchLabel">torch off</span>
+  <span id="torchLabel">torch</span>
 </button>
 
     <!-- Start sensor -->
@@ -453,11 +453,10 @@
     const musicBtn = document.getElementById("musicToggle");
     const musicLabel = document.getElementById("musicLabel");
 
-    function setToggle(btn, labelEl, isOn, onText, offText){
-      btn.classList.toggle("isOn", isOn);
-      btn.setAttribute("aria-pressed", String(isOn));
-      labelEl.textContent = isOn ? onText : offText;
-    }
+    function setToggle(btn, labelEl, isOn){
+  btn.classList.toggle("isOn", isOn);
+  btn.setAttribute("aria-pressed", String(isOn));
+}
 
     setToggle(voiceBtn, voiceLabel, false, "voice on", "voice off");
     setToggle(musicBtn, musicLabel, false, "music on", "music off");
@@ -1260,7 +1259,7 @@ fireflyDelayTimeout = setTimeout(() => {
   });
 
   torchBtn.classList.toggle("isOn", torchOn);
-  torchLabel.textContent = torchOn ? "torch on" : "torch off";
+ torchLabel.textContent = "torch";
 });
 
     // Session timer (unchanged)
