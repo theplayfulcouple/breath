@@ -196,7 +196,22 @@
     0 0 0 1px rgba(255,255,255,0.22) inset,
     0 0 18px rgba(255,255,255,0.18);
 }
-    
+   .endBtn{
+  position:absolute;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  z-index:6;
+  padding:8px 12px;
+  border:none;
+  background:transparent;
+  color:rgba(255,255,255,0.92);
+  font: 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing:0.01em;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+} 
     .sessionTimer{
       position:absolute;
       bottom:18px;
@@ -329,6 +344,91 @@
 
     /* hidden camera elements */
     #ppgVideo { display:none; }
+   
+    .summaryScreen{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  color:rgba(255,255,255,0.95);
+  opacity:0;
+  transition: opacity 800ms ease;
+  pointer-events:none;
+}
+
+.summaryScreen.isVisible{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.summaryExit{
+  position:absolute;
+  top:58px;
+  right:28px;
+  border:none;
+  background:transparent;
+  color:rgba(255,255,255,0.92);
+  font: 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.summaryTitle{
+  margin-top:210px;
+  font: 18px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:rgba(255,255,255,0.95);
+}
+
+.summaryMetric{
+  margin-top:46px;
+  text-align:center;
+}
+
+.summaryLabel{
+  font: 17px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:rgba(255,255,255,0.95);
+}
+
+.summaryBars{
+  margin-top:10px;
+  font: 18px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing:0.08em;
+  color:rgba(255,255,255,0.95);
+}
+
+.summaryDuration{
+  margin-top:10px;
+  font: 18px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:rgba(255,255,255,0.95);
+}
+
+.summaryNav{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:30px;
+  display:flex;
+  justify-content:space-evenly;
+  align-items:center;
+}
+
+.summaryTab{
+  border:none;
+  background:transparent;
+  color:rgba(255,255,255,0.92);
+  font: 17px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-transform:lowercase;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+    
+    
+    
     #ppgFrame { display:none; }
   </style>
 </head>
@@ -349,7 +449,8 @@
 
  <button class="expandBtn" id="expandBtn" type="button">expand</button>
 <button class="relearnBtn" id="relearnBtn" type="button" style="display:none;">relearn</button>
-<div class="sessionTimer" id="sessionTimer">00:00</div>
+<button class="endBtn" id="endBtn" type="button">end</button>
+    <div class="sessionTimer" id="sessionTimer">00:00</div>
     
    <div class="calibrationLabel" id="calibrationLabel" style="display:none;">learning your rhythm…</div>
 
@@ -379,6 +480,40 @@
 </div>
 
     <!-- hidden camera elements -->
+    
+    <div class="summaryScreen" id="summaryScreen" style="display:none;">
+  <button class="summaryExit" id="summaryExit" type="button">exit</button>
+
+  <div class="summaryTitle">today’s resonance</div>
+
+  <div class="summaryMetric">
+    <div class="summaryLabel">strength</div>
+    <div class="summaryBars">■■■■□</div>
+  </div>
+
+  <div class="summaryMetric">
+    <div class="summaryLabel">stability</div>
+    <div class="summaryBars">■■■□□</div>
+  </div>
+
+  <div class="summaryMetric">
+    <div class="summaryLabel">resilience</div>
+    <div class="summaryBars">■■■■□</div>
+  </div>
+
+  <div class="summaryMetric">
+    <div class="summaryLabel">duration</div>
+    <div class="summaryDuration">8 min</div>
+  </div>
+
+  <div class="summaryNav">
+    <button class="summaryTab" type="button">week</button>
+    <button class="summaryTab" type="button">month</button>
+    <button class="summaryTab" type="button">year</button>
+  </div>
+</div>
+    
+    
     <video id="ppgVideo" playsinline></video>
     <canvas id="ppgFrame" width="160" height="120"></canvas>
   </div>
@@ -613,6 +748,9 @@ let personalBaseline = null;
 const expandBtn = document.getElementById("expandBtn");
     const expandBox = document.getElementById("expandBox");
     const firefly = document.getElementById("firefly");
+    const endBtn = document.getElementById("endBtn");
+const summaryScreen = document.getElementById("summaryScreen");
+const summaryExit = document.getElementById("summaryExit");
     
     let expandMode = false;
     let fireflyDelayTimeout = null;
@@ -1240,6 +1378,48 @@ fireflyDelayTimeout = setTimeout(() => {
 
   });
 }
+    function showSummaryScreen(){
+  expandMode = false;
+
+  expandBtn.classList.remove("active");
+  expandBox.style.opacity = "0";
+  firefly.style.opacity = "0";
+  firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
+
+  belly.style.opacity = "0";
+  lungs.style.opacity = "0";
+
+  const resWrap = document.querySelector(".resWrap");
+  if (resWrap) resWrap.style.opacity = "0";
+
+  const sensorBtn = document.getElementById("sensorBtn");
+  if (sensorBtn) sensorBtn.style.opacity = "0";
+
+  const calLabel = document.getElementById("calibrationLabel");
+  const calRing = document.getElementById("calRing");
+  if (calLabel) calLabel.style.opacity = "0";
+  if (calRing) calRing.style.opacity = "0";
+
+  setTimeout(() => {
+    if (summaryScreen){
+      summaryScreen.style.display = "flex";
+      requestAnimationFrame(() => {
+        summaryScreen.classList.add("isVisible");
+      });
+    }
+  }, 500);
+}
+
+if (endBtn){
+  endBtn.addEventListener("click", showSummaryScreen);
+}
+
+    if (summaryExit){
+  summaryExit.addEventListener("click", () => {
+    window.location.href = "https://theplayfulcouple.co.uk";
+  });
+}
+
     
     torchBtn.addEventListener("click", async () => {
   if (!ppgStream) return;
