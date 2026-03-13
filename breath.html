@@ -1419,10 +1419,17 @@ fireflyDelayTimeout = setTimeout(() => {
 }
 
 if (endBtn){
-  endBtn.addEventListener("click", showSummaryScreen);
+  endBtn.addEventListener("click", () => {
+
+    const sensorBtn = document.getElementById("sensorBtn");
+    if (sensorBtn) sensorBtn.style.display = "none";
+
+    showSummaryScreen();
+
+  });
 }
 
-    if (summaryExit){
+if (summaryExit){
   summaryExit.addEventListener("click", () => {
     window.location.href = "https://theplayfulcouple.co.uk";
   });
