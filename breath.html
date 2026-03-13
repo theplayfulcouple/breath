@@ -1460,7 +1460,7 @@ fireflyDelayTimeout = setTimeout(() => {
 
   const secText = String(seconds).padStart(2,"0");
 
-  summaryDuration.textContent = minutes + " min " + secText + " sec";
+  summaryDuration.textContent = minutes + ":" + secText;
 }
 
   [metricStrength, metricStability, metricResilience, metricDuration].forEach(el => {
