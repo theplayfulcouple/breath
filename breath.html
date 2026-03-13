@@ -348,7 +348,7 @@
     .summaryScreen{
   position:absolute;
   inset:0;
-  z-index:50;
+  z-index:20;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -378,13 +378,13 @@
 }
 
 .summaryTitle{
-  margin-top:160px;
+  margin-top:210px;
   font: 18px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color:rgba(255,255,255,0.95);
 }
 
 .summaryMetric{
- margin-top:34px;
+  margin-top:46px;
   text-align:center;
 }
 
@@ -753,7 +753,6 @@ const summaryScreen = document.getElementById("summaryScreen");
 const summaryExit = document.getElementById("summaryExit");
     
     let expandMode = false;
-    let summaryMode = false;
     let fireflyDelayTimeout = null;
     
 if (relearnBtn && personalBaseline){
@@ -1226,12 +1225,6 @@ if (!personalBaseline){
     // Animation loop (your original)
     // =========================================================
     function frame(now){
-  if (summaryMode){
-  setCircle(belly, minScale, 0);
-  setCircle(lungs, minScale, 0);
-  requestAnimationFrame(frame);
-  return;
-}
       const t = (now - start) % cycle;
 
       if (t < inhale){
@@ -1385,53 +1378,7 @@ fireflyDelayTimeout = setTimeout(() => {
 
   });
 }
-   function showSummaryScreen(){
-  summaryMode = true;
-  expandMode = false;
-
-  if (fireflyDelayTimeout) {
-    clearTimeout(fireflyDelayTimeout);
-    fireflyDelayTimeout = null;
-  }
-
-  expandBtn.classList.remove("active");
-  expandBox.style.opacity = "0";
-  firefly.style.opacity = "0";
-  firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
-
-  const resWrap = document.querySelector(".resWrap");
-  const sensorBtn = document.getElementById("sensorBtn");
-  const calLabel = document.getElementById("calibrationLabel");
-  const calRing = document.getElementById("calRing");
-  const voiceToggle = document.getElementById("voiceToggle");
-  const musicToggle = document.getElementById("musicToggle");
-  const torchToggle = document.getElementById("torchToggle");
-  const sessionTimer = document.getElementById("sessionTimer");
-
-  if (resWrap) resWrap.style.display = "none";
-  if (sensorBtn) sensorBtn.style.display = "none";
-  if (calLabel) calLabel.style.display = "none";
-  if (calRing) calRing.style.display = "none";
-
-  if (voiceToggle) voiceToggle.style.display = "none";
-  if (musicToggle) musicToggle.style.display = "none";
-  if (torchToggle) torchToggle.style.display = "none";
-
-  if (expandBtn) expandBtn.style.display = "none";
-  if (relearnBtn) relearnBtn.style.display = "none";
-  if (sessionTimer) sessionTimer.style.display = "none";
-  if (endBtn) endBtn.style.display = "none";
-
-  setTimeout(() => {
-    if (summaryScreen){
-      summaryScreen.style.display = "flex";
-      requestAnimationFrame(() => {
-        summaryScreen.classList.add("isVisible");
-      });
-    }
-  }, 500);
-}
-      
+    function showSummaryScreen(){
   expandMode = false;
 
   expandBtn.classList.remove("active");
