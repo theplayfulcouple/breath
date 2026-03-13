@@ -352,10 +352,10 @@
     /* hidden camera elements */
     #ppgVideo { display:none; }
    
-    .summaryScreen{
+ .summaryScreen{
   position:absolute;
   inset:0;
-  z-index:20;
+  z-index:50;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -366,32 +366,65 @@
   pointer-events:none;
 }
 
-.summaryScreen.isVisible{
-  opacity:1;
-  pointer-events:auto;
+.summaryTopBar{
+  position:absolute;
+  top:22px;
+  left:18px;
+  right:18px;
+  z-index:21;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 16px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(42,10,10,0.55);
+  backdrop-filter: blur(6px);
+}
+
+.summaryTopTitle{
+  color:rgba(255,255,255,0.95);
+  font:16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing:0.01em;
+}
+
+.summaryContent{
+  width:100%;
+  margin-top:150px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.summaryBottomBar{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:18px;
+  z-index:21;
+  display:flex;
+  align-items:center;
+  justify-content:space-evenly;
+  padding:12px 16px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(42,10,10,0.55);
+  backdrop-filter: blur(6px);
 }
 
 .summaryExit{
-  position:absolute;
-  top:58px;
-  right:28px;
   border:none;
   background:transparent;
   color:rgba(255,255,255,0.92);
-  font: 16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font:16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   cursor:pointer;
   user-select:none;
   -webkit-tap-highlight-color: transparent;
 }
 
-.summaryTitle{
-  margin-top:210px;
-  font: 18px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  color:rgba(255,255,255,0.95);
-}
 
 .summaryMetric{
-  margin-top:46px;
+  margin-top:30px;
   text-align:center;
 }
 
@@ -413,15 +446,6 @@
   color:rgba(255,255,255,0.95);
 }
 
-.summaryNav{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:30px;
-  display:flex;
-  justify-content:space-evenly;
-  align-items:center;
-}
 
 .summaryTab{
   border:none;
@@ -488,36 +512,41 @@
 
     <!-- hidden camera elements -->
     
-    <div class="summaryScreen" id="summaryScreen" style="display:none;">
-  <button class="summaryExit" id="summaryExit" type="button">exit</button>
+ <div class="summaryScreen" id="summaryScreen" style="display:none;">
 
-  <div class="summaryTitle">today’s resonance</div>
-
-  <div class="summaryMetric">
-    <div class="summaryLabel">strength</div>
-    <div class="summaryBars">■■■■□</div>
+  <div class="summaryTopBar">
+    <div class="summaryTopTitle">today’s resonance</div>
+    <button class="summaryExit" id="summaryExit" type="button">exit</button>
   </div>
 
-  <div class="summaryMetric">
-    <div class="summaryLabel">stability</div>
-    <div class="summaryBars">■■■□□</div>
+  <div class="summaryContent">
+    <div class="summaryMetric">
+      <div class="summaryLabel">strength</div>
+      <div class="summaryBars">■■■■□</div>
+    </div>
+
+    <div class="summaryMetric">
+      <div class="summaryLabel">stability</div>
+      <div class="summaryBars">■■■□□</div>
+    </div>
+
+    <div class="summaryMetric">
+      <div class="summaryLabel">resilience</div>
+      <div class="summaryBars">■■■■□</div>
+    </div>
+
+    <div class="summaryMetric">
+      <div class="summaryLabel">duration</div>
+      <div class="summaryDuration">8 min</div>
+    </div>
   </div>
 
-  <div class="summaryMetric">
-    <div class="summaryLabel">resilience</div>
-    <div class="summaryBars">■■■■□</div>
-  </div>
-
-  <div class="summaryMetric">
-    <div class="summaryLabel">duration</div>
-    <div class="summaryDuration">8 min</div>
-  </div>
-
-  <div class="summaryNav">
+  <div class="summaryBottomBar">
     <button class="summaryTab" type="button">week</button>
     <button class="summaryTab" type="button">month</button>
     <button class="summaryTab" type="button">year</button>
   </div>
+
 </div>
     
     
