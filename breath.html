@@ -115,35 +115,37 @@
   z-index:9;
 }
     /* ---- toggles ---- */
-    .toggle{
-      position:absolute;
-      left:18px;
-      z-index: 6;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(0,0,0,0.28);
-      color: rgba(255,255,255,0.88);
-      font: 14px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      cursor:pointer;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-      backdrop-filter: blur(6px);
-    }
+ .toggle{
+  position:absolute;
+  left:18px;
+  z-index:6;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(42,10,10,0.55);
+  color:rgba(255,255,255,0.85);
+  font:13px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing:0.02em;
+  backdrop-filter: blur(6px);
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 450ms ease, box-shadow 450ms ease, color 450ms ease;
+}
     .toggleDot{
-      width:10px;
-      height:10px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.30);
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.10);
-      flex: 0 0 auto;
-    }
-    .toggle.isOn .toggleDot{
-      background: rgba(255,255,255,0.85);
-    }
+  display:none;
+}
+    .toggle.isOn{
+  background: rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.95);
+
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.22) inset,
+    0 0 18px rgba(255,255,255,0.18);
+}
 
     #voiceToggle{ bottom:66px; }
     #musicToggle{ bottom:18px; }
