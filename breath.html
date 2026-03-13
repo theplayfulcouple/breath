@@ -1453,10 +1453,14 @@ fireflyDelayTimeout = setTimeout(() => {
     if (summaryScreen){
   summaryScreen.style.display = "flex";
 
-      if (summaryDuration){
+   if (summaryDuration){
   const totalSeconds = Math.floor(elapsedMs / 1000);
   const minutes = Math.floor(totalSeconds / 60);
-  summaryDuration.textContent = minutes + " min";
+  const seconds = totalSeconds % 60;
+
+  const secText = String(seconds).padStart(2,"0");
+
+  summaryDuration.textContent = minutes + " min " + secText + " sec";
 }
 
   [metricStrength, metricStability, metricResilience, metricDuration].forEach(el => {
