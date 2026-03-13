@@ -1427,8 +1427,20 @@ fireflyDelayTimeout = setTimeout(() => {
 if (endBtn){
   endBtn.addEventListener("click", () => {
 
-    const sensorBtn = document.getElementById("sensorBtn");
-    if (sensorBtn) sensorBtn.style.display = "none";
+    const controls = [
+      document.getElementById("sensorBtn"),
+      document.getElementById("voiceToggle"),
+      document.getElementById("musicToggle"),
+      document.getElementById("torchToggle"),
+      document.getElementById("expandBtn"),
+      document.getElementById("relearnBtn"),
+      document.getElementById("sessionTimer"),
+      endBtn
+    ];
+
+    controls.forEach(el => {
+      if (el) el.classList.add("fadeOutUI");
+    });
 
     showSummaryScreen();
 
