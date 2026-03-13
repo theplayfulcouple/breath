@@ -1401,19 +1401,6 @@ fireflyDelayTimeout = setTimeout(() => {
   const calLabel = document.getElementById("calibrationLabel");
   const calRing = document.getElementById("calRing");
 
-  if (resWrap) resWrap.style.display = "none";
-  if (sensorBtn) sensorBtn.style.display = "none";
-  if (calLabel) calLabel.style.display = "none";
-  if (calRing) calRing.style.display = "none";
-
-  voiceBtn.style.display = "none";
-  musicBtn.style.display = "none";
-  torchBtn.style.display = "none";
-  expandBtn.style.display = "none";
-  relearnBtn.style.display = "none";
-  endBtn.style.display = "none";
-  timerEl.style.display = "none";
-
   setTimeout(() => {
     if (summaryScreen){
       summaryScreen.style.display = "flex";
