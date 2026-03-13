@@ -534,7 +534,7 @@
  <div class="summaryContent">
   <div class="summaryMetric" id="metricStrength">
     <div class="summaryLabel">strength</div>
-    <div class="summaryBars">■■■■□</div>
+    <div class="summaryBars" id="summaryStrengthBars">■■■■□</div>
   </div>
 
   <div class="summaryMetric" id="metricStability">
@@ -787,6 +787,9 @@ let lastBeatT = 0;
     let resonanceReservoir = 0; // 0..1 accumulated capacity
     let smoothCoherence = 0;
 let capacityLevel = 1;
+    let resonanceSum = 0;
+let resonanceSamples = 0;
+let resonanceAverage = 0;
     let isCalibrating = false;
 let calibrationSamples = [];
 let personalBaseline = null;
@@ -805,6 +808,7 @@ const metricStability = document.getElementById("metricStability");
 const metricResilience = document.getElementById("metricResilience");
 const metricDuration = document.getElementById("metricDuration");
     const summaryDuration = document.getElementById("summaryDuration");
+    const summaryStrengthBars = document.getElementById("summaryStrengthBars");
     
     let expandMode = false;
     let fireflyDelayTimeout = null;
@@ -1144,6 +1148,11 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
         // NEW: update bars from resonance model
     const raw = computeSpectralCoherence(now);
 
+  if (!isCalibrating){
+  resonanceSum += raw;
+  resonanceSamples++;
+}
+
  if (isCalibrating){
   calibrationSamples.push(raw);
 
@@ -1462,7 +1471,19 @@ fireflyDelayTimeout = setTimeout(() => {
 
   summaryDuration.textContent = minutes + ":" + secText;
 }
+if (resonanceSamples > 0){
+  resonanceAverage = resonanceSum / resonanceSamples;
+}
 
+      if (summaryStrengthBars){
+
+  const bars = Math.round(resonanceAverage * 5);
+  const clampedBars = Math.max(1, Math.min(5, bars));
+
+  summaryStrengthBars.textContent =
+    "■".repeat(clampedBars) + "□".repeat(5 - clampedBars);
+
+}
   [metricStrength, metricStability, metricResilience, metricDuration].forEach(el => {
     if (el) el.classList.remove("isVisible");
   });
