@@ -1511,6 +1511,38 @@ if (resonanceSamples > 0){
 
 }
 
+      if (summaryStabilityBars){
+
+  let calmAverage = 0;
+  let moveAverage = 0;
+
+  if (calmSamples > 0){
+    calmAverage = calmResonanceSum / calmSamples;
+  }
+
+  if (moveSamples > 0){
+    moveAverage = moveResonanceSum / moveSamples;
+  }
+
+  let stabilityBars = 5;
+
+  if (moveSamples > 0){
+
+    const drop = calmAverage - moveAverage;
+
+    if (drop <= 0.06) stabilityBars = 5;
+    else if (drop <= 0.12) stabilityBars = 4;
+    else if (drop <= 0.18) stabilityBars = 3;
+    else if (drop <= 0.25) stabilityBars = 2;
+    else stabilityBars = 1;
+
+  }
+
+  summaryStabilityBars.textContent =
+    "■".repeat(stabilityBars) + "□".repeat(5 - stabilityBars);
+
+}
+
 if (summaryStabilityBars){
 
   let calmAverage = 0;
