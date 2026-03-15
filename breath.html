@@ -820,6 +820,7 @@ const metricDuration = document.getElementById("metricDuration");
     
     let expandMode = false;
     let fireflyDelayTimeout = null;
+    let lastMoveTime = 0;
     
 if (relearnBtn && personalBaseline){
   relearnBtn.style.display = "";
@@ -1161,14 +1162,19 @@ if (!isCalibrating){
   resonanceSum += raw;
   resonanceSamples++;
 
-  if (!expandMode){
+  const isEngaging = expandMode && (performance.now() - lastMoveTime < 700);
+
+  if (!isEngaging){
     calmResonanceSum += raw;
     calmSamples++;
   }
 
 }
+}
 
-  if (expandMode){
+const isEngaging = expandMode && (performance.now() - lastMoveTime < 700);
+
+if (isEngaging){
   moveResonanceSum += raw;
   moveSamples++;
 }
@@ -1647,6 +1653,8 @@ function moveExpandBox(e){
   expandBox.style.left = x + "px";
   expandBox.style.top = y + "px";
 
+  lastMoveTime = performance.now();
+  
   checkFireflyTouch(x, y);
 }
 
