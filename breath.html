@@ -1157,29 +1157,24 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
         // NEW: update bars from resonance model
     const raw = computeSpectralCoherence(now);
 
-if (!isCalibrating){
+const isEngaging = expandMode && (performance.now() - lastMoveTime < 700);
 
+if (!isCalibrating){
   resonanceSum += raw;
   resonanceSamples++;
-
-  const isEngaging = expandMode && (performance.now() - lastMoveTime < 700);
 
   if (!isEngaging){
     calmResonanceSum += raw;
     calmSamples++;
   }
 
-}
-}
-
-const isEngaging = expandMode && (performance.now() - lastMoveTime < 700);
-
-if (isEngaging){
-  moveResonanceSum += raw;
-  moveSamples++;
+  if (isEngaging){
+    moveResonanceSum += raw;
+    moveSamples++;
+  }
 }
 
- if (isCalibrating){
+if (isCalibrating){
   calibrationSamples.push(raw);
 
   const calRingFg = document.querySelector(".calRingFg");
@@ -1198,23 +1193,21 @@ if (isEngaging){
     const calLabel = document.getElementById("calibrationLabel");
     const calRing = document.getElementById("calRing");
 
-  if (calLabel) calLabel.style.opacity = "0";
-if (calRing) calRing.style.opacity = "0";
+    if (calLabel) calLabel.style.opacity = "0";
+    if (calRing) calRing.style.opacity = "0";
 
-setTimeout(() => {
-  if (calLabel) calLabel.style.display = "none";
-  if (calRing) calRing.style.display = "none";
-}, 600);
+    setTimeout(() => {
+      if (calLabel) calLabel.style.display = "none";
+      if (calRing) calRing.style.display = "none";
+    }, 600);
 
     if (relearnBtn) relearnBtn.style.display = "";
-
     console.log("Calibration complete", personalBaseline);
   }
 }
+
 const level = updateCapacityFromCoherence(raw);
-        setResonanceLevel(level);
-      }
-    }
+setResonanceLevel(level);
 
     function ppgLoop(){
       const w = frameCanvas.width, h = frameCanvas.height;
@@ -1280,6 +1273,17 @@ const level = updateCapacityFromCoherence(raw);
         lastBeatT = 0;
         lastAbove = false;
         lastPeakT = 0;
+
+        resonanceSum = 0;
+resonanceSamples = 0;
+resonanceAverage = 0;
+
+calmResonanceSum = 0;
+calmSamples = 0;
+moveResonanceSum = 0;
+moveSamples = 0;
+
+lastMoveTime = 0;
 
         // decide mode
         
