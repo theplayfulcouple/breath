@@ -1518,14 +1518,19 @@ if (summaryStabilityBars){
     moveAverage = moveResonanceSum / moveSamples;
   }
 
-  const drop = calmAverage - moveAverage;
+let stabilityBars = 5;
 
-  let stabilityBars = 1;
+if (moveSamples > 0){
+
+  const drop = calmAverage - moveAverage;
 
   if (drop <= 0.06) stabilityBars = 5;
   else if (drop <= 0.12) stabilityBars = 4;
   else if (drop <= 0.18) stabilityBars = 3;
   else if (drop <= 0.25) stabilityBars = 2;
+  else stabilityBars = 1;
+
+}
 
   summaryStabilityBars.textContent =
     "■".repeat(stabilityBars) + "□".repeat(5 - stabilityBars);
