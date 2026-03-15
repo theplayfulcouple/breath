@@ -539,7 +539,7 @@
 
   <div class="summaryMetric" id="metricStability">
     <div class="summaryLabel">stability</div>
-    <div class="summaryBars">■■■□□</div>
+    <div class="summaryBars" id="summaryStabilityBars">■■■□□</div>
   </div>
 
   <div class="summaryMetric" id="metricResilience">
@@ -790,6 +790,18 @@ let capacityLevel = 1;
     let resonanceSum = 0;
 let resonanceSamples = 0;
 let resonanceAverage = 0;
+
+    calmResonanceSum = 0;
+calmSamples = 0;
+moveResonanceSum = 0;
+moveSamples = 0;
+
+let calmResonanceSum = 0;
+let calmSamples = 0;
+
+let moveResonanceSum = 0;
+let moveSamples = 0;
+    
     let isCalibrating = false;
 let calibrationSamples = [];
 let personalBaseline = null;
@@ -809,6 +821,7 @@ const metricResilience = document.getElementById("metricResilience");
 const metricDuration = document.getElementById("metricDuration");
     const summaryDuration = document.getElementById("summaryDuration");
     const summaryStrengthBars = document.getElementById("summaryStrengthBars");
+    const summaryStabilityBars = document.getElementById("summaryStabilityBars");
     
     let expandMode = false;
     let fireflyDelayTimeout = null;
@@ -1148,9 +1161,21 @@ if (isPeak && (now - lastPeakT) > refractoryMs) {
         // NEW: update bars from resonance model
     const raw = computeSpectralCoherence(now);
 
-  if (!isCalibrating){
+if (!isCalibrating){
+
   resonanceSum += raw;
   resonanceSamples++;
+
+  if (!expandMode){
+    calmResonanceSum += raw;
+    calmSamples++;
+  }
+
+}
+
+  if (expandMode){
+  moveResonanceSum += raw;
+  moveSamples++;
 }
 
  if (isCalibrating){
@@ -1484,6 +1509,34 @@ if (resonanceSamples > 0){
     "■".repeat(clampedBars) + "□".repeat(5 - clampedBars);
 
 }
+
+if (summaryStabilityBars){
+
+  let calmAverage = 0;
+  let moveAverage = 0;
+
+  if (calmSamples > 0){
+    calmAverage = calmResonanceSum / calmSamples;
+  }
+
+  if (moveSamples > 0){
+    moveAverage = moveResonanceSum / moveSamples;
+  }
+
+  const drop = calmAverage - moveAverage;
+
+  let stabilityBars = 1;
+
+  if (drop <= 0.06) stabilityBars = 5;
+  else if (drop <= 0.12) stabilityBars = 4;
+  else if (drop <= 0.18) stabilityBars = 3;
+  else if (drop <= 0.25) stabilityBars = 2;
+
+  summaryStabilityBars.textContent =
+    "■".repeat(stabilityBars) + "□".repeat(5 - stabilityBars);
+
+}
+      
   [metricStrength, metricStability, metricResilience, metricDuration].forEach(el => {
     if (el) el.classList.remove("isVisible");
   });
