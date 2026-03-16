@@ -1568,6 +1568,9 @@ if (summaryStabilityBars){
       stabilityDrops.length;
   }
 
+  let debugText = "avgDrop: " + avgDrop.toFixed(3) + " | drops: " + stabilityDrops.length;
+document.getElementById("debugStability").textContent = debugText;
+
   console.log("stability avgDrop:", avgDrop, "drops:", stabilityDrops.length);
 
   let bars = 5;
