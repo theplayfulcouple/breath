@@ -1531,37 +1531,37 @@ if (resonanceSamples > 0){
 
 }
 
-      if (summaryStabilityBars){
+         if (summaryStabilityBars){
 
-  let calmAverage = 0;
-  let moveAverage = 0;
+  let avgDrop = 0;
 
-  if (calmSamples > 0){
-    calmAverage = calmResonanceSum / calmSamples;
+  if (stabilityDrops.length > 0){
+    avgDrop =
+      stabilityDrops.reduce((a, b) => a + b, 0) /
+      stabilityDrops.length;
   }
 
-  if (moveSamples > 0){
-    moveAverage = moveResonanceSum / moveSamples;
+  let debugText = "avgDrop: " + avgDrop.toFixed(3) + " | drops: " + stabilityDrops.length;
+  const debugStability = document.getElementById("debugStability");
+  if (debugStability){
+    debugStability.textContent = debugText;
   }
 
-  let stabilityBars = 5;
+  console.log("stability avgDrop:", avgDrop, "drops:", stabilityDrops.length);
 
-  if (moveSamples > 0){
+  let bars = 5;
 
-    const drop = calmAverage - moveAverage;
-
-    if (drop <= 0.06) stabilityBars = 5;
-    else if (drop <= 0.12) stabilityBars = 4;
-    else if (drop <= 0.18) stabilityBars = 3;
-    else if (drop <= 0.25) stabilityBars = 2;
-    else stabilityBars = 1;
-
-  }
+  if (avgDrop > 0.025) bars = 4;
+  if (avgDrop > 0.040) bars = 3;
+  if (avgDrop > 0.055) bars = 2;
+  if (avgDrop > 0.070) bars = 1;
 
   summaryStabilityBars.textContent =
-    "■".repeat(stabilityBars) + "□".repeat(5 - stabilityBars);
+    "■".repeat(bars) + "□".repeat(5 - bars);
 
-        const summaryResilienceBars = document.getElementById("summaryResilienceBars");
+}
+
+const summaryResilienceBars = document.getElementById("summaryResilienceBars");
 
 if (summaryResilienceBars){
 
@@ -1581,36 +1581,6 @@ if (summaryResilienceBars){
 
   summaryResilienceBars.textContent =
     "■".repeat(resilienceBars) + "□".repeat(5 - resilienceBars);
-
-}
-
-if (summaryStabilityBars){
-
-  let avgDrop = 0;
-
-  if (stabilityDrops.length > 0){
-    avgDrop =
-      stabilityDrops.reduce((a, b) => a + b, 0) /
-      stabilityDrops.length;
-  }
-
-  let debugText = "avgDrop: " + avgDrop.toFixed(3) + " | drops: " + stabilityDrops.length;
-const debugStability = document.getElementById("debugStability");
-if (debugStability){
-  debugStability.textContent = debugText;
-}
-
-  console.log("stability avgDrop:", avgDrop, "drops:", stabilityDrops.length);
-
-let bars = 5;
-
-if (avgDrop > 0.025) bars = 4;
-if (avgDrop > 0.040) bars = 3;
-if (avgDrop > 0.055) bars = 2;
-if (avgDrop > 0.070) bars = 1;
-
-  summaryStabilityBars.textContent =
-    "■".repeat(bars) + "□".repeat(5 - bars);
 
 }
       
