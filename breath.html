@@ -1696,6 +1696,14 @@ function moveExpandBox(e){
   expandBox.style.left = x + "px";
   expandBox.style.top = y + "px";
 
+  lastMoveTime = performance.now();
+
+  if (!chaseActive && firefly.style.opacity !== "0"){
+    chaseActive = true;
+    chaseBaseline = smoothCoherence;
+    chaseLowest = chaseBaseline;
+  }
+
   checkFireflyTouch(x, y);
 }
 
