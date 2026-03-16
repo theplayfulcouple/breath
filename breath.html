@@ -1577,12 +1577,12 @@ if (debugStability){
 
   console.log("stability avgDrop:", avgDrop, "drops:", stabilityDrops.length);
 
-  let bars = 5;
+let bars = 5;
 
-  if (avgDrop > 0.05) bars = 4;
-  if (avgDrop > 0.10) bars = 3;
-  if (avgDrop > 0.16) bars = 2;
-  if (avgDrop > 0.22) bars = 1;
+if (avgDrop > 0.025) bars = 4;
+if (avgDrop > 0.040) bars = 3;
+if (avgDrop > 0.055) bars = 2;
+if (avgDrop > 0.070) bars = 1;
 
   summaryStabilityBars.textContent =
     "■".repeat(bars) + "□".repeat(5 - bars);
