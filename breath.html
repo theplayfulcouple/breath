@@ -1560,33 +1560,23 @@ if (resonanceSamples > 0){
 
 if (summaryStabilityBars){
 
-  let calmAverage = 0;
-  let moveAverage = 0;
+  let avgDrop = 0;
 
-  if (calmSamples > 0){
-    calmAverage = calmResonanceSum / calmSamples;
+  if (stabilityDrops.length > 0){
+    avgDrop =
+      stabilityDrops.reduce((a, b) => a + b, 0) /
+      stabilityDrops.length;
   }
 
-  if (moveSamples > 0){
-    moveAverage = moveResonanceSum / moveSamples;
-  }
+  let bars = 5;
 
-let stabilityBars = 5;
-
-if (moveSamples > 0){
-
-  const drop = calmAverage - moveAverage;
-
-  if (drop <= 0.06) stabilityBars = 5;
-  else if (drop <= 0.12) stabilityBars = 4;
-  else if (drop <= 0.18) stabilityBars = 3;
-  else if (drop <= 0.25) stabilityBars = 2;
-  else stabilityBars = 1;
-
-}
+  if (avgDrop > 0.05) bars = 4;
+  if (avgDrop > 0.10) bars = 3;
+  if (avgDrop > 0.16) bars = 2;
+  if (avgDrop > 0.22) bars = 1;
 
   summaryStabilityBars.textContent =
-    "■".repeat(stabilityBars) + "□".repeat(5 - stabilityBars);
+    "■".repeat(bars) + "□".repeat(5 - bars);
 
 }
       
