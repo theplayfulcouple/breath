@@ -1570,7 +1570,10 @@ if (summaryStabilityBars){
   }
 
   let debugText = "avgDrop: " + avgDrop.toFixed(3) + " | drops: " + stabilityDrops.length;
-document.getElementById("debugStability").textContent = debugText;
+const debugStability = document.getElementById("debugStability");
+if (debugStability){
+  debugStability.textContent = debugText;
+}
 
   console.log("stability avgDrop:", avgDrop, "drops:", stabilityDrops.length);
 
