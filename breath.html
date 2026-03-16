@@ -797,9 +797,7 @@ let chaseBaseline = 0;
 let chaseLowest = 1;
 
 let stabilityDrops = [];
-    let recoverySuccess = 0;
-let recoveryAttempts = 0;
-    let recoverySuccess = 0;
+let recoverySuccess = 0;
 let recoveryAttempts = 0;
 
 let calmResonanceSum = 0;
@@ -1294,6 +1292,8 @@ const level = updateCapacityFromCoherence(raw);
 chaseBaseline = 0;
 chaseLowest = 1;
 stabilityDrops.length = 0;
+recoverySuccess = 0;
+recoveryAttempts = 0;
 
         calmResonanceSum = 0;
 calmSamples = 0;
