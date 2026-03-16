@@ -1245,6 +1245,10 @@ const level = updateCapacityFromCoherence(raw);
       if (beats.length >= 8) {
         const now = performance.now();
         const raw = computeSpectralCoherence(now);
+        
+        if (chaseActive && raw < chaseLowest){
+  chaseLowest = raw;
+}
 const level = updateCapacityFromCoherence(raw);
         setResonanceLevel(level);
       }
