@@ -1281,6 +1281,11 @@ const level = updateCapacityFromCoherence(raw);
         lastAbove = false;
         lastPeakT = 0;
 
+        chaseActive = false;
+chaseBaseline = 0;
+chaseLowest = 1;
+stabilityDrops.length = 0;
+
         calmResonanceSum = 0;
 calmSamples = 0;
 
