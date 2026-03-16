@@ -1785,6 +1785,12 @@ function checkFireflyTouch(x, y){
 
     function collectFirefly(){
 
+      if (chaseActive){
+  const drop = chaseBaseline - chaseLowest;
+  stabilityDrops.push(drop);
+  chaseActive = false;
+}
+
   firefly.style.opacity = "0";
   firefly.style.transform = "translate(-50%,-50%) scale(0.6)";
 
