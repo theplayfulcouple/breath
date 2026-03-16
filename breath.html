@@ -545,7 +545,7 @@
 
   <div class="summaryMetric" id="metricResilience">
     <div class="summaryLabel">resilience</div>
-    <div class="summaryBars">■■■■□</div>
+   <div class="summaryBars" id="summaryResilienceBars">■■■■□</div>
   </div>
 
   <div class="summaryMetric" id="metricDuration">
@@ -797,6 +797,10 @@ let chaseBaseline = 0;
 let chaseLowest = 1;
 
 let stabilityDrops = [];
+    let recoverySuccess = 0;
+let recoveryAttempts = 0;
+    let recoverySuccess = 0;
+let recoveryAttempts = 0;
 
 let calmResonanceSum = 0;
 let calmSamples = 0;
@@ -1557,6 +1561,27 @@ if (resonanceSamples > 0){
   summaryStabilityBars.textContent =
     "■".repeat(stabilityBars) + "□".repeat(5 - stabilityBars);
 
+        const summaryResilienceBars = document.getElementById("summaryResilienceBars");
+
+if (summaryResilienceBars){
+
+  let resilienceBars = 3;
+
+  if (recoveryAttempts > 0){
+
+    const recoveryRate = recoverySuccess / recoveryAttempts;
+
+    if (recoveryRate > 0.80) resilienceBars = 5;
+    else if (recoveryRate > 0.65) resilienceBars = 4;
+    else if (recoveryRate > 0.50) resilienceBars = 3;
+    else if (recoveryRate > 0.35) resilienceBars = 2;
+    else resilienceBars = 1;
+
+  }
+
+  summaryResilienceBars.textContent =
+    "■".repeat(resilienceBars) + "□".repeat(5 - resilienceBars);
+
 }
 
 if (summaryStabilityBars){
@@ -1786,8 +1811,15 @@ function checkFireflyTouch(x, y){
 
       if (chaseActive){
   const drop = chaseBaseline - chaseLowest;
-  stabilityDrops.push(drop);
-  chaseActive = false;
+stabilityDrops.push(drop);
+
+recoveryAttempts++;
+
+if (smoothCoherence >= chaseBaseline * 0.85){
+  recoverySuccess++;
+}
+
+chaseActive = false;
 }
 
   firefly.style.opacity = "0";
