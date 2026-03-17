@@ -797,8 +797,11 @@ let chaseBaseline = 0;
 let chaseLowest = 1;
 
 let stabilityDrops = [];
-let recoverySuccess = 0;
-let recoveryAttempts = 0;
+
+let recoveryTimes = [];
+let recoveryPending = false;
+let recoveryStartTime = 0;
+let recoveryTarget = 0;
 
 let calmResonanceSum = 0;
 let calmSamples = 0;
@@ -1245,16 +1248,23 @@ const level = updateCapacityFromCoherence(raw);
 
       // gentle drift update even if no new beat this frame
       // (keeps the ladder responsive but not twitchy)
-      if (beats.length >= 8) {
-        const now = performance.now();
-        const raw = computeSpectralCoherence(now);
-        
-        if (chaseActive && raw < chaseLowest){
-  chaseLowest = raw;
+    if (beats.length >= 8) {
+  const now = performance.now();
+  const raw = computeSpectralCoherence(now);
+
+  if (chaseActive && raw < chaseLowest){
+    chaseLowest = raw;
+  }
+
+  const level = updateCapacityFromCoherence(raw);
+  setResonanceLevel(level);
+
+  if (recoveryPending && smoothCoherence >= recoveryTarget){
+    const recoveryMs = now - recoveryStartTime;
+    recoveryTimes.push(recoveryMs);
+    recoveryPending = false;
+  }
 }
-const level = updateCapacityFromCoherence(raw);
-        setResonanceLevel(level);
-      }
 
       ppgRaf = requestAnimationFrame(ppgLoop);
     }
@@ -1292,8 +1302,10 @@ const level = updateCapacityFromCoherence(raw);
 chaseBaseline = 0;
 chaseLowest = 1;
 stabilityDrops.length = 0;
-recoverySuccess = 0;
-recoveryAttempts = 0;
+recoveryTimes.length = 0;
+recoveryPending = false;
+recoveryStartTime = 0;
+recoveryTarget = 0;
 
         calmResonanceSum = 0;
 calmSamples = 0;
@@ -1567,14 +1579,15 @@ if (summaryResilienceBars){
 
   let resilienceBars = 3;
 
-  if (recoveryAttempts > 0){
+  if (recoveryTimes.length > 0){
 
-    const recoveryRate = recoverySuccess / recoveryAttempts;
+    const avgRecoveryMs =
+      recoveryTimes.reduce((a, b) => a + b, 0) / recoveryTimes.length;
 
-    if (recoveryRate > 0.80) resilienceBars = 5;
-    else if (recoveryRate > 0.65) resilienceBars = 4;
-    else if (recoveryRate > 0.50) resilienceBars = 3;
-    else if (recoveryRate > 0.35) resilienceBars = 2;
+    if (avgRecoveryMs < 1500) resilienceBars = 5;
+    else if (avgRecoveryMs < 2500) resilienceBars = 4;
+    else if (avgRecoveryMs < 4000) resilienceBars = 3;
+    else if (avgRecoveryMs < 6000) resilienceBars = 2;
     else resilienceBars = 1;
 
   }
@@ -1783,11 +1796,9 @@ function checkFireflyTouch(x, y){
   const drop = chaseBaseline - chaseLowest;
 stabilityDrops.push(drop);
 
-recoveryAttempts++;
-
-if (smoothCoherence >= chaseBaseline * 0.85){
-  recoverySuccess++;
-}
+recoveryPending = true;
+recoveryStartTime = performance.now();
+recoveryTarget = chaseBaseline * 0.85;
 
 chaseActive = false;
 }
