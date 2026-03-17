@@ -1611,12 +1611,21 @@ else resilienceBars = 1;
   summaryResilienceBars.textContent =
     "■".repeat(resilienceBars) + "□".repeat(5 - resilienceBars);
 
- if (debugResilience){
-  debugResilience.textContent =
-    resilienceText + " | bars: " + resilienceBars;
-}
+if (debugResilience){
+
+  if (recoveryTimes.length > 0){
+    const avgRecoveryMs =
+      recoveryTimes.reduce((a, b) => a + b, 0) / recoveryTimes.length;
+
+    debugResilience.textContent =
+      (avgRecoveryMs / 1000).toFixed(1) + "s";
+  } else {
+    debugResilience.textContent = "—";
+  }
 
 }
+}
+
       
   [metricStrength, metricStability, metricResilience, metricDuration].forEach(el => {
     if (el) el.classList.remove("isVisible");
