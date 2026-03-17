@@ -412,7 +412,28 @@
   flex-direction:column;
   align-items:center;
 }
+.summaryActions{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:74px;
+  z-index:21;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 8px;
+}
 
+.summaryActionBtn{
+  border:none;
+  background:transparent;
+  color:rgba(255,255,255,0.92);
+  font: 17px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  text-transform:lowercase;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
 .summaryBottomBar{
   position:absolute;
   left:18px;
@@ -556,9 +577,17 @@
   </div>
 </div>
 
- <div class="summaryBottomBar">
-  <button class="summaryTab" id="discardSessionBtn" type="button">discard</button>
-  <button class="summaryTab" id="saveSessionBtn" type="button">save</button>
+ <!-- action row (NEW) -->
+<div class="summaryActions">
+  <button class="summaryActionBtn" id="discardSessionBtn" type="button">discard</button>
+  <button class="summaryActionBtn" id="saveSessionBtn" type="button">save</button>
+</div>
+
+<!-- bottom navigation (week/month/year) -->
+<div class="summaryBottomBar">
+  <button class="summaryTab" type="button">week</button>
+  <button class="summaryTab" type="button">month</button>
+  <button class="summaryTab" type="button">year</button>
 </div>
 
 </div>
