@@ -1548,7 +1548,8 @@ if (resonanceSamples > 0){
 
   const debugResonance = document.getElementById("debugResonance");
   if (debugResonance){
-    debugResonance.textContent = "avgResonance: " + resonanceAverage.toFixed(3);
+  debugResonance.textContent =
+  (resonanceAverage * 10).toFixed(1);
   }
 
 }
