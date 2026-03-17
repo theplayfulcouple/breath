@@ -1627,8 +1627,7 @@ if (debugResilience){
       avgRecoveryMs / 1000,
       elapsedMs / 1000
     );
-        const sessions = JSON.parse(localStorage.getItem("sessions") || "[]");
-    alert("sessions saved: " + sessions.length);
+      
 
   } else {
     debugResilience.textContent = "—";
@@ -1639,8 +1638,7 @@ if (debugResilience){
       0,
       elapsedMs / 1000
     );
-        const sessions = JSON.parse(localStorage.getItem("sessions") || "[]");
-    alert("sessions saved: " + sessions.length);
+       
   }
 
 }
