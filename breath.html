@@ -1619,8 +1619,23 @@ if (debugResilience){
 
     debugResilience.textContent =
       (avgRecoveryMs / 1000).toFixed(1) + "s";
+
+    saveSession(
+      resonanceAverage,
+      stabilityDrops.length,
+      avgRecoveryMs / 1000,
+      elapsedMs / 1000
+    );
+
   } else {
     debugResilience.textContent = "—";
+
+    saveSession(
+      resonanceAverage,
+      stabilityDrops.length,
+      0,
+      elapsedMs / 1000
+    );
   }
 
 }
@@ -1877,6 +1892,25 @@ chaseActive = false;
         }
       }
     });
+
+function saveSession(resonance, drifts, resilience, duration){
+
+  const session = {
+    date: new Date().toISOString(),
+    resonance: resonance,
+    drifts: drifts,
+    resilience: resilience,
+    duration: duration
+  };
+
+  const existing = JSON.parse(localStorage.getItem("sessions") || "[]");
+
+  existing.push(session);
+
+  localStorage.setItem("sessions", JSON.stringify(existing));
+
+}
+    
   </script>
 </body>
 </html>
