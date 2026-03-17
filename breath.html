@@ -544,9 +544,10 @@
   </div>
 
   <div class="summaryMetric" id="metricResilience">
-    <div class="summaryLabel">resilience</div>
-   <div class="summaryBars" id="summaryResilienceBars">■■■■□</div>
-  </div>
+  <div class="summaryLabel">resilience</div>
+  <div class="summaryBars" id="summaryResilienceBars">■■■■□</div>
+  <div id="debugResilience" style="margin-top:8px; font:14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:rgba(255,255,255,0.72);"></div>
+</div>
 
   <div class="summaryMetric" id="metricDuration">
     <div class="summaryLabel">duration</div>
@@ -1574,10 +1575,12 @@ if (resonanceSamples > 0){
 }
 
 const summaryResilienceBars = document.getElementById("summaryResilienceBars");
+const debugResilience = document.getElementById("debugResilience");
 
 if (summaryResilienceBars){
 
   let resilienceBars = 3;
+  let resilienceText = "avgRecovery: none | recoveries: 0";
 
   if (recoveryTimes.length > 0){
 
@@ -1590,10 +1593,16 @@ if (summaryResilienceBars){
     else if (avgRecoveryMs < 6000) resilienceBars = 2;
     else resilienceBars = 1;
 
+    resilienceText =
+      "avgRecovery: " + Math.round(avgRecoveryMs) + "ms | recoveries: " + recoveryTimes.length;
   }
 
   summaryResilienceBars.textContent =
     "■".repeat(resilienceBars) + "□".repeat(5 - resilienceBars);
+
+  if (debugResilience){
+    debugResilience.textContent = resilienceText;
+  }
 
 }
       
