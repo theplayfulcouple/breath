@@ -556,11 +556,10 @@
   </div>
 </div>
 
-  <div class="summaryBottomBar">
-    <button class="summaryTab" type="button">week</button>
-    <button class="summaryTab" type="button">month</button>
-    <button class="summaryTab" type="button">year</button>
-  </div>
+ <div class="summaryBottomBar">
+  <button class="summaryTab" id="discardSessionBtn" type="button">discard</button>
+  <button class="summaryTab" id="saveSessionBtn" type="button">save</button>
+</div>
 
 </div>
     
@@ -823,6 +822,8 @@ const expandBtn = document.getElementById("expandBtn");
     const endBtn = document.getElementById("endBtn");
 const summaryScreen = document.getElementById("summaryScreen");
 const summaryExit = document.getElementById("summaryExit");
+    const saveSessionBtn = document.getElementById("saveSessionBtn");
+const discardSessionBtn = document.getElementById("discardSessionBtn");
 
     const metricStrength = document.getElementById("metricStrength");
 const metricStability = document.getElementById("metricStability");
@@ -1619,25 +1620,10 @@ if (debugResilience){
 
     debugResilience.textContent =
       (avgRecoveryMs / 1000).toFixed(1) + "s";
-    
-
-    saveSession(
-      resonanceAverage,
-      stabilityDrops.length,
-      avgRecoveryMs / 1000,
-      elapsedMs / 1000
-    );
       
 
   } else {
     debugResilience.textContent = "—";
-
-    saveSession(
-      resonanceAverage,
-      stabilityDrops.length,
-      0,
-      elapsedMs / 1000
-    );
        
   }
 
