@@ -1566,7 +1566,8 @@ if (resonanceSamples > 0){
   let debugText = stabilityDrops.length + " drifts";
   const debugStability = document.getElementById("debugStability");
   if (debugStability){
-    debugStability.textContent = debugText;
+    debugStability.textContent =
+  stabilityDrops.length + " drifts";
   }
 
   console.log("stability avgDrop:", avgDrop, "drops:", stabilityDrops.length);
