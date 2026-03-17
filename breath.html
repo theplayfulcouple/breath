@@ -1260,11 +1260,14 @@ const level = updateCapacityFromCoherence(raw);
   const level = updateCapacityFromCoherence(raw);
   setResonanceLevel(level);
 
-  if (recoveryPending && smoothCoherence >= recoveryTarget){
-    const recoveryMs = now - recoveryStartTime;
+if (recoveryPending){
+  const recoveryMs = now - recoveryStartTime;
+
+  if (recoveryMs >= 800 && smoothCoherence >= recoveryTarget){
     recoveryTimes.push(recoveryMs);
     recoveryPending = false;
   }
+}
 }
 
       ppgRaf = requestAnimationFrame(ppgLoop);
@@ -1807,7 +1810,7 @@ stabilityDrops.push(drop);
 
 recoveryPending = true;
 recoveryStartTime = performance.now();
-recoveryTarget = chaseBaseline * 0.85;
+recoveryTarget = chaseBaseline * 0.92;
 
 chaseActive = false;
 }
