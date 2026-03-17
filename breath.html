@@ -1603,9 +1603,10 @@ else resilienceBars = 1;
   summaryResilienceBars.textContent =
     "■".repeat(resilienceBars) + "□".repeat(5 - resilienceBars);
 
-  if (debugResilience){
-    debugResilience.textContent = resilienceText;
-  }
+ if (debugResilience){
+  debugResilience.textContent =
+    resilienceText + " | bars: " + resilienceBars;
+}
 
 }
       
