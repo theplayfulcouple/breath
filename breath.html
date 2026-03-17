@@ -833,8 +833,9 @@ const metricDuration = document.getElementById("metricDuration");
     const summaryStrengthBars = document.getElementById("summaryStrengthBars");
     const summaryStabilityBars = document.getElementById("summaryStabilityBars");
     
-    let expandMode = false;
+       let expandMode = false;
     let fireflyDelayTimeout = null;
+    let pendingSession = null;
     
 if (relearnBtn && personalBaseline){
   relearnBtn.style.display = "";
@@ -1620,10 +1621,22 @@ if (debugResilience){
 
     debugResilience.textContent =
       (avgRecoveryMs / 1000).toFixed(1) + "s";
+        pendingSession = {
+      resonance: resonanceAverage,
+      drifts: stabilityDrops.length,
+      resilience: avgRecoveryMs / 1000,
+      duration: elapsedMs / 1000
+    };
       
 
   } else {
     debugResilience.textContent = "—";
+        pendingSession = {
+      resonance: resonanceAverage,
+      drifts: stabilityDrops.length,
+      resilience: 0,
+      duration: elapsedMs / 1000
+    };
        
   }
 
@@ -1690,6 +1703,34 @@ if (summaryExit){
   });
 }
 
+    if (saveSessionBtn){
+  saveSessionBtn.addEventListener("click", () => {
+
+    if (!pendingSession) return;
+
+    saveSession(
+      pendingSession.resonance,
+      pendingSession.drifts,
+      pendingSession.resilience,
+      pendingSession.duration
+    );
+
+    pendingSession = null;
+
+    alert("session saved");
+
+  });
+}
+
+if (discardSessionBtn){
+  discardSessionBtn.addEventListener("click", () => {
+
+    pendingSession = null;
+
+    alert("session discarded");
+
+  });
+}
     
     torchBtn.addEventListener("click", async () => {
   if (!ppgStream) return;
