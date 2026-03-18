@@ -869,14 +869,38 @@ const weekTab = document.getElementById("weekTab");
 const monthTab = document.getElementById("monthTab");
 const yearTab = document.getElementById("yearTab");
 
-    const placeholderViews = {
-  week: {
+    const weekViews = [
+  {
     title: "this week",
     resonance: "6.8",
     drifts: "14 drifts",
     resilience: "0.9s",
     duration: "32:40"
   },
+  {
+    title: "last week",
+    resonance: "6.4",
+    drifts: "17 drifts",
+    resilience: "1.1s",
+    duration: "28:15"
+  },
+  {
+    title: "2 weeks ago",
+    resonance: "6.1",
+    drifts: "19 drifts",
+    resilience: "1.3s",
+    duration: "24:50"
+  },
+  {
+    title: "3 weeks ago",
+    resonance: "5.9",
+    drifts: "22 drifts",
+    resilience: "1.5s",
+    duration: "21:10"
+  }
+];
+
+const placeholderViews = {
   month: {
     title: "this month",
     resonance: "6.5",
@@ -900,6 +924,7 @@ const yearTab = document.getElementById("yearTab");
   resilience: "",
   duration: ""
 };
+    let currentWeekIndex = 0;
 
    function showPlaceholderView(viewName){
   const view = placeholderViews[viewName];
