@@ -926,8 +926,15 @@ const placeholderViews = {
 };
     let currentWeekIndex = 0;
 
-   function showPlaceholderView(viewName){
-  const view = placeholderViews[viewName];
+  function showPlaceholderView(viewName){
+  let view = null;
+
+  if (viewName === "week"){
+    view = weekViews[currentWeekIndex];
+  } else {
+    view = placeholderViews[viewName];
+  }
+
   if (!view) return;
 
   if (summaryTopTitle){
@@ -1930,6 +1937,8 @@ if (weekTab){
     monthTab.classList.remove("active");
     yearTab.classList.remove("active");
 
+    currentWeekIndex = 0;
+    
     showPlaceholderView("week");
 
   });
