@@ -377,19 +377,20 @@
   transform:translateY(10px);
   transition: opacity 700ms ease, transform 700ms ease;
 }
-    .summaryMetric.isFading{
-  opacity:0.2;
-  transition:opacity 120ms ease;
+  .summaryMetric.isFading{
+  animation: metricFadePulse 220ms ease;
+}
+    @keyframes metricFadePulse{
+  0%   { opacity:1; }
+  50%  { opacity:0.2; }
+  100% { opacity:1; }
 }
 
 .summaryMetric.isVisible{
   opacity:1;
   transform:translateY(0);
 }
-    .summaryMetric.isVisible.isFading{
-  opacity:0.2;
-}
-    
+
 .summaryTopBar{
   position:absolute;
   top:22px;
@@ -946,10 +947,29 @@ let touchEndX = 0;
 
   if (!view) return;
 
-    if (metricStrength) metricStrength.classList.add("isFading");
-if (metricStability) metricStability.classList.add("isFading");
-if (metricResilience) metricResilience.classList.add("isFading");
-if (metricDuration) metricDuration.classList.add("isFading");
+   if (metricStrength){
+  metricStrength.classList.remove("isFading");
+  void metricStrength.offsetWidth;
+  metricStrength.classList.add("isFading");
+}
+
+if (metricStability){
+  metricStability.classList.remove("isFading");
+  void metricStability.offsetWidth;
+  metricStability.classList.add("isFading");
+}
+
+if (metricResilience){
+  metricResilience.classList.remove("isFading");
+  void metricResilience.offsetWidth;
+  metricResilience.classList.add("isFading");
+}
+
+if (metricDuration){
+  metricDuration.classList.remove("isFading");
+  void metricDuration.offsetWidth;
+  metricDuration.classList.add("isFading");
+}
 
   if (summaryTopTitle){
     summaryTopTitle.textContent = view.title;
@@ -977,7 +997,7 @@ if (metricDuration) metricDuration.classList.add("isFading");
   if (metricStability) metricStability.classList.remove("isFading");
   if (metricResilience) metricResilience.classList.remove("isFading");
   if (metricDuration) metricDuration.classList.remove("isFading");
-}, 120);
+}, 220);
     
 function showTodayView(){
   if (summaryTopTitle){
