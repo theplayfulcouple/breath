@@ -387,6 +387,9 @@
   opacity:1;
   transform:translateY(0);
 }
+    .summaryMetric.isVisible.isFading{
+  opacity:0.28;
+}
 
 .summaryTopBar{
   position:absolute;
@@ -944,10 +947,10 @@ let touchEndX = 0;
 
   if (!view) return;
 
-if (metricStrength) metricStrength.classList.add("isFading");
-if (metricStability) metricStability.classList.add("isFading");
-if (metricResilience) metricResilience.classList.add("isFading");
-if (metricDuration) metricDuration.classList.add("isFading");
+  if (metricStrength) metricStrength.classList.add("isFading");
+  if (metricStability) metricStability.classList.add("isFading");
+  if (metricResilience) metricResilience.classList.add("isFading");
+  if (metricDuration) metricDuration.classList.add("isFading");
 
   if (summaryTopTitle){
     summaryTopTitle.textContent = view.title;
@@ -968,14 +971,15 @@ if (metricDuration) metricDuration.classList.add("isFading");
   if (summaryDuration){
     summaryDuration.textContent = view.duration;
   }
+
+  setTimeout(() => {
+    if (metricStrength) metricStrength.classList.remove("isFading");
+    if (metricStability) metricStability.classList.remove("isFading");
+    if (metricResilience) metricResilience.classList.remove("isFading");
+    if (metricDuration) metricDuration.classList.remove("isFading");
+  }, 260);
 }
 
-    setTimeout(() => {
-  if (metricStrength) metricStrength.classList.remove("isFading");
-  if (metricStability) metricStability.classList.remove("isFading");
-  if (metricResilience) metricResilience.classList.remove("isFading");
-  if (metricDuration) metricDuration.classList.remove("isFading");
-}, 260);
     
 function showTodayView(){
   if (summaryTopTitle){
