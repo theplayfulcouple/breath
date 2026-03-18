@@ -869,6 +869,55 @@ const weekTab = document.getElementById("weekTab");
 const monthTab = document.getElementById("monthTab");
 const yearTab = document.getElementById("yearTab");
 
+    const placeholderViews = {
+  week: {
+    title: "this week",
+    resonance: "6.8",
+    drifts: "14 drifts",
+    resilience: "0.9s",
+    duration: "32:40"
+  },
+  month: {
+    title: "this month",
+    resonance: "6.5",
+    drifts: "52 drifts",
+    resilience: "1.1s",
+    duration: "2:48:10"
+  },
+  year: {
+    title: "this year",
+    resonance: "6.9",
+    drifts: "418 drifts",
+    resilience: "0.8s",
+    duration: "18:22:00"
+  }
+};
+
+    function showPlaceholderView(viewName){
+  const view = placeholderViews[viewName];
+  if (!view) return;
+
+  if (summaryTopTitle){
+    summaryTopTitle.textContent = view.title;
+  }
+
+  if (debugResonance){
+    debugResonance.textContent = view.resonance;
+  }
+
+  if (debugStability){
+    debugStability.textContent = view.drifts;
+  }
+
+  if (debugResilience){
+    debugResilience.textContent = view.resilience;
+  }
+
+  if (summaryDuration){
+    summaryDuration.textContent = view.duration;
+  }
+}
+
     const metricStrength = document.getElementById("metricStrength");
 const metricStability = document.getElementById("metricStability");
 const metricResilience = document.getElementById("metricResilience");
@@ -876,6 +925,11 @@ const metricDuration = document.getElementById("metricDuration");
     const summaryDuration = document.getElementById("summaryDuration");
     const summaryStrengthBars = document.getElementById("summaryStrengthBars");
     const summaryStabilityBars = document.getElementById("summaryStabilityBars");
+
+    const debugResonance = document.getElementById("debugResonance");
+const debugStability = document.getElementById("debugStability");
+const debugResilience = document.getElementById("debugResilience");
+const summaryResilienceBars = document.getElementById("summaryResilienceBars");
     
        let expandMode = false;
     let fireflyDelayTimeout = null;
@@ -1776,44 +1830,38 @@ if (discardSessionBtn){
   });
 }
   
- if (weekTab){
+if (weekTab){
   weekTab.addEventListener("click", () => {
 
     weekTab.classList.add("active");
     monthTab.classList.remove("active");
     yearTab.classList.remove("active");
 
-    if (summaryTopTitle){
-      summaryTopTitle.textContent = "this week";
-    }
+    showPlaceholderView("week");
 
   });
-}  
+}
 
-    if (monthTab){
+ if (monthTab){
   monthTab.addEventListener("click", () => {
 
     monthTab.classList.add("active");
     weekTab.classList.remove("active");
     yearTab.classList.remove("active");
 
-    if (summaryTopTitle){
-      summaryTopTitle.textContent = "this month";
-    }
+    showPlaceholderView("month");
 
   });
 }
 
-    if (yearTab){
+if (yearTab){
   yearTab.addEventListener("click", () => {
 
     yearTab.classList.add("active");
     weekTab.classList.remove("active");
     monthTab.classList.remove("active");
 
-    if (summaryTopTitle){
-      summaryTopTitle.textContent = "this year";
-    }
+    showPlaceholderView("year");
 
   });
 }
