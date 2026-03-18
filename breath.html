@@ -1833,6 +1833,18 @@ if (discardSessionBtn){
 if (weekTab){
   weekTab.addEventListener("click", () => {
 
+    const isActive = weekTab.classList.contains("active");
+
+    if (isActive){
+      weekTab.classList.remove("active");
+
+      if (summaryTopTitle){
+        summaryTopTitle.textContent = "today’s resonance";
+      }
+
+      return;
+    }
+
     weekTab.classList.add("active");
     monthTab.classList.remove("active");
     yearTab.classList.remove("active");
