@@ -378,11 +378,11 @@
   transition: opacity 700ms ease, transform 700ms ease;
 }
   .summaryMetric.isFading{
-  animation: metricFadePulse 220ms ease;
+  animation: metricFadePulse 420ms ease-in-out;
 }
-    @keyframes metricFadePulse{
+  @keyframes metricFadePulse{
   0%   { opacity:1; }
-  50%  { opacity:0.2; }
+  50%  { opacity:0.55; }
   100% { opacity:1; }
 }
 
@@ -997,7 +997,7 @@ if (metricDuration){
   if (metricStability) metricStability.classList.remove("isFading");
   if (metricResilience) metricResilience.classList.remove("isFading");
   if (metricDuration) metricDuration.classList.remove("isFading");
-}, 220);
+}, 420);
     
 function showTodayView(){
   if (summaryTopTitle){
