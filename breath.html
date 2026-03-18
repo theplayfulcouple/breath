@@ -377,6 +377,10 @@
   transform:translateY(10px);
   transition: opacity 700ms ease, transform 700ms ease;
 }
+    .summaryMetric.isFading{
+  opacity:0.2;
+  transition:opacity 120ms ease;
+}
 
 .summaryMetric.isVisible{
   opacity:1;
@@ -939,6 +943,11 @@ let touchEndX = 0;
 
   if (!view) return;
 
+    if (metricStrength) metricStrength.classList.add("isFading");
+if (metricStability) metricStability.classList.add("isFading");
+if (metricResilience) metricResilience.classList.add("isFading");
+if (metricDuration) metricDuration.classList.add("isFading");
+
   if (summaryTopTitle){
     summaryTopTitle.textContent = view.title;
   }
@@ -960,6 +969,13 @@ let touchEndX = 0;
   }
 }
 
+    setTimeout(() => {
+  if (metricStrength) metricStrength.classList.remove("isFading");
+  if (metricStability) metricStability.classList.remove("isFading");
+  if (metricResilience) metricResilience.classList.remove("isFading");
+  if (metricDuration) metricDuration.classList.remove("isFading");
+}, 120);
+    
 function showTodayView(){
   if (summaryTopTitle){
     summaryTopTitle.textContent = todayView.title;
