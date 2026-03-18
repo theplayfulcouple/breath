@@ -908,22 +908,60 @@ const yearTab = document.getElementById("yearTab");
   }
 ];
 
-const placeholderViews = {
-  month: {
+const monthViews = [
+  {
     title: "this month",
     resonance: "6.5",
     drifts: "52 drifts",
     resilience: "1.1s",
     duration: "2:48:10"
   },
-  year: {
+  {
+    title: "last month",
+    resonance: "6.2",
+    drifts: "58 drifts",
+    resilience: "1.2s",
+    duration: "2:21:30"
+  },
+  {
+    title: "January",
+    resonance: "6.0",
+    drifts: "61 drifts",
+    resilience: "1.3s",
+    duration: "2:05:20"
+  },
+  {
+    title: "December",
+    resonance: "5.8",
+    drifts: "67 drifts",
+    resilience: "1.5s",
+    duration: "1:52:10"
+  }
+];
+
+const yearViews = [
+  {
     title: "this year",
     resonance: "6.9",
     drifts: "418 drifts",
     resilience: "0.8s",
     duration: "18:22:00"
+  },
+  {
+    title: "last year",
+    resonance: "6.4",
+    drifts: "462 drifts",
+    resilience: "1.0s",
+    duration: "16:48:00"
+  },
+  {
+    title: "2024",
+    resonance: "6.1",
+    drifts: "509 drifts",
+    resilience: "1.2s",
+    duration: "14:32:00"
   }
-};
+];
 
     let todayView = {
   title: "today’s rhythm",
@@ -933,16 +971,21 @@ const placeholderViews = {
   duration: ""
 };
     let currentWeekIndex = 0;
+    let currentMonthIndex = 0;
+let currentYearIndex = 0;
+    
     let touchStartX = 0;
 let touchEndX = 0;
 
-  function showPlaceholderView(viewName){
+function showPlaceholderView(viewName){
   let view = null;
 
   if (viewName === "week"){
     view = weekViews[currentWeekIndex];
-  } else {
-    view = placeholderViews[viewName];
+  } else if (viewName === "month"){
+    view = monthViews[currentMonthIndex];
+  } else if (viewName === "year"){
+    view = yearViews[currentYearIndex];
   }
 
   if (!view) return;
@@ -2004,7 +2047,8 @@ if (monthTab){
     monthTab.classList.add("active");
     weekTab.classList.remove("active");
     yearTab.classList.remove("active");
-
+    
+    currentMonthIndex = 0;
     showPlaceholderView("month");
 
   });
@@ -2046,7 +2090,8 @@ if (yearTab){
     yearTab.classList.add("active");
     weekTab.classList.remove("active");
     monthTab.classList.remove("active");
-
+    
+    currentYearIndex = 0;
     showPlaceholderView("year");
 
   });
@@ -2118,27 +2163,73 @@ document.addEventListener("pointermove", moveExpandBox);
 
     if (summaryContent){
   summaryContent.addEventListener("touchstart", (e) => {
-    if (!weekTab.classList.contains("active")) return;
+    if (
+      !weekTab.classList.contains("active") &&
+      !monthTab.classList.contains("active") &&
+      !yearTab.classList.contains("active")
+    ) return;
+
     touchStartX = e.changedTouches[0].clientX;
   });
 
   summaryContent.addEventListener("touchend", (e) => {
-    if (!weekTab.classList.contains("active")) return;
+    if (
+      !weekTab.classList.contains("active") &&
+      !monthTab.classList.contains("active") &&
+      !yearTab.classList.contains("active")
+    ) return;
 
     touchEndX = e.changedTouches[0].clientX;
     const swipeDistance = touchEndX - touchStartX;
 
-    if (swipeDistance < -40){
-      if (currentWeekIndex < weekViews.length - 1){
-        currentWeekIndex++;
-        showPlaceholderView("week");
+    // WEEK
+    if (weekTab.classList.contains("active")){
+      if (swipeDistance < -40){
+        if (currentWeekIndex < weekViews.length - 1){
+          currentWeekIndex++;
+          showPlaceholderView("week");
+        }
+      }
+
+      if (swipeDistance > 40){
+        if (currentWeekIndex > 0){
+          currentWeekIndex--;
+          showPlaceholderView("week");
+        }
       }
     }
 
-    if (swipeDistance > 40){
-      if (currentWeekIndex > 0){
-        currentWeekIndex--;
-        showPlaceholderView("week");
+    // MONTH
+    if (monthTab.classList.contains("active")){
+      if (swipeDistance < -40){
+        if (currentMonthIndex < monthViews.length - 1){
+          currentMonthIndex++;
+          showPlaceholderView("month");
+        }
+      }
+
+      if (swipeDistance > 40){
+        if (currentMonthIndex > 0){
+          currentMonthIndex--;
+          showPlaceholderView("month");
+        }
+      }
+    }
+
+    // YEAR
+    if (yearTab.classList.contains("active")){
+      if (swipeDistance < -40){
+        if (currentYearIndex < yearViews.length - 1){
+          currentYearIndex++;
+          showPlaceholderView("year");
+        }
+      }
+
+      if (swipeDistance > 40){
+        if (currentYearIndex > 0){
+          currentYearIndex--;
+          showPlaceholderView("year");
+        }
       }
     }
   });
