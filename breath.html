@@ -1939,6 +1939,8 @@ if (summaryExit){
     window.location.href = "https://theplayfulcouple.co.uk";
   });
 }
+    const savedSessions = getSavedSessions();
+console.log("saved sessions", savedSessions);
 
     if (saveSessionBtn){
   saveSessionBtn.addEventListener("click", () => {
@@ -2386,6 +2388,9 @@ function saveSession(resonance, drifts, resilience, duration){
 
   localStorage.setItem("sessions", JSON.stringify(existing));
 
+}
+    function getSavedSessions(){
+  return JSON.parse(localStorage.getItem("sessions") || "[]");
 }
 
 function showToast(message){
