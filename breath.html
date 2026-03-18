@@ -377,14 +377,11 @@
   transform:translateY(10px);
   transition: opacity 700ms ease, transform 700ms ease;
 }
-  .summaryMetric.isFading{
-  animation: metricFadePulse 800ms ease-in-out;
+ .summaryMetric.isFading{
+  opacity:0.28;
+  transition:opacity 260ms ease;
 }
- @keyframes metricFadePulse{
-  0%   { opacity:1; }
-  50%  { opacity:0.7; }
-  100% { opacity:1; }
-}
+ 
 
 .summaryMetric.isVisible{
   opacity:1;
@@ -947,29 +944,10 @@ let touchEndX = 0;
 
   if (!view) return;
 
-   if (metricStrength){
-  metricStrength.classList.remove("isFading");
-  void metricStrength.offsetWidth;
-  metricStrength.classList.add("isFading");
-}
-
-if (metricStability){
-  metricStability.classList.remove("isFading");
-  void metricStability.offsetWidth;
-  metricStability.classList.add("isFading");
-}
-
-if (metricResilience){
-  metricResilience.classList.remove("isFading");
-  void metricResilience.offsetWidth;
-  metricResilience.classList.add("isFading");
-}
-
-if (metricDuration){
-  metricDuration.classList.remove("isFading");
-  void metricDuration.offsetWidth;
-  metricDuration.classList.add("isFading");
-}
+if (metricStrength) metricStrength.classList.add("isFading");
+if (metricStability) metricStability.classList.add("isFading");
+if (metricResilience) metricResilience.classList.add("isFading");
+if (metricDuration) metricDuration.classList.add("isFading");
 
   if (summaryTopTitle){
     summaryTopTitle.textContent = view.title;
@@ -997,7 +975,7 @@ if (metricDuration){
   if (metricStability) metricStability.classList.remove("isFading");
   if (metricResilience) metricResilience.classList.remove("isFading");
   if (metricDuration) metricDuration.classList.remove("isFading");
-}, 800);
+}, 260);
     
 function showTodayView(){
   if (summaryTopTitle){
