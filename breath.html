@@ -1753,6 +1753,8 @@ fireflyDelayTimeout = setTimeout(() => {
   setTimeout(() => {
     if (summaryScreen){
   summaryScreen.style.display = "flex";
+      const actions = document.querySelector(".summaryActions");
+if (actions) actions.style.display = "flex";
 
    if (summaryDuration){
   const totalSeconds = Math.floor(elapsedMs / 1000);
@@ -1952,7 +1954,10 @@ if (summaryExit){
 
     pendingSession = null;
 
-   showToast("session saved");
+    const actions = document.querySelector(".summaryActions");
+    if (actions) actions.style.display = "none";
+
+    showToast("session saved");
 
   });
 }
@@ -1961,6 +1966,9 @@ if (discardSessionBtn){
   discardSessionBtn.addEventListener("click", () => {
 
     pendingSession = null;
+
+    const actions = document.querySelector(".summaryActions");
+    if (actions) actions.style.display = "none";
 
     showToast("session discarded");
 
