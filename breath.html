@@ -1788,7 +1788,36 @@ if (discardSessionBtn){
     }
 
   });
-}   
+}  
+
+    if (monthTab){
+  monthTab.addEventListener("click", () => {
+
+    monthTab.classList.add("active");
+    weekTab.classList.remove("active");
+    yearTab.classList.remove("active");
+
+    if (summaryTopTitle){
+      summaryTopTitle.textContent = "this month";
+    }
+
+  });
+}
+
+    if (yearTab){
+  yearTab.addEventListener("click", () => {
+
+    yearTab.classList.add("active");
+    weekTab.classList.remove("active");
+    monthTab.classList.remove("active");
+
+    if (summaryTopTitle){
+      summaryTopTitle.textContent = "this year";
+    }
+
+  });
+}
+    
     torchBtn.addEventListener("click", async () => {
   if (!ppgStream) return;
 
