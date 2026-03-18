@@ -893,7 +893,15 @@ const yearTab = document.getElementById("yearTab");
   }
 };
 
-    function showPlaceholderView(viewName){
+    let todayView = {
+  title: "today’s resonance",
+  resonance: "",
+  drifts: "",
+  resilience: "",
+  duration: ""
+};
+
+   function showPlaceholderView(viewName){
   const view = placeholderViews[viewName];
   if (!view) return;
 
@@ -915,6 +923,28 @@ const yearTab = document.getElementById("yearTab");
 
   if (summaryDuration){
     summaryDuration.textContent = view.duration;
+  }
+}
+
+function showTodayView(){
+  if (summaryTopTitle){
+    summaryTopTitle.textContent = todayView.title;
+  }
+
+  if (debugResonance){
+    debugResonance.textContent = todayView.resonance;
+  }
+
+  if (debugStability){
+    debugStability.textContent = todayView.drifts;
+  }
+
+  if (debugResilience){
+    debugResilience.textContent = todayView.resilience;
+  }
+
+  if (summaryDuration){
+    summaryDuration.textContent = todayView.duration;
   }
 }
 
