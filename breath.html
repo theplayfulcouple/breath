@@ -877,36 +877,7 @@ const weekTab = document.getElementById("weekTab");
 const monthTab = document.getElementById("monthTab");
 const yearTab = document.getElementById("yearTab");
 
-  const weekViews = [
-  {
-    title: "this week",
-    resonance: "6.8",
-    drifts: "14 drifts",
-    resilience: "0.9s",
-    duration: "32:40"
-  },
-  {
-    title: "last week",
-    resonance: "6.4",
-    drifts: "17 drifts",
-    resilience: "1.1s",
-    duration: "28:15"
-  },
-  {
-    title: "3 weeks ago",
-    resonance: "6.1",
-    drifts: "19 drifts",
-    resilience: "1.3s",
-    duration: "24:50"
-  },
-  {
-    title: "4 weeks ago",
-    resonance: "5.9",
-    drifts: "22 drifts",
-    resilience: "1.5s",
-    duration: "21:10"
-  }
-];
+ let weekViews = buildWeekViewsFromSessions();
 
 const monthViews = [
   {
@@ -973,6 +944,162 @@ const yearViews = [
     let currentWeekIndex = 0;
     let currentMonthIndex = 0;
 let currentYearIndex = 0;
+
+    function getStartOfWeek(date){
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+function formatDuration(totalSeconds){
+  const total = Math.round(totalSeconds);
+
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+
+  if (hours > 0){
+    return hours + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
+  }
+
+  return minutes + ":" + String(seconds).padStart(2, "0");
+}
+
+function buildWeekViewsFromSessions(){
+  const sessions = getSavedSessions();
+  const now = new Date();
+  const startOfThisWeek = getStartOfWeek(now);
+
+  const labels = ["this week", "last week", "3 weeks ago", "4 weeks ago"];
+  const views = [];
+
+  for (let i = 0; i < 4; i++){
+    const bucketStart = new Date(startOfThisWeek);
+    bucketStart.setDate(bucketStart.getDate() - (i * 7));
+
+    const bucketEnd = new Date(bucketStart);
+    bucketEnd.setDate(bucketEnd.getDate() + 7);
+
+    const bucketSessions = sessions.filter(session => {
+      const sessionDate = new Date(session.date);
+      return sessionDate >= bucketStart && sessionDate < bucketEnd;
+    });
+
+    if (bucketSessions.length === 0){
+      views.push({
+        title: labels[i],
+        resonance: "—",
+        drifts: "0 drifts",
+        resilience: "—",
+        duration: "0:00"
+      });
+      continue;
+    }
+
+    const resonanceAverage =
+      bucketSessions.reduce((sum, session) => sum + Number(session.resonance || 0), 0) / bucketSessions.length;
+
+    const totalDrifts =
+      bucketSessions.reduce((sum, session) => sum + Number(session.drifts || 0), 0);
+
+    const resilienceAverage =
+      bucketSessions.reduce((sum, session) => sum + Number(session.resilience || 0), 0) / bucketSessions.length;
+
+    const totalDuration =
+      bucketSessions.reduce((sum, session) => sum + Number(session.duration || 0), 0);
+
+    views.push({
+      title: labels[i],
+      resonance: resonanceAverage.toFixed(1),
+      drifts: totalDrifts + " drifts",
+      resilience: resilienceAverage.toFixed(1) + "s",
+      duration: formatDuration(totalDuration)
+    });
+  }
+
+  return views;
+}
+
+    function getStartOfWeek(date){
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+function formatDuration(totalSeconds){
+  const total = Math.round(totalSeconds);
+
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+
+  if (hours > 0){
+    return hours + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
+  }
+
+  return minutes + ":" + String(seconds).padStart(2, "0");
+}
+
+function buildWeekViewsFromSessions(){
+  const sessions = getSavedSessions();
+  const now = new Date();
+  const startOfThisWeek = getStartOfWeek(now);
+
+  const labels = ["this week", "last week", "3 weeks ago", "4 weeks ago"];
+  const views = [];
+
+  for (let i = 0; i < 4; i++){
+    const bucketStart = new Date(startOfThisWeek);
+    bucketStart.setDate(bucketStart.getDate() - (i * 7));
+
+    const bucketEnd = new Date(bucketStart);
+    bucketEnd.setDate(bucketEnd.getDate() + 7);
+
+    const bucketSessions = sessions.filter(session => {
+      const sessionDate = new Date(session.date);
+      return sessionDate >= bucketStart && sessionDate < bucketEnd;
+    });
+
+    if (bucketSessions.length === 0){
+      views.push({
+        title: labels[i],
+        resonance: "—",
+        drifts: "0 drifts",
+        resilience: "—",
+        duration: "0:00"
+      });
+      continue;
+    }
+
+    const resonanceAverage =
+      bucketSessions.reduce((sum, session) => sum + Number(session.resonance || 0), 0) / bucketSessions.length;
+
+    const totalDrifts =
+      bucketSessions.reduce((sum, session) => sum + Number(session.drifts || 0), 0);
+
+    const resilienceAverage =
+      bucketSessions.reduce((sum, session) => sum + Number(session.resilience || 0), 0) / bucketSessions.length;
+
+    const totalDuration =
+      bucketSessions.reduce((sum, session) => sum + Number(session.duration || 0), 0);
+
+    views.push({
+      title: labels[i],
+      resonance: resonanceAverage.toFixed(1),
+      drifts: totalDrifts + " drifts",
+      resilience: resilienceAverage.toFixed(1) + "s",
+      duration: formatDuration(totalDuration)
+    });
+  }
+
+  return views;
+}
     
     let touchStartX = 0;
 let touchEndX = 0;
@@ -1939,8 +2066,7 @@ if (summaryExit){
     window.location.href = "https://theplayfulcouple.co.uk";
   });
 }
-    const savedSessions = getSavedSessions();
-console.log("saved sessions", savedSessions);
+   
 
     if (saveSessionBtn){
   saveSessionBtn.addEventListener("click", () => {
@@ -1955,6 +2081,7 @@ console.log("saved sessions", savedSessions);
     );
 
     pendingSession = null;
+        weekViews = buildWeekViewsFromSessions();
 
     const actions = document.querySelector(".summaryActions");
     if (actions) actions.style.display = "none";
