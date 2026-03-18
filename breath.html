@@ -1696,14 +1696,6 @@ if (debugResilience){
 
     summaryScreen.classList.add("isVisible");
 
-        if (weekTab) weekTab.classList.add("active");
-    if (monthTab) monthTab.classList.remove("active");
-    if (yearTab) yearTab.classList.remove("active");
-
-    if (summaryTopTitle){
-      summaryTopTitle.textContent = "this week";
-    }
-
     setTimeout(() => {
       if (metricStrength) metricStrength.classList.add("isVisible");
     }, 0);
