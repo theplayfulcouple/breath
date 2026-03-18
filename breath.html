@@ -491,7 +491,10 @@
   -webkit-tap-highlight-color: transparent;
 }
     
-    
+ .summaryTab.active{
+  color:rgba(255,255,255,0.98);
+  text-shadow:0 0 10px rgba(255,255,255,0.35);
+}   
     
     #ppgFrame { display:none; }
   </style>
@@ -853,6 +856,11 @@ const summaryScreen = document.getElementById("summaryScreen");
 const summaryExit = document.getElementById("summaryExit");
     const saveSessionBtn = document.getElementById("saveSessionBtn");
 const discardSessionBtn = document.getElementById("discardSessionBtn");
+
+    const summaryTopTitle = document.getElementById("summaryTopTitle");
+const weekTab = document.getElementById("weekTab");
+const monthTab = document.getElementById("monthTab");
+const yearTab = document.getElementById("yearTab");
 
     const metricStrength = document.getElementById("metricStrength");
 const metricStability = document.getElementById("metricStability");
@@ -1761,7 +1769,19 @@ if (discardSessionBtn){
   });
 }
   
-    
+ if (weekTab){
+  weekTab.addEventListener("click", () => {
+
+    weekTab.classList.add("active");
+    monthTab.classList.remove("active");
+    yearTab.classList.remove("active");
+
+    if (summaryTopTitle){
+      summaryTopTitle.textContent = "this week";
+    }
+
+  });
+}   
     torchBtn.addEventListener("click", async () => {
   if (!ppgStream) return;
 
