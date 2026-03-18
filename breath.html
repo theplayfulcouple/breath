@@ -1910,8 +1910,38 @@ if (weekTab){
   });
 }
 
- if (monthTab){
+if (monthTab){
   monthTab.addEventListener("click", () => {
+
+    const isActive = monthTab.classList.contains("active");
+
+    if (isActive){
+      monthTab.classList.remove("active");
+      weekTab.classList.remove("active");
+      yearTab.classList.remove("active");
+
+      if (summaryTopTitle){
+        summaryTopTitle.textContent = todayView.title;
+      }
+
+      if (debugResonance){
+        debugResonance.textContent = todayView.resonance;
+      }
+
+      if (debugStability){
+        debugStability.textContent = todayView.drifts;
+      }
+
+      if (debugResilience){
+        debugResilience.textContent = todayView.resilience;
+      }
+
+      if (summaryDuration){
+        summaryDuration.textContent = todayView.duration;
+      }
+
+      return;
+    }
 
     monthTab.classList.add("active");
     weekTab.classList.remove("active");
@@ -1924,6 +1954,36 @@ if (weekTab){
 
 if (yearTab){
   yearTab.addEventListener("click", () => {
+
+    const isActive = yearTab.classList.contains("active");
+
+    if (isActive){
+      yearTab.classList.remove("active");
+      weekTab.classList.remove("active");
+      monthTab.classList.remove("active");
+
+      if (summaryTopTitle){
+        summaryTopTitle.textContent = todayView.title;
+      }
+
+      if (debugResonance){
+        debugResonance.textContent = todayView.resonance;
+      }
+
+      if (debugStability){
+        debugStability.textContent = todayView.drifts;
+      }
+
+      if (debugResilience){
+        debugResilience.textContent = todayView.resilience;
+      }
+
+      if (summaryDuration){
+        summaryDuration.textContent = todayView.duration;
+      }
+
+      return;
+    }
 
     yearTab.classList.add("active");
     weekTab.classList.remove("active");
