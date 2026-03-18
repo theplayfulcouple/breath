@@ -994,7 +994,7 @@ const metricDuration = document.getElementById("metricDuration");
 const debugStability = document.getElementById("debugStability");
 const debugResilience = document.getElementById("debugResilience");
 const summaryResilienceBars = document.getElementById("summaryResilienceBars");
-    const summaryTopBar = document.querySelector(".summaryTopBar");
+    const summaryContent = document.querySelector(".summaryContent");
     
        let expandMode = false;
     let fireflyDelayTimeout = null;
@@ -2095,13 +2095,13 @@ function moveExpandBox(e){
 document.addEventListener("pointerdown", moveExpandBox);
 document.addEventListener("pointermove", moveExpandBox);
 
-    if (summaryTopBar){
-  summaryTopBar.addEventListener("touchstart", (e) => {
+    if (summaryContent){
+  summaryContent.addEventListener("touchstart", (e) => {
     if (!weekTab.classList.contains("active")) return;
     touchStartX = e.changedTouches[0].clientX;
   });
 
-  summaryTopBar.addEventListener("touchend", (e) => {
+  summaryContent.addEventListener("touchend", (e) => {
     if (!weekTab.classList.contains("active")) return;
 
     touchEndX = e.changedTouches[0].clientX;
