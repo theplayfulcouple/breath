@@ -925,6 +925,8 @@ const placeholderViews = {
   duration: ""
 };
     let currentWeekIndex = 0;
+    let touchStartX = 0;
+let touchEndX = 0;
 
   function showPlaceholderView(viewName){
   let view = null;
@@ -992,6 +994,7 @@ const metricDuration = document.getElementById("metricDuration");
 const debugStability = document.getElementById("debugStability");
 const debugResilience = document.getElementById("debugResilience");
 const summaryResilienceBars = document.getElementById("summaryResilienceBars");
+    const summaryTopBar = document.querySelector(".summaryTopBar");
     
        let expandMode = false;
     let fireflyDelayTimeout = null;
@@ -2091,6 +2094,34 @@ function moveExpandBox(e){
 
 document.addEventListener("pointerdown", moveExpandBox);
 document.addEventListener("pointermove", moveExpandBox);
+
+    if (summaryTopBar){
+  summaryTopBar.addEventListener("touchstart", (e) => {
+    if (!weekTab.classList.contains("active")) return;
+    touchStartX = e.changedTouches[0].clientX;
+  });
+
+  summaryTopBar.addEventListener("touchend", (e) => {
+    if (!weekTab.classList.contains("active")) return;
+
+    touchEndX = e.changedTouches[0].clientX;
+    const swipeDistance = touchEndX - touchStartX;
+
+    if (swipeDistance < -40){
+      if (currentWeekIndex < weekViews.length - 1){
+        currentWeekIndex++;
+        showPlaceholderView("week");
+      }
+    }
+
+    if (swipeDistance > 40){
+      if (currentWeekIndex > 0){
+        currentWeekIndex--;
+        showPlaceholderView("week");
+      }
+    }
+  });
+}
 
 function spawnFirefly(mode = "next"){
   const scene = document.querySelector(".scene");
