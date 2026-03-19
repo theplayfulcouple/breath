@@ -1260,6 +1260,7 @@ const debugStability = document.getElementById("debugStability");
 const debugResilience = document.getElementById("debugResilience");
 const summaryResilienceBars = document.getElementById("summaryResilienceBars");
     const summaryContent = document.querySelector(".summaryContent");
+    let isSessionSummary = false;
     const summaryScoreOverlay = document.getElementById("summaryScoreOverlay");
     
        let expandMode = false;
@@ -1955,6 +1956,7 @@ fireflyDelayTimeout = setTimeout(() => {
   setTimeout(() => {
     if (summaryScreen){
   summaryScreen.style.display = "flex";
+      isSessionSummary = true;
       const actions = document.querySelector(".summaryActions");
 if (actions) actions.style.display = "flex";
 
@@ -2165,7 +2167,7 @@ console.log("session count", getSavedSessions().length);
 if (actions) actions.style.display = "none";
 
 setTimeout(() => {
-  if (summaryScoreOverlay){
+  if (summaryScoreOverlay && isSessionSummary){
     summaryScoreOverlay.style.display = "block";
   }
 }, 2200);
@@ -2184,7 +2186,7 @@ if (discardSessionBtn){
 if (actions) actions.style.display = "none";
 
 setTimeout(() => {
-  if (summaryScoreOverlay){
+  if (summaryScoreOverlay && isSessionSummary){
     summaryScoreOverlay.style.display = "block";
   }
 }, 2200);
@@ -2196,6 +2198,9 @@ showToast("session discarded");
   
 if (weekTab){
   weekTab.addEventListener("click", () => {
+
+    isSessionSummary = false;
+    if (summaryScoreOverlay) summaryScoreOverlay.style.display = "none";
 
     const isActive = weekTab.classList.contains("active");
 
@@ -2241,6 +2246,9 @@ if (weekTab){
 if (monthTab){
   monthTab.addEventListener("click", () => {
 
+    isSessionSummary = false;
+    if (summaryScoreOverlay) summaryScoreOverlay.style.display = "none";
+
     const isActive = monthTab.classList.contains("active");
 
     if (isActive){
@@ -2283,6 +2291,9 @@ if (monthTab){
 
 if (yearTab){
   yearTab.addEventListener("click", () => {
+
+    isSessionSummary = false;
+    if (summaryScoreOverlay) summaryScoreOverlay.style.display = "none";
 
     const isActive = yearTab.classList.contains("active");
 
