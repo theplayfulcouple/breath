@@ -1134,83 +1134,71 @@ function showPlaceholderView(viewName){
 
   if (!view) return;
 
+  const isScoreMode =
+    viewName === "week" ||
+    viewName === "month" ||
+    viewName === "year";
+
   if (metricStrength) metricStrength.classList.add("isFading");
   if (metricStability) metricStability.classList.add("isFading");
   if (metricResilience) metricResilience.classList.add("isFading");
   if (metricDuration) metricDuration.classList.add("isFading");
 
   if (summaryTopTitle){
-    summaryTopTitle.textContent = view.title;
+    summaryTopTitle.textContent = isScoreMode ? (view.title + " score") : view.title;
   }
 
-  const resonanceValue = Number(view.resonance);
-  const driftsValue = parseInt(view.drifts, 10);
-  const resilienceValue = Number(view.resilience);
-
-  let resonanceBars = "";
-  let stabilityBars = "";
-  let resilienceBars = "";
-
-  if (Number.isFinite(resonanceValue) && resonanceValue > 0){
-    const count = Math.max(1, Math.min(5, Math.round(resonanceValue / 2)));
-    resonanceBars = "■".repeat(count) + "□".repeat(5 - count);
-  }
-
-  if (Number.isFinite(driftsValue) && driftsValue > 0){
-    let count = 5;
-    if (driftsValue > 5) count = 4;
-    if (driftsValue > 10) count = 3;
-    if (driftsValue > 20) count = 2;
-    if (driftsValue > 40) count = 1;
-    stabilityBars = "■".repeat(count) + "□".repeat(5 - count);
-  }
-
-  if (Number.isFinite(resilienceValue) && resilienceValue > 0){
-    let count = 3;
-    if (resilienceValue < 0.7) count = 5;
-    else if (resilienceValue < 0.95) count = 4;
-    else if (resilienceValue < 1.4) count = 3;
-    else if (resilienceValue < 2.2) count = 2;
-    else count = 1;
-    resilienceBars = "■".repeat(count) + "□".repeat(5 - count);
+  if (summaryLabelStrength){
+    summaryLabelStrength.textContent = isScoreMode ? "score" : "resonance";
   }
 
   if (summaryStrengthBars){
-    summaryStrengthBars.textContent = resonanceBars;
+    if (isScoreMode){
+      summaryStrengthBars.textContent = "";
+    } else {
+      summaryStrengthBars.textContent = todayView.strengthBars || "";
+    }
+  }
+
+  if (debugResonance){
+    debugResonance.textContent = view.resonance;
+  }
+
+  if (summaryLabelStability){
+    summaryLabelStability.style.display = isScoreMode ? "none" : "";
   }
 
   if (summaryStabilityBars){
-    summaryStabilityBars.textContent = stabilityBars;
+    summaryStabilityBars.style.display = isScoreMode ? "none" : "";
+    if (!isScoreMode){
+      summaryStabilityBars.textContent = todayView.stabilityBars || "";
+    }
+  }
+
+  if (debugStability){
+    debugStability.style.display = isScoreMode ? "none" : "";
+    if (!isScoreMode){
+      debugStability.textContent = view.drifts;
+    }
+  }
+
+  if (summaryLabelResilience){
+    summaryLabelResilience.style.display = isScoreMode ? "none" : "";
   }
 
   if (summaryResilienceBars){
-    summaryResilienceBars.textContent = resilienceBars;
+    summaryResilienceBars.style.display = isScoreMode ? "none" : "";
+    if (!isScoreMode){
+      summaryResilienceBars.textContent = todayView.resilienceBars || "";
+    }
   }
-
-if (debugResonance){
-  if (currentMode === "week" || currentMode === "month" || currentMode === "year"){
-    debugResonance.textContent = view.resonance;
-    if (summaryTopTitle) summaryTopTitle.textContent = view.title + " score";
-  } else {
-    debugResonance.textContent = view.resonance;
-  }
-}
-
-if (debugStability){
-  if (currentMode === "week" || currentMode === "month" || currentMode === "year"){
-    debugStability.textContent = "";
-  } else {
-    debugStability.textContent = view.drifts;
-  }
-}
 
   if (debugResilience){
-  if (currentMode === "week" || currentMode === "month" || currentMode === "year"){
-    debugResilience.textContent = "";
-  } else {
-    debugResilience.textContent = view.resilience;
+    debugResilience.style.display = isScoreMode ? "none" : "";
+    if (!isScoreMode){
+      debugResilience.textContent = view.resilience;
+    }
   }
-}
 
   if (summaryDuration){
     summaryDuration.textContent = view.duration;
@@ -1254,6 +1242,10 @@ const metricDuration = document.getElementById("metricDuration");
     const summaryDuration = document.getElementById("summaryDuration");
     const summaryStrengthBars = document.getElementById("summaryStrengthBars");
     const summaryStabilityBars = document.getElementById("summaryStabilityBars");
+
+    const summaryLabelStrength = document.querySelector("#metricStrength .summaryLabel");
+const summaryLabelStability = document.querySelector("#metricStability .summaryLabel");
+const summaryLabelResilience = document.querySelector("#metricResilience .summaryLabel");
 
     const debugResonance = document.getElementById("debugResonance");
 const debugStability = document.getElementById("debugStability");
