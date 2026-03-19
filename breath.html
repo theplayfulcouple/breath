@@ -2126,6 +2126,7 @@ if (summaryExit){
 
     pendingSession = null;
         weekViews = buildWeekViewsFromSessions();
+        console.log("session count", getSavedSessions().length);
 
     const actions = document.querySelector(".summaryActions");
     if (actions) actions.style.display = "none";
@@ -2563,7 +2564,6 @@ function saveSession(resonance, drifts, resilience, duration){
     function getSavedSessions(){
   return JSON.parse(localStorage.getItem("sessions") || "[]");
 }
-    localStorage.removeItem("sessions");
 
 function showToast(message){
 
