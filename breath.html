@@ -1126,6 +1126,50 @@ function showPlaceholderView(viewName){
     summaryTopTitle.textContent = view.title;
   }
 
+  const resonanceValue = Number(view.resonance);
+  const driftsValue = parseInt(view.drifts, 10);
+  const resilienceValue = Number(view.resilience);
+
+  let resonanceBars = "";
+  let stabilityBars = "";
+  let resilienceBars = "";
+
+  if (Number.isFinite(resonanceValue) && resonanceValue > 0){
+    const count = Math.max(1, Math.min(5, Math.round(resonanceValue / 2)));
+    resonanceBars = "■".repeat(count) + "□".repeat(5 - count);
+  }
+
+  if (Number.isFinite(driftsValue) && driftsValue > 0){
+    let count = 5;
+    if (driftsValue > 5) count = 4;
+    if (driftsValue > 10) count = 3;
+    if (driftsValue > 20) count = 2;
+    if (driftsValue > 40) count = 1;
+    stabilityBars = "■".repeat(count) + "□".repeat(5 - count);
+  }
+
+  if (Number.isFinite(resilienceValue) && resilienceValue > 0){
+    let count = 3;
+    if (resilienceValue < 0.7) count = 5;
+    else if (resilienceValue < 0.95) count = 4;
+    else if (resilienceValue < 1.4) count = 3;
+    else if (resilienceValue < 2.2) count = 2;
+    else count = 1;
+    resilienceBars = "■".repeat(count) + "□".repeat(5 - count);
+  }
+
+  if (summaryStrengthBars){
+    summaryStrengthBars.textContent = resonanceBars;
+  }
+
+  if (summaryStabilityBars){
+    summaryStabilityBars.textContent = stabilityBars;
+  }
+
+  if (summaryResilienceBars){
+    summaryResilienceBars.textContent = resilienceBars;
+  }
+
   if (debugResonance){
     debugResonance.textContent = view.resonance;
   }
@@ -1977,8 +2021,8 @@ if (debugResilience){
 
     debugResilience.textContent =
       (avgRecoveryMs / 1000).toFixed(1) + "s";
-        pendingSession = {
-      resonance: resonanceAverage,
+               pendingSession = {
+      resonance: Number((resonanceAverage * 10).toFixed(1)),
       drifts: stabilityDrops.length,
       resilience: avgRecoveryMs / 1000,
       duration: elapsedMs / 1000
@@ -1987,8 +2031,8 @@ if (debugResilience){
 
   } else {
     debugResilience.textContent = "—";
-        pendingSession = {
-      resonance: resonanceAverage,
+               pendingSession = {
+      resonance: Number((resonanceAverage * 10).toFixed(1)),
       drifts: stabilityDrops.length,
       resilience: 0,
       duration: elapsedMs / 1000
