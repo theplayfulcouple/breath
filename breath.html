@@ -2145,7 +2145,7 @@ todayView = {
     
     summaryScreen.classList.add("isVisible");
 
-    setTimeout(() => {
+        setTimeout(() => {
       if (metricStrength) metricStrength.classList.add("isVisible");
     }, 0);
 
@@ -2153,9 +2153,15 @@ todayView = {
       if (metricStability) metricStability.classList.add("isVisible");
     }, 250);
 
-  setTimeout(() => {
-  if (metricResilience) metricResilience.classList.add("isVisible");
-}, 500);
+    setTimeout(() => {
+      if (metricResilience) metricResilience.classList.add("isVisible");
+    }, 500);
+
+    setTimeout(() => {
+      if (metricDuration) metricDuration.classList.add("isVisible");
+    }, 750);
+
+  });
 }
   }, 1600);
 }
