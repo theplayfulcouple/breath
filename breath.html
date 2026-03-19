@@ -2519,6 +2519,7 @@ function saveSession(resonance, drifts, resilience, duration){
     function getSavedSessions(){
   return JSON.parse(localStorage.getItem("sessions") || "[]");
 }
+    localStorage.removeItem("sessions");
 
 function showToast(message){
 
