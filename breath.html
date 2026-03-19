@@ -1254,13 +1254,39 @@ function showTodayView(){
     summaryTopTitle.textContent = todayView.title;
   }
 
+  if (summaryLabelStrength){
+    summaryLabelStrength.textContent = "resonance";
+  }
+
+  if (summaryStrengthBars){
+    summaryStrengthBars.textContent = todayView.strengthBars || "";
+  }
+
   if (debugResonance){
     debugResonance.textContent = todayView.resonance;
+  }
+
+  if (summaryLabelStability){
+    summaryLabelStability.style.display = "";
+  }
+
+  if (summaryStabilityBars){
+    summaryStabilityBars.style.display = "";
+    summaryStabilityBars.textContent = todayView.stabilityBars || "";
   }
 
   if (debugStability){
     debugStability.style.display = "";
     debugStability.textContent = todayView.drifts;
+  }
+
+  if (summaryLabelResilience){
+    summaryLabelResilience.style.display = "";
+  }
+
+  if (summaryResilienceBars){
+    summaryResilienceBars.style.display = "";
+    summaryResilienceBars.textContent = todayView.resilienceBars || "";
   }
 
   if (debugResilience){
