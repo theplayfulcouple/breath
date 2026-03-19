@@ -900,7 +900,8 @@ const weekTab = document.getElementById("weekTab");
 const monthTab = document.getElementById("monthTab");
 const yearTab = document.getElementById("yearTab");
 
- let weekViews = buildWeekViewsFromSessions();
+localStorage.removeItem("sessions");
+let weekViews = buildWeekViewsFromSessions();
 
 const monthViews = [
   {
@@ -2543,7 +2544,6 @@ function saveSession(resonance, drifts, resilience, duration){
     function getSavedSessions(){
   return JSON.parse(localStorage.getItem("sessions") || "[]");
 }
-    localStorage.removeItem("sessions");
 
 function showToast(message){
 
