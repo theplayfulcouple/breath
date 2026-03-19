@@ -1955,10 +1955,6 @@ fireflyDelayTimeout = setTimeout(() => {
   setTimeout(() => {
     if (summaryScreen){
   summaryScreen.style.display = "flex";
-      if (summaryScoreOverlay){
-  summaryScoreOverlay.style.display = "none";
-  summaryScoreOverlay.style.opacity = "0";
-}
       const actions = document.querySelector(".summaryActions");
 if (actions) actions.style.display = "flex";
 
@@ -2171,10 +2167,6 @@ if (actions) actions.style.display = "none";
 setTimeout(() => {
   if (summaryScoreOverlay){
     summaryScoreOverlay.style.display = "block";
-
-requestAnimationFrame(() => {
-  summaryScoreOverlay.style.opacity = "1";
-});
   }
 }, 2200);
 
