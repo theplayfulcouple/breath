@@ -377,6 +377,15 @@
   transform:translateY(10px);
   transition: opacity 700ms ease, transform 700ms ease;
 }
+    .scoreMode #metricStrength .summaryValue{
+  font-size:64px;
+  line-height:1;
+  margin-top:10px;
+}
+
+.scoreMode #metricStrength{
+  transform: scale(1.2);
+}
  .summaryMetric.isFading{
   opacity:0.28;
 transition:opacity 520ms ease;
@@ -1139,6 +1148,14 @@ function showPlaceholderView(viewName){
     viewName === "month" ||
     viewName === "year";
 
+  const app = document.body;
+
+if (isScoreMode){
+  app.classList.add("scoreMode");
+} else {
+  app.classList.remove("scoreMode");
+}
+
   if (metricStrength) metricStrength.classList.add("isFading");
   if (metricStability) metricStability.classList.add("isFading");
   if (metricResilience) metricResilience.classList.add("isFading");
@@ -1214,6 +1231,8 @@ function showPlaceholderView(viewName){
 
     
 function showTodayView(){
+  document.body.classList.remove("scoreMode");
+
   if (summaryTopTitle){
     summaryTopTitle.textContent = todayView.title;
   }
@@ -1223,10 +1242,12 @@ function showTodayView(){
   }
 
   if (debugStability){
+    debugStability.style.display = "";
     debugStability.textContent = todayView.drifts;
   }
 
   if (debugResilience){
+    debugResilience.style.display = "";
     debugResilience.textContent = todayView.resilience;
   }
 
