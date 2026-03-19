@@ -903,60 +903,8 @@ const yearTab = document.getElementById("yearTab");
 localStorage.removeItem("sessions");
 let weekViews = buildWeekViewsFromSessions();
 
-const monthViews = [
-  {
-    title: "this month",
-    resonance: "6.5",
-    drifts: "52 drifts",
-    resilience: "1.1s",
-    duration: "2:48:10"
-  },
-  {
-    title: "last month",
-    resonance: "6.2",
-    drifts: "58 drifts",
-    resilience: "1.2s",
-    duration: "2:21:30"
-  },
-  {
-    title: "January",
-    resonance: "6.0",
-    drifts: "61 drifts",
-    resilience: "1.3s",
-    duration: "2:05:20"
-  },
-  {
-    title: "December",
-    resonance: "5.8",
-    drifts: "67 drifts",
-    resilience: "1.5s",
-    duration: "1:52:10"
-  }
-];
-
-const yearViews = [
-  {
-    title: "this year",
-    resonance: "6.9",
-    drifts: "418 drifts",
-    resilience: "0.8s",
-    duration: "18:22:00"
-  },
-  {
-    title: "last year",
-    resonance: "6.4",
-    drifts: "462 drifts",
-    resilience: "1.0s",
-    duration: "16:48:00"
-  },
-  {
-    title: "2024",
-    resonance: "6.1",
-    drifts: "509 drifts",
-    resilience: "1.2s",
-    duration: "14:32:00"
-  }
-];
+let monthViews = buildMonthViewsFromSessions();
+let yearViews = buildYearViewsFromSessions();
 
     let todayView = {
   title: "today’s rhythm",
@@ -1044,7 +992,104 @@ function buildWeekViewsFromSessions(){
 
   return views;
 }
-    
+   function buildMonthViewsFromSessions(){
+  const sessions = getSavedSessions();
+  const now = new Date();
+
+  const views = [];
+
+  for (let i = 0; i < 4; i++){
+    const bucketStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const bucketEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+
+    let title = "";
+    if (i === 0) title = "this month";
+    else if (i === 1) title = "last month";
+    else title = bucketStart.toLocaleString("en-GB", { month: "long" });
+
+    const bucketSessions = sessions.filter(session => {
+      const sessionDate = new Date(session.date);
+      return sessionDate >= bucketStart && sessionDate < bucketEnd;
+    });
+
+    if (bucketSessions.length === 0){
+      views.push({
+        title: title,
+        resonance: "—",
+        drifts: "—",
+        resilience: "—",
+        duration: "0:00"
+      });
+      continue;
+    }
+
+    const totalScore =
+      bucketSessions.reduce((sum, session) => sum + getSessionScore(session), 0);
+
+    const totalDuration =
+      bucketSessions.reduce((sum, session) => sum + Number(session.duration || 0), 0);
+
+    views.push({
+      title: title,
+      resonance: String(Number(totalScore.toFixed(1))),
+      drifts: "—",
+      resilience: "—",
+      duration: formatDuration(totalDuration)
+    });
+  }
+
+  return views;
+}
+
+function buildYearViewsFromSessions(){
+  const sessions = getSavedSessions();
+  const now = new Date();
+
+  const views = [];
+
+  for (let i = 0; i < 3; i++){
+    const year = now.getFullYear() - i;
+    const bucketStart = new Date(year, 0, 1);
+    const bucketEnd = new Date(year + 1, 0, 1);
+
+    let title = "";
+    if (i === 0) title = "this year";
+    else if (i === 1) title = "last year";
+    else title = String(year);
+
+    const bucketSessions = sessions.filter(session => {
+      const sessionDate = new Date(session.date);
+      return sessionDate >= bucketStart && sessionDate < bucketEnd;
+    });
+
+    if (bucketSessions.length === 0){
+      views.push({
+        title: title,
+        resonance: "—",
+        drifts: "—",
+        resilience: "—",
+        duration: "0:00"
+      });
+      continue;
+    }
+
+    const totalScore =
+      bucketSessions.reduce((sum, session) => sum + getSessionScore(session), 0);
+
+    const totalDuration =
+      bucketSessions.reduce((sum, session) => sum + Number(session.duration || 0), 0);
+
+    views.push({
+      title: title,
+      resonance: String(Number(totalScore.toFixed(1))),
+      drifts: "—",
+      resilience: "—",
+      duration: formatDuration(totalDuration)
+    });
+  }
+
+  return views;
+} 
     let touchStartX = 0;
 let touchEndX = 0;
 
@@ -2086,8 +2131,10 @@ if (summaryExit){
     );
 
     pendingSession = null;
-        weekViews = buildWeekViewsFromSessions();
-        console.log("session count", getSavedSessions().length);
+weekViews = buildWeekViewsFromSessions();
+monthViews = buildMonthViewsFromSessions();
+yearViews = buildYearViewsFromSessions();
+console.log("session count", getSavedSessions().length);
 
     const actions = document.querySelector(".summaryActions");
     if (actions) actions.style.display = "none";
