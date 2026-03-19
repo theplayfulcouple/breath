@@ -967,6 +967,29 @@ function formatDuration(totalSeconds){
 
   return minutes + ":" + String(seconds).padStart(2, "0");
 }
+    function getSessionScore(session){
+  const resonance = Number(session.resonance || 0);
+  const drifts = Number(session.drifts || 0);
+  const resilience = Number(session.resilience || 0);
+
+  let resonancePoints = 0;
+  if (resonance >= 2.5) resonancePoints = 1;
+  if (resonance >= 4.5) resonancePoints = 2;
+  if (resonance >= 6.5) resonancePoints = 3;
+  if (resonance >= 8.5) resonancePoints = 4;
+
+  let stabilityPoints = 0;
+  if (drifts <= 15) stabilityPoints = 1;
+  if (drifts <= 8) stabilityPoints = 2;
+  if (drifts <= 3) stabilityPoints = 3;
+
+  let resiliencePoints = 0;
+  if (resilience > 0 && resilience <= 2.0) resiliencePoints = 1;
+  if (resilience > 0 && resilience <= 1.2) resiliencePoints = 2;
+  if (resilience > 0 && resilience <= 0.7) resiliencePoints = 3;
+
+  return resonancePoints + stabilityPoints + resiliencePoints;
+}
 
 function buildWeekViewsFromSessions(){
   const sessions = getSavedSessions();
@@ -992,30 +1015,24 @@ function buildWeekViewsFromSessions(){
       views.push({
         title: labels[i],
         resonance: "—",
-        drifts: "0 drifts",
+        drifts: "—",
         resilience: "—",
         duration: "0:00"
       });
       continue;
     }
 
-    const resonanceAverage =
-      bucketSessions.reduce((sum, session) => sum + Number(session.resonance || 0), 0) / bucketSessions.length;
-
-    const totalDrifts =
-      bucketSessions.reduce((sum, session) => sum + Number(session.drifts || 0), 0);
-
-    const resilienceAverage =
-      bucketSessions.reduce((sum, session) => sum + Number(session.resilience || 0), 0) / bucketSessions.length;
+    const totalScore =
+      bucketSessions.reduce((sum, session) => sum + getSessionScore(session), 0);
 
     const totalDuration =
       bucketSessions.reduce((sum, session) => sum + Number(session.duration || 0), 0);
 
     views.push({
       title: labels[i],
-      resonance: resonanceAverage.toFixed(1),
-      drifts: totalDrifts + " drifts",
-      resilience: resilienceAverage.toFixed(1) + "s",
+      resonance: String(totalScore),
+      drifts: "—",
+      resilience: "—",
       duration: formatDuration(totalDuration)
     });
   }
