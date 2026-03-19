@@ -1187,17 +1187,30 @@ function showPlaceholderView(viewName){
     summaryResilienceBars.textContent = resilienceBars;
   }
 
-  if (debugResonance){
+if (debugResonance){
+  if (currentMode === "week" || currentMode === "month" || currentMode === "year"){
+    debugResonance.textContent = view.resonance;
+    if (summaryTopTitle) summaryTopTitle.textContent = view.title + " score";
+  } else {
     debugResonance.textContent = view.resonance;
   }
+}
 
-  if (debugStability){
+if (debugStability){
+  if (currentMode === "week" || currentMode === "month" || currentMode === "year"){
+    debugStability.textContent = "";
+  } else {
     debugStability.textContent = view.drifts;
   }
+}
 
   if (debugResilience){
+  if (currentMode === "week" || currentMode === "month" || currentMode === "year"){
+    debugResilience.textContent = "";
+  } else {
     debugResilience.textContent = view.resilience;
   }
+}
 
   if (summaryDuration){
     summaryDuration.textContent = view.duration;
