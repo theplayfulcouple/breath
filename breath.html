@@ -939,10 +939,7 @@ function formatDuration(totalSeconds){
 
   return minutes + ":" + String(seconds).padStart(2, "0");
 }
-    function getSessionScore(session){
-  const resonance = Number(session.resonance || 0);
-  return resonance;
-}
+  function getSessionScore(session){
 
 function buildWeekViewsFromSessions(){
   const sessions = getSavedSessions();
