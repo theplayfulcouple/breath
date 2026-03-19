@@ -453,6 +453,7 @@ transition:opacity 520ms ease;
   align-items:center;
   justify-content:space-between;
   padding:0 8px;
+  min-height:24px;
 }
 
 .summaryActionBtn{
@@ -509,7 +510,31 @@ transition:opacity 520ms ease;
   font: 18px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color:rgba(255,255,255,0.95);
 }
+.summarySessionScore{
+  font: 18px/1.1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color:rgba(255,255,255,0.92);
+  opacity:0;
+  transform:translateY(8px);
+  transition: opacity 700ms ease, transform 700ms ease;
+  display:none;
+}
 
+.summarySessionScoreOverlay{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%) translateY(8px);
+  white-space:nowrap;
+  pointer-events:none;
+}
+
+.summarySessionScoreOverlay.isVisible{
+  transform:translateX(-50%) translateY(0);
+}
+
+.summarySessionScore.isVisible{
+  opacity:1;
+  transform:translateY(0);
+}
 
 .summaryTab{
   border:none;
@@ -598,7 +623,6 @@ transition:opacity 520ms ease;
   <div class="summaryLabel">resonance</div>
   <div class="summaryBars" id="summaryStrengthBars">■■■■□</div>
   <div id="debugResonance" style="margin-top:8px; font:14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:rgba(255,255,255,0.72);"></div>
-  <div class="summarySessionScore" id="summarySessionScore">score 0</div>
 </div>
 
   <div class="summaryMetric" id="metricStability">
@@ -623,6 +647,7 @@ transition:opacity 520ms ease;
 <div class="summaryActions">
   <button class="summaryActionBtn" id="discardSessionBtn" type="button">discard</button>
   <button class="summaryActionBtn" id="saveSessionBtn" type="button">save</button>
+  <div class="summarySessionScore summarySessionScoreOverlay" id="summarySessionScore">score 0</div>
 </div>
 
 <!-- bottom navigation (week/month/year) -->
@@ -907,12 +932,16 @@ let weekViews = buildWeekViewsFromSessions();
 let monthViews = buildMonthViewsFromSessions();
 let yearViews = buildYearViewsFromSessions();
 
-    let todayView = {
+let todayView = {
   title: "today’s rhythm",
   resonance: "",
   drifts: "",
   resilience: "",
-  duration: ""
+  duration: "",
+  sessionScore: "",
+  strengthBars: "",
+  stabilityBars: "",
+  resilienceBars: ""
 };
     let currentWeekIndex = 0;
     let currentMonthIndex = 0;
@@ -1204,6 +1233,11 @@ if (isScoreMode){
     summaryDuration.textContent = view.duration;
   }
 
+  if (summarySessionScore){
+  summarySessionScore.classList.remove("isVisible");
+  summarySessionScore.style.display = "none";
+}
+
   setTimeout(() => {
     if (metricStrength) metricStrength.classList.remove("isFading");
     if (metricStability) metricStability.classList.remove("isFading");
@@ -1237,6 +1271,11 @@ function showTodayView(){
   if (summaryDuration){
     summaryDuration.textContent = todayView.duration;
   }
+
+  if (summarySessionScore){
+    summarySessionScore.classList.remove("isVisible");
+    summarySessionScore.style.display = "none";
+  }
 }
 
     const metricStrength = document.getElementById("metricStrength");
@@ -1255,7 +1294,8 @@ const summaryLabelResilience = document.querySelector("#metricResilience .summar
 const debugStability = document.getElementById("debugStability");
 const debugResilience = document.getElementById("debugResilience");
 const summaryResilienceBars = document.getElementById("summaryResilienceBars");
-    const summaryContent = document.querySelector(".summaryContent");
+const summarySessionScore = document.getElementById("summarySessionScore");
+const summaryContent = document.querySelector(".summaryContent");
     
        let expandMode = false;
     let fireflyDelayTimeout = null;
@@ -1950,8 +1990,14 @@ fireflyDelayTimeout = setTimeout(() => {
   setTimeout(() => {
     if (summaryScreen){
   summaryScreen.style.display = "flex";
-      const actions = document.querySelector(".summaryActions");
-if (actions) actions.style.display = "flex";
+  const actions = document.querySelector(".summaryActions");
+  if (actions) actions.style.display = "flex";
+  if (discardSessionBtn) discardSessionBtn.style.display = "";
+  if (saveSessionBtn) saveSessionBtn.style.display = "";
+  if (summarySessionScore){
+    summarySessionScore.style.display = "none";
+    summarySessionScore.classList.remove("isVisible");
+  }
 
    if (summaryDuration){
   const totalSeconds = Math.floor(elapsedMs / 1000);
@@ -2076,13 +2122,26 @@ if (debugResilience){
 
   requestAnimationFrame(() => {
 
-        todayView = {
-    title: "today’s rhythm",
-      resonance: debugResonance ? debugResonance.textContent : "",
-      drifts: debugStability ? debugStability.textContent : "",
-      resilience: debugResilience ? debugResilience.textContent : "",
-      duration: summaryDuration ? summaryDuration.textContent : ""
-    };
+       const sessionScoreText =
+  pendingSession ? String(getSessionScore(pendingSession)) : "—";
+
+if (summarySessionScore){
+  summarySessionScore.classList.remove("isVisible");
+  summarySessionScore.style.display = "none";
+  summarySessionScore.textContent = "score " + sessionScoreText;
+}
+
+todayView = {
+  title: "today’s rhythm",
+  resonance: debugResonance ? debugResonance.textContent : "",
+  drifts: debugStability ? debugStability.textContent : "",
+  resilience: debugResilience ? debugResilience.textContent : "",
+  duration: summaryDuration ? summaryDuration.textContent : "",
+  sessionScore: sessionScoreText,
+  strengthBars: summaryStrengthBars ? summaryStrengthBars.textContent : "",
+  stabilityBars: summaryStabilityBars ? summaryStabilityBars.textContent : "",
+  resilienceBars: summaryResilienceBars ? summaryResilienceBars.textContent : ""
+};
     
     summaryScreen.classList.add("isVisible");
 
@@ -2094,15 +2153,9 @@ if (debugResilience){
       if (metricStability) metricStability.classList.add("isVisible");
     }, 250);
 
-    setTimeout(() => {
-      if (metricResilience) metricResilience.classList.add("isVisible");
-    }, 500);
-
-    setTimeout(() => {
-      if (metricDuration) metricDuration.classList.add("isVisible");
-    }, 750);
-
-  });
+  setTimeout(() => {
+  if (metricResilience) metricResilience.classList.add("isVisible");
+}, 500);
 }
   }, 1600);
 }
@@ -2156,10 +2209,20 @@ monthViews = buildMonthViewsFromSessions();
 yearViews = buildYearViewsFromSessions();
 console.log("session count", getSavedSessions().length);
 
-    const actions = document.querySelector(".summaryActions");
-    if (actions) actions.style.display = "none";
+if (discardSessionBtn) discardSessionBtn.style.display = "none";
+if (saveSessionBtn) saveSessionBtn.style.display = "none";
 
-    showToast("session saved");
+if (summarySessionScore){
+  summarySessionScore.textContent = "score " + (todayView.sessionScore || "—");
+  summarySessionScore.style.display = "";
+  summarySessionScore.classList.remove("isVisible");
+
+  setTimeout(() => {
+    if (summarySessionScore) summarySessionScore.classList.add("isVisible");
+  }, 40);
+}
+
+showToast("session saved");
 
   });
 }
@@ -2169,10 +2232,20 @@ if (discardSessionBtn){
 
     pendingSession = null;
 
-    const actions = document.querySelector(".summaryActions");
-    if (actions) actions.style.display = "none";
+    if (discardSessionBtn) discardSessionBtn.style.display = "none";
+if (saveSessionBtn) saveSessionBtn.style.display = "none";
 
-    showToast("session discarded");
+if (summarySessionScore){
+  summarySessionScore.textContent = "score " + (todayView.sessionScore || "—");
+  summarySessionScore.style.display = "";
+  summarySessionScore.classList.remove("isVisible");
+
+  setTimeout(() => {
+    if (summarySessionScore) summarySessionScore.classList.add("isVisible");
+  }, 40);
+}
+
+showToast("session discarded");
 
   });
 }
@@ -2183,32 +2256,12 @@ if (weekTab){
     const isActive = weekTab.classList.contains("active");
 
     if (isActive){
-      weekTab.classList.remove("active");
-      monthTab.classList.remove("active");
-      yearTab.classList.remove("active");
-
-      if (summaryTopTitle){
-        summaryTopTitle.textContent = todayView.title;
-      }
-
-      if (debugResonance){
-        debugResonance.textContent = todayView.resonance;
-      }
-
-      if (debugStability){
-        debugStability.textContent = todayView.drifts;
-      }
-
-      if (debugResilience){
-        debugResilience.textContent = todayView.resilience;
-      }
-
-      if (summaryDuration){
-        summaryDuration.textContent = todayView.duration;
-      }
-
-      return;
-    }
+  weekTab.classList.remove("active");
+  monthTab.classList.remove("active");
+  yearTab.classList.remove("active");
+  showTodayView();
+  return;
+}
 
     weekTab.classList.add("active");
     monthTab.classList.remove("active");
@@ -2227,32 +2280,12 @@ if (monthTab){
     const isActive = monthTab.classList.contains("active");
 
     if (isActive){
-      monthTab.classList.remove("active");
-      weekTab.classList.remove("active");
-      yearTab.classList.remove("active");
-
-      if (summaryTopTitle){
-        summaryTopTitle.textContent = todayView.title;
-      }
-
-      if (debugResonance){
-        debugResonance.textContent = todayView.resonance;
-      }
-
-      if (debugStability){
-        debugStability.textContent = todayView.drifts;
-      }
-
-      if (debugResilience){
-        debugResilience.textContent = todayView.resilience;
-      }
-
-      if (summaryDuration){
-        summaryDuration.textContent = todayView.duration;
-      }
-
-      return;
-    }
+  monthTab.classList.remove("active");
+  weekTab.classList.remove("active");
+  yearTab.classList.remove("active");
+  showTodayView();
+  return;
+}
 
     monthTab.classList.add("active");
     weekTab.classList.remove("active");
@@ -2270,32 +2303,12 @@ if (yearTab){
     const isActive = yearTab.classList.contains("active");
 
     if (isActive){
-      yearTab.classList.remove("active");
-      weekTab.classList.remove("active");
-      monthTab.classList.remove("active");
-
-      if (summaryTopTitle){
-        summaryTopTitle.textContent = todayView.title;
-      }
-
-      if (debugResonance){
-        debugResonance.textContent = todayView.resonance;
-      }
-
-      if (debugStability){
-        debugStability.textContent = todayView.drifts;
-      }
-
-      if (debugResilience){
-        debugResilience.textContent = todayView.resilience;
-      }
-
-      if (summaryDuration){
-        summaryDuration.textContent = todayView.duration;
-      }
-
-      return;
-    }
+  yearTab.classList.remove("active");
+  weekTab.classList.remove("active");
+  monthTab.classList.remove("active");
+  showTodayView();
+  return;
+}
 
     yearTab.classList.add("active");
     weekTab.classList.remove("active");
