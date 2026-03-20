@@ -2089,13 +2089,13 @@ else resilienceBars = 1;
 
   requestAnimationFrame(() => {
 
-        todayView = {
-    title: "today’s rhythm",
-      resonance: debugResonance ? debugResonance.textContent : "",
-      drifts: debugStability ? debugStability.textContent : "",
-      resilience: debugResilience ? debugResilience.textContent : "",
-      duration: summaryDuration ? summaryDuration.textContent : ""
-    };
+      todayView = {
+  title: "today’s rhythm",
+  resonance: currentSessionScore ? currentSessionScore : "",
+  drifts: debugStability ? debugStability.textContent : "",
+  resilience: debugResilience ? debugResilience.textContent : "",
+  duration: summaryDuration ? summaryDuration.textContent : ""
+};
     
     summaryScreen.classList.add("isVisible");
 
