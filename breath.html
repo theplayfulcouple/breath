@@ -454,6 +454,26 @@ transition:opacity 520ms ease;
   justify-content:space-between;
   padding:0 8px;
 }
+    .summaryReflectWrap{
+  position:absolute;
+  left:50%;
+  bottom:74px;
+  transform:translateX(-50%);
+  z-index:21;
+}
+
+.summaryReflectBtn{
+  padding:8px 16px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.22);
+  background:rgba(255,255,255,0.14);
+  color:rgba(255,255,255,0.92);
+  font:17px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  backdrop-filter:blur(6px);
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
 
 .summaryActionBtn{
   border:none;
@@ -621,8 +641,11 @@ transition:opacity 520ms ease;
  <!-- action row (NEW) -->
 <div class="summaryActions">
   <button class="summaryActionBtn" id="discardSessionBtn" type="button">discard</button>
-  <button class="summaryActionBtn" id="reflectSessionBtn" type="button" style="padding:8px 16px; border-radius:999px; border:1px solid rgba(255,255,255,0.22); background:rgba(255,255,255,0.14); color:rgba(42,10,10,0.92); font:17px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; backdrop-filter:blur(6px);">reflect</button>
   <button class="summaryActionBtn" id="saveSessionBtn" type="button">save</button>
+</div>
+
+<div class="summaryReflectWrap">
+  <button class="summaryReflectBtn" id="reflectSessionBtn" type="button">reflect</button>
 </div>
   
     <div id="summaryScoreOverlay" style="display:none; position:absolute; 
@@ -898,8 +921,9 @@ const expandBtn = document.getElementById("expandBtn");
     const endBtn = document.getElementById("endBtn");
 const summaryScreen = document.getElementById("summaryScreen");
 const summaryExit = document.getElementById("summaryExit");
-    const saveSessionBtn = document.getElementById("saveSessionBtn");
+const saveSessionBtn = document.getElementById("saveSessionBtn");
 const discardSessionBtn = document.getElementById("discardSessionBtn");
+const reflectSessionBtn = document.getElementById("reflectSessionBtn");
 
     const summaryTopTitle = document.getElementById("summaryTopTitle");
 const weekTab = document.getElementById("weekTab");
@@ -1959,8 +1983,11 @@ fireflyDelayTimeout = setTimeout(() => {
     if (summaryScreen){
   summaryScreen.style.display = "flex";
       isSessionSummary = true;
-      const actions = document.querySelector(".summaryActions");
+  const actions = document.querySelector(".summaryActions");
 if (actions) actions.style.display = "flex";
+
+const reflectWrap = document.querySelector(".summaryReflectWrap");
+if (reflectWrap) reflectWrap.style.display = "block";
 
    if (summaryDuration){
   const totalSeconds = Math.floor(elapsedMs / 1000);
