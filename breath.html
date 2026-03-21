@@ -584,6 +584,14 @@ transition:opacity 520ms ease;
 }
 
 .reflectionCylinder{
+  .reflectionLowLine{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:33%;
+  height:2px;
+  background:rgba(255,255,255,0.35);
+}
   position:relative;
   width:120px;
   height:260px;
@@ -597,6 +605,18 @@ transition:opacity 520ms ease;
 }
 
 .reflectionLiquid{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:50%;
+  background:rgba(255,255,255,0.78);
+  transition:height 400ms ease, background 400ms ease;
+}
+
+.reflectionLiquid.isLow{
+  background:rgba(120,20,20,0.85);
+}
   position:absolute;
   left:0;
   right:0;
@@ -752,8 +772,9 @@ transition:opacity 520ms ease;
 
   <div class="reflectionCylinderWrap" id="reflectionCylinderWrap">
   <div class="reflectionCylinder" id="reflectionCylinder">
-    <div class="reflectionLiquid" id="reflectionLiquid"></div>
-  </div>
+  <div class="reflectionLowLine"></div>
+  <div class="reflectionLiquid" id="reflectionLiquid"></div>
+</div>
 </div>
 
   <div class="reflectionBottomBar">
