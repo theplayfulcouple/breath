@@ -1043,6 +1043,23 @@ const reflectionScreen = document.getElementById("reflectionScreen");
 const reflectionExit = document.getElementById("reflectionExit");
 const supportiveBtn = document.getElementById("supportiveBtn");
 const harshBtn = document.getElementById("harshBtn");
+
+    let reflectionLevel = 0.5; // starts half full
+
+const reflectionLiquid = document.getElementById("reflectionLiquid");
+
+function updateReflectionLiquid(){
+  if (!reflectionLiquid) return;
+
+  const percent = Math.max(0, Math.min(1, reflectionLevel));
+  reflectionLiquid.style.height = (percent * 100) + "%";
+
+  if (percent < 0.33){
+    reflectionLiquid.classList.add("isLow");
+  } else {
+    reflectionLiquid.classList.remove("isLow");
+  }
+}
 const saveSessionBtn = document.getElementById("saveSessionBtn");
 const discardSessionBtn = document.getElementById("discardSessionBtn");
 const reflectSessionBtn = document.getElementById("reflectSessionBtn");
@@ -2294,6 +2311,20 @@ if (endBtn){
   });
 }
 
+    if (supportiveBtn){
+  supportiveBtn.addEventListener("click", () => {
+    reflectionLevel += 0.08;
+    updateReflectionLiquid();
+  });
+}
+
+if (harshBtn){
+  harshBtn.addEventListener("click", () => {
+    reflectionLevel -= 0.12;
+    updateReflectionLiquid();
+  });
+}
+    
 if (reflectionExit){
   reflectionExit.addEventListener("click", () => {
     if (reflectionScreen) reflectionScreen.style.display = "none";
@@ -2305,6 +2336,8 @@ if (reflectionExit){
 
    if (summaryScreen) summaryScreen.style.display = "none";
 if (reflectionScreen) reflectionScreen.style.display = "flex";
+
+    updateReflectionLiquid();
 
   });
 }
