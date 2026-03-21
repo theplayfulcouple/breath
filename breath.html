@@ -1053,6 +1053,11 @@ function updateReflectionLiquid(){
 
   const percent = Math.max(0, Math.min(1, reflectionLevel));
   reflectionLiquid.style.height = (percent * 100) + "%";
+reflectionLiquid.style.transform = "scaleY(1.02)";
+
+setTimeout(() => {
+  reflectionLiquid.style.transform = "scaleY(1)";
+}, 120);
 
   if (percent < 0.33){
     reflectionLiquid.classList.add("isLow");
@@ -2313,14 +2318,14 @@ if (endBtn){
 
     if (supportiveBtn){
   supportiveBtn.addEventListener("click", () => {
-    reflectionLevel += 0.08;
+    reflectionLevel += 0.06;
     updateReflectionLiquid();
   });
 }
 
 if (harshBtn){
   harshBtn.addEventListener("click", () => {
-    reflectionLevel -= 0.12;
+   reflectionLevel -= 0.18;
     updateReflectionLiquid();
   });
 }
