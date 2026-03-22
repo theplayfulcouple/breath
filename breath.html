@@ -645,6 +645,26 @@ transition:opacity 520ms ease;
   -webkit-tap-highlight-color: transparent;
 }
 
+.reflectionNextWrap{
+  position:absolute;
+  left:50%;
+  bottom:104px;
+  transform:translateX(-50%);
+  z-index:21;
+}
+
+.reflectionNextBtn{
+  padding:8px 16px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.92);
+  font:16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 #ppgFrame { display:none; }
   </style>
 </head>
@@ -771,10 +791,13 @@ transition:opacity 520ms ease;
 </div>
 </div>
 
-  <div class="reflectionBottomBar">
-    <button class="reflectionChoiceBtn" id="supportiveBtn" type="button">supportive +</button>
-    <button class="reflectionChoiceBtn" id="harshBtn" type="button">harsh +</button>
-  </div>
+<div class="reflectionBottomBar">
+  <button class="reflectionChoiceBtn" id="supportiveBtn" type="button">supportive +</button>
+  <button class="reflectionChoiceBtn" id="harshBtn" type="button">harsh +</button>
+</div>
+
+<div class="reflectionNextWrap">
+  <button class="reflectionNextBtn" id="reflectionNextBtn" type="button">next</button>
 </div>
 
 </div>
@@ -1041,10 +1064,13 @@ const summaryScreen = document.getElementById("summaryScreen");
 const summaryExit = document.getElementById("summaryExit");
 const reflectionScreen = document.getElementById("reflectionScreen");
 const reflectionExit = document.getElementById("reflectionExit");
+const reflectionTopTitle = document.getElementById("reflectionTopTitle");
+const reflectionQuestion = document.getElementById("reflectionQuestion");
 const supportiveBtn = document.getElementById("supportiveBtn");
 const harshBtn = document.getElementById("harshBtn");
+const reflectionNextBtn = document.getElementById("reflectionNextBtn");
 
-    let reflectionLevel = 0.5; // starts half full
+let reflectionLevel = 0.5; // starts half full
 
 const reflectionLiquid = document.getElementById("reflectionLiquid");
 
@@ -1436,6 +1462,44 @@ const summaryResilienceBars = document.getElementById("summaryResilienceBars");
     let fireflyDelayTimeout = null;
     let pendingSession = null;
     let currentSessionScore = "";
+
+    let reflectionStepIndex = 0;
+
+const reflectionSteps = [
+  {
+    title: "self-talk",
+    question: "How many times did you support yourself or turn against yourself?",
+    positiveLabel: "supportive +",
+    negativeLabel: "harsh +"
+  },
+  {
+    title: "toward / hurtful",
+    question: "How many times did you turn toward the other person or have a hurtful interaction?",
+    positiveLabel: "turn toward +",
+    negativeLabel: "hurtful +"
+  },
+  {
+    title: "pause / react",
+    question: "How many times did you pause before reacting or react quickly?",
+    positiveLabel: "paused +",
+    negativeLabel: "reacted +"
+  }
+];
+
+function renderReflectionStep(){
+  const step = reflectionSteps[reflectionStepIndex];
+  if (!step) return;
+
+  if (reflectionTopTitle) reflectionTopTitle.textContent = step.title;
+  if (reflectionQuestion) reflectionQuestion.textContent = step.question;
+  if (supportiveBtn) supportiveBtn.textContent = step.positiveLabel;
+  if (harshBtn) harshBtn.textContent = step.negativeLabel;
+
+  if (reflectionNextBtn){
+    reflectionNextBtn.textContent =
+      reflectionStepIndex === reflectionSteps.length - 1 ? "finish" : "next";
+  }
+}
     
 if (relearnBtn && personalBaseline){
   relearnBtn.style.display = "";
@@ -2336,11 +2400,24 @@ if (reflectionExit){
     if (summaryScreen) summaryScreen.style.display = "flex";
   });
 }
+
+    if (reflectionNextBtn){
+  reflectionNextBtn.addEventListener("click", () => {
+    if (reflectionStepIndex < reflectionSteps.length - 1){
+      reflectionStepIndex++;
+      renderReflectionStep();
+    }
+  });
+}
+    
    if (reflectSessionBtn){
   reflectSessionBtn.addEventListener("click", () => {
 
-   if (summaryScreen) summaryScreen.style.display = "none";
-if (reflectionScreen) reflectionScreen.style.display = "flex";
+    reflectionStepIndex = 0;
+    renderReflectionStep();
+
+    if (summaryScreen) summaryScreen.style.display = "none";
+    if (reflectionScreen) reflectionScreen.style.display = "flex";
 
     updateReflectionLiquid();
 
