@@ -2377,21 +2377,23 @@ else resilienceBars = 1;
       debugResilience.textContent =
         (avgRecoveryMs / 1000).toFixed(1) + "s";
 
-      pendingSession = {
+           pendingSession = {
         resonance: Number((resonanceAverage * 10).toFixed(1)),
         drifts: stabilityDrops.length,
         resilience: avgRecoveryMs / 1000,
-        duration: elapsedMs / 1000
+        duration: elapsedMs / 1000,
+        reflectionScore: null
       };
 
     } else {
       debugResilience.textContent = "—";
 
-      pendingSession = {
+           pendingSession = {
         resonance: Number((resonanceAverage * 10).toFixed(1)),
         drifts: stabilityDrops.length,
         resilience: 0,
-        duration: elapsedMs / 1000
+        duration: elapsedMs / 1000,
+        reflectionScore: null
       };
     }
 
@@ -2538,7 +2540,11 @@ if (reflectionExit){
       return;
     }
 
-    showReflectionSummaryMode();
+        showReflectionSummaryMode();
+
+    if (pendingSession){
+      pendingSession.reflectionScore = reflectionScore;
+    }
 
   });
 }
@@ -2577,11 +2583,12 @@ if (reflectionExit){
 
     if (!pendingSession) return;
 
-    saveSession(
+       saveSession(
       pendingSession.resonance,
       pendingSession.drifts,
       pendingSession.resilience,
-      pendingSession.duration
+      pendingSession.duration,
+      pendingSession.reflectionScore
     );
 
     pendingSession = null;
@@ -3027,14 +3034,15 @@ chaseActive = false;
       }
     });
 
-function saveSession(resonance, drifts, resilience, duration){
+function saveSession(resonance, drifts, resilience, duration, reflectionScore){
 
   const session = {
     date: new Date().toISOString(),
     resonance: resonance,
     drifts: drifts,
     resilience: resilience,
-    duration: duration
+    duration: duration,
+    reflectionScore: reflectionScore
   };
 
   const existing = JSON.parse(localStorage.getItem("sessions") || "[]");
