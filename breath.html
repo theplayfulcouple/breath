@@ -1469,6 +1469,7 @@ const summaryResilienceBars = document.getElementById("summaryResilienceBars");
     let fireflyDelayTimeout = null;
     let pendingSession = null;
     let currentSessionScore = "";
+    let reflectionScore = 0;
 
   let reflectionStepIndex = 0;
 
@@ -1515,6 +1516,18 @@ function renderReflectionStep(){
     reflectionNextBtn.textContent =
       reflectionStepIndex === reflectionSteps.length - 1 ? "finish" : "next";
   }
+}
+
+function calculateReflectionScore(){
+  reflectionScore =
+    (reflectionData.supportive * 1) +
+    (reflectionData.toward * 1) +
+    (reflectionData.paused * 1) +
+    (reflectionData.harsh * -1) +
+    (reflectionData.reacted * -2) +
+    (reflectionData.hurtful * -3);
+
+  return reflectionScore;
 }
     
 if (relearnBtn && personalBaseline){
@@ -2449,12 +2462,20 @@ if (reflectionExit){
   });
 }
 
-    if (reflectionNextBtn){
+   if (reflectionNextBtn){
   reflectionNextBtn.addEventListener("click", () => {
+
     if (reflectionStepIndex < reflectionSteps.length - 1){
       reflectionStepIndex++;
       renderReflectionStep();
+      return;
     }
+
+    calculateReflectionScore();
+
+    console.log("reflectionData", reflectionData);
+    console.log("reflectionScore", reflectionScore);
+
   });
 }
     
