@@ -1470,7 +1470,9 @@ const summaryResilienceBars = document.getElementById("summaryResilienceBars");
     let pendingSession = null;
     let currentSessionScore = "";
 
-   let reflectionData = {
+  let reflectionStepIndex = 0;
+
+let reflectionData = {
   supportive: 0,
   harsh: 0,
   toward: 0,
@@ -1478,6 +1480,8 @@ const summaryResilienceBars = document.getElementById("summaryResilienceBars");
   paused: 0,
   reacted: 0
 };
+
+const reflectionSteps = [
   {
     title: "self-talk",
     question: "How many times did you support yourself or turn against yourself?",
