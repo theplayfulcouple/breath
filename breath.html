@@ -1470,9 +1470,14 @@ const summaryResilienceBars = document.getElementById("summaryResilienceBars");
     let pendingSession = null;
     let currentSessionScore = "";
 
-    let reflectionStepIndex = 0;
-
-const reflectionSteps = [
+   let reflectionData = {
+  supportive: 0,
+  harsh: 0,
+  toward: 0,
+  hurtful: 0,
+  paused: 0,
+  reacted: 0
+};
   {
     title: "self-talk",
     question: "How many times did you support yourself or turn against yourself?",
@@ -2387,8 +2392,24 @@ if (endBtn){
   });
 }
 
-    if (supportiveBtn){
+  if (supportiveBtn){
   supportiveBtn.addEventListener("click", () => {
+
+    const step = reflectionSteps[reflectionStepIndex];
+    if (!step) return;
+
+    if (step.title === "self-talk"){
+      reflectionData.supportive += 1;
+    }
+
+    if (step.title === "toward / hurtful"){
+      reflectionData.toward += 1;
+    }
+
+    if (step.title === "pause / react"){
+      reflectionData.paused += 1;
+    }
+
     reflectionLevel += 0.06;
     updateReflectionLiquid();
   });
@@ -2396,7 +2417,23 @@ if (endBtn){
 
 if (harshBtn){
   harshBtn.addEventListener("click", () => {
-   reflectionLevel -= 0.18;
+
+    const step = reflectionSteps[reflectionStepIndex];
+    if (!step) return;
+
+    if (step.title === "self-talk"){
+      reflectionData.harsh += 1;
+    }
+
+    if (step.title === "toward / hurtful"){
+      reflectionData.hurtful += 1;
+    }
+
+    if (step.title === "pause / react"){
+      reflectionData.reacted += 1;
+    }
+
+    reflectionLevel -= 0.18;
     updateReflectionLiquid();
   });
 }
@@ -2421,6 +2458,18 @@ if (reflectionExit){
   reflectSessionBtn.addEventListener("click", () => {
 
     reflectionStepIndex = 0;
+
+    reflectionData = {
+      supportive: 0,
+      harsh: 0,
+      toward: 0,
+      hurtful: 0,
+      paused: 0,
+      reacted: 0
+    };
+
+    reflectionLevel = 0.5;
+
     renderReflectionStep();
 
     if (summaryScreen) summaryScreen.style.display = "none";
