@@ -672,6 +672,34 @@ transition:opacity 520ms ease;
   -webkit-tap-highlight-color: transparent;
 }
 
+.reflectionScoreDisplay{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  z-index:22;
+  display:none;
+  color:rgba(255,255,255,0.98);
+  font:300 110px/0.9 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing:-0.03em;
+  text-align:center;
+  pointer-events:none;
+}
+
+.reflectionScreen.isSummaryMode #reflectionTopTitle{
+  opacity:0;
+}
+
+.reflectionScreen.isSummaryMode #reflectionQuestion,
+.reflectionScreen.isSummaryMode #reflectionCylinderWrap,
+.reflectionScreen.isSummaryMode #reflectionBottomBar{
+  display:none;
+}
+
+.reflectionScreen.isSummaryMode #reflectionScoreDisplay{
+  display:block;
+}
+
 #ppgFrame { display:none; }
   </style>
 </head>
@@ -792,21 +820,22 @@ transition:opacity 520ms ease;
   </div>
 
   <div class="reflectionCylinderWrap" id="reflectionCylinderWrap">
-  <div class="reflectionCylinder" id="reflectionCylinder">
-  <div class="reflectionLowLine"></div>
-  <div class="reflectionLiquid" id="reflectionLiquid"></div>
-</div>
-</div>
+    <div class="reflectionCylinder" id="reflectionCylinder">
+      <div class="reflectionLowLine"></div>
+      <div class="reflectionLiquid" id="reflectionLiquid"></div>
+    </div>
+  </div>
 
-<div class="reflectionBottomBar">
-  <button class="reflectionChoiceBtn" id="supportiveBtn" type="button">supportive +</button>
-  <button class="reflectionChoiceBtn" id="harshBtn" type="button">harsh +</button>
-</div>
+  <div class="reflectionScoreDisplay" id="reflectionScoreDisplay">0</div>
 
-<div class="reflectionNextWrap">
-  <button class="reflectionNextBtn" id="reflectionNextBtn" type="button">next</button>
-</div>
+  <div class="reflectionBottomBar" id="reflectionBottomBar">
+    <button class="reflectionChoiceBtn" id="supportiveBtn" type="button">supportive +</button>
+    <button class="reflectionChoiceBtn" id="harshBtn" type="button">harsh +</button>
+  </div>
 
+  <div class="reflectionNextWrap">
+    <button class="reflectionNextBtn" id="reflectionNextBtn" type="button">next</button>
+  </div>
 </div>
     
     
@@ -1076,6 +1105,7 @@ const reflectionQuestion = document.getElementById("reflectionQuestion");
 const supportiveBtn = document.getElementById("supportiveBtn");
 const harshBtn = document.getElementById("harshBtn");
 const reflectionNextBtn = document.getElementById("reflectionNextBtn");
+const reflectionScoreDisplay = document.getElementById("reflectionScoreDisplay");
 
 let reflectionLevel = 0.5; // starts half full
 
@@ -1468,10 +1498,10 @@ const summaryResilienceBars = document.getElementById("summaryResilienceBars");
        let expandMode = false;
     let fireflyDelayTimeout = null;
     let pendingSession = null;
-    let currentSessionScore = "";
-    let reflectionScore = 0;
-
-  let reflectionStepIndex = 0;
+  let currentSessionScore = "";
+let reflectionScore = 0;
+let reflectionStepIndex = 0;
+let reflectionSummaryMode = false;
 
 let reflectionData = {
   supportive: 0,
@@ -1507,15 +1537,41 @@ function renderReflectionStep(){
   const step = reflectionSteps[reflectionStepIndex];
   if (!step) return;
 
+  if (reflectionScreen) reflectionScreen.classList.remove("isSummaryMode");
+  reflectionSummaryMode = false;
+
   if (reflectionTopTitle) reflectionTopTitle.textContent = step.title;
   if (reflectionQuestion) reflectionQuestion.textContent = step.question;
   if (supportiveBtn) supportiveBtn.textContent = step.positiveLabel;
   if (harshBtn) harshBtn.textContent = step.negativeLabel;
+  if (reflectionScoreDisplay) reflectionScoreDisplay.textContent = "0";
 
   if (reflectionNextBtn){
     reflectionNextBtn.textContent =
       reflectionStepIndex === reflectionSteps.length - 1 ? "finish" : "next";
   }
+}
+
+function calculateReflectionScore(){
+  reflectionScore =
+    (reflectionData.supportive * 1) +
+    (reflectionData.toward * 1) +
+    (reflectionData.paused * 1) +
+    (reflectionData.harsh * -1) +
+    (reflectionData.reacted * -2) +
+    (reflectionData.hurtful * -3);
+
+  return reflectionScore;
+}
+
+function showReflectionSummaryMode(){
+  calculateReflectionScore();
+
+  reflectionSummaryMode = true;
+
+  if (reflectionScreen) reflectionScreen.classList.add("isSummaryMode");
+  if (reflectionScoreDisplay) reflectionScoreDisplay.textContent = String(reflectionScore);
+  if (reflectionNextBtn) reflectionNextBtn.textContent = "continue";
 }
 
 function calculateReflectionScore(){
@@ -2457,13 +2513,24 @@ if (harshBtn){
     
 if (reflectionExit){
   reflectionExit.addEventListener("click", () => {
+
+    reflectionSummaryMode = false;
+
+    if (reflectionScreen) reflectionScreen.classList.remove("isSummaryMode");
+
     if (reflectionScreen) reflectionScreen.style.display = "none";
     if (summaryScreen) summaryScreen.style.display = "flex";
+
   });
 }
 
-   if (reflectionNextBtn){
+  if (reflectionNextBtn){
   reflectionNextBtn.addEventListener("click", () => {
+
+    if (reflectionSummaryMode){
+      console.log("continue to final summary screen");
+      return;
+    }
 
     if (reflectionStepIndex < reflectionSteps.length - 1){
       reflectionStepIndex++;
@@ -2471,10 +2538,7 @@ if (reflectionExit){
       return;
     }
 
-    calculateReflectionScore();
-
-    console.log("reflectionData", reflectionData);
-    console.log("reflectionScore", reflectionScore);
+    showReflectionSummaryMode();
 
   });
 }
@@ -2483,6 +2547,8 @@ if (reflectionExit){
   reflectSessionBtn.addEventListener("click", () => {
 
     reflectionStepIndex = 0;
+    reflectionScore = 0;
+    reflectionSummaryMode = false;
 
     reflectionData = {
       supportive: 0,
