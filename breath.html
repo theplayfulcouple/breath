@@ -671,6 +671,48 @@ transition:opacity 520ms ease;
   user-select:none;
   -webkit-tap-highlight-color: transparent;
 }
+    .integrationScreen{
+  position:absolute;
+  inset:0;
+  z-index:70;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  color:rgba(255,255,255,0.95);
+}
+
+.integrationContent{
+  position:absolute;
+  top:40%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  width:80%;
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+  align-items:center;
+}
+
+.integrationRow{
+  display:flex;
+  gap:12px;
+  align-items:baseline;
+}
+
+.integrationLabel{
+  font:16px system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  opacity:0.7;
+}
+
+.integrationValue{
+  font:300 48px system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+.integrationBottom{
+  position:absolute;
+  bottom:60px;
+}
 
 .reflectionScoreDisplay{
   position:absolute;
@@ -835,6 +877,29 @@ transition:opacity 520ms ease;
 
   <div class="reflectionNextWrap">
     <button class="reflectionNextBtn" id="reflectionNextBtn" type="button">next</button>
+  </div>
+</div>
+
+<div class="integrationScreen" id="integrationScreen" style="display:none;">
+  <div class="summaryTopBar">
+    <div class="summaryTopTitle">integration</div>
+    <button class="summaryExit" id="integrationExit" type="button">back</button>
+  </div>
+
+  <div class="integrationContent">
+    <div class="integrationRow">
+      <div class="integrationLabel">inner</div>
+      <div class="integrationValue" id="integrationInner">0</div>
+    </div>
+
+    <div class="integrationRow">
+      <div class="integrationLabel">outer</div>
+      <div class="integrationValue" id="integrationOuter">0</div>
+    </div>
+  </div>
+
+  <div class="integrationBottom">
+    <button class="reflectionNextBtn" id="integrationDoneBtn" type="button">done</button>
   </div>
 </div>
     
@@ -1106,6 +1171,11 @@ const supportiveBtn = document.getElementById("supportiveBtn");
 const harshBtn = document.getElementById("harshBtn");
 const reflectionNextBtn = document.getElementById("reflectionNextBtn");
 const reflectionScoreDisplay = document.getElementById("reflectionScoreDisplay");
+    const integrationScreen = document.getElementById("integrationScreen");
+const integrationInner = document.getElementById("integrationInner");
+const integrationOuter = document.getElementById("integrationOuter");
+const integrationDoneBtn = document.getElementById("integrationDoneBtn");
+const integrationExit = document.getElementById("integrationExit");
 
 let reflectionLevel = 0.5; // starts half full
 
@@ -2513,24 +2583,40 @@ if (harshBtn){
   });
 }
     
-if (reflectionExit){
-  reflectionExit.addEventListener("click", () => {
+if (integrationDoneBtn){
+  integrationDoneBtn.addEventListener("click", () => {
 
-    reflectionSummaryMode = false;
-
-    if (reflectionScreen) reflectionScreen.classList.remove("isSummaryMode");
-
-    if (reflectionScreen) reflectionScreen.style.display = "none";
+    if (integrationScreen) integrationScreen.style.display = "none";
     if (summaryScreen) summaryScreen.style.display = "flex";
 
   });
 }
 
-  if (reflectionNextBtn){
+if (integrationExit){
+  integrationExit.addEventListener("click", () => {
+
+    if (integrationScreen) integrationScreen.style.display = "none";
+    if (reflectionScreen) reflectionScreen.style.display = "flex";
+
+  });
+}
+
+ if (reflectionNextBtn){
   reflectionNextBtn.addEventListener("click", () => {
 
     if (reflectionSummaryMode){
-      console.log("continue to final summary screen");
+
+      if (integrationInner && pendingSession){
+        integrationInner.textContent = String(pendingSession.resonance);
+      }
+
+      if (integrationOuter){
+        integrationOuter.textContent = String(reflectionScore);
+      }
+
+      if (reflectionScreen) reflectionScreen.style.display = "none";
+      if (integrationScreen) integrationScreen.style.display = "flex";
+
       return;
     }
 
@@ -2540,11 +2626,7 @@ if (reflectionExit){
       return;
     }
 
-        showReflectionSummaryMode();
-
-    if (pendingSession){
-      pendingSession.reflectionScore = reflectionScore;
-    }
+    showReflectionSummaryMode();
 
   });
 }
