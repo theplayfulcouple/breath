@@ -926,28 +926,28 @@ transition:opacity 520ms ease;
   </div>
 
   <div class="integrationContent">
-    <div class="integrationPathWrap">
+   <div class="integrationPathWrap">
 
-      <div class="integrationColumn">
-        <div class="integrationTopLabel">inner</div>
-        <div class="integrationSide integrationSideLeft">
-          <div id="integrationInner" style="display:none;">0</div>
-        </div>
-      </div>
-
-      <div class="integrationColumn">
-        <div class="integrationTopLabel">path</div>
-        <div class="integrationPathCenter"></div>
-      </div>
-
-      <div class="integrationColumn">
-        <div class="integrationTopLabel">outer</div>
-        <div class="integrationSide integrationSideRight">
-          <div id="integrationOuter" style="display:none;">0</div>
-        </div>
-      </div>
-
+  <div class="integrationColumn" id="integrationInnerColumn">
+    <div class="integrationTopLabel">inner</div>
+    <div class="integrationSide integrationSideLeft">
+      <div id="integrationInner" style="display:none;">0</div>
     </div>
+  </div>
+
+  <div class="integrationColumn" id="integrationPathColumn">
+    <div class="integrationTopLabel">path</div>
+    <div class="integrationPathCenter"></div>
+  </div>
+
+  <div class="integrationColumn" id="integrationOuterColumn">
+    <div class="integrationTopLabel">outer</div>
+    <div class="integrationSide integrationSideRight">
+      <div id="integrationOuter" style="display:none;">0</div>
+    </div>
+  </div>
+
+</div>
 
     <div class="integrationBottom">
       <button class="reflectionNextBtn" id="integrationDoneBtn" type="button">done</button>
@@ -1228,6 +1228,9 @@ const integrationInner = document.getElementById("integrationInner");
 const integrationOuter = document.getElementById("integrationOuter");
 const integrationDoneBtn = document.getElementById("integrationDoneBtn");
 const integrationExit = document.getElementById("integrationExit");
+const integrationInnerColumn = document.getElementById("integrationInnerColumn");
+const integrationPathColumn = document.getElementById("integrationPathColumn");
+const integrationOuterColumn = document.getElementById("integrationOuterColumn");
 
 let reflectionLevel = 0.5; // starts half full
 
@@ -1703,6 +1706,27 @@ function translateTrainingToPathwayScore(rawScore){
   const safe = Number(rawScore) || 0;
   const clamped = Math.max(0, Math.min(10, safe));
   return Math.round(clamped);
+}
+
+function updateIntegrationPathway(){
+  const innerScore = Math.max(0, Math.min(10, pathwayInnerScore));
+  const outerScore = Math.max(0, Math.min(10, pathwayOuterScore));
+
+  const innerFlex = 2.2 - (innerScore * 0.14);
+  const outerFlex = 2.2 - (outerScore * 0.14);
+  const pathFlex = 1.0;
+
+  if (integrationInnerColumn){
+    integrationInnerColumn.style.flex = String(innerFlex);
+  }
+
+  if (integrationPathColumn){
+    integrationPathColumn.style.flex = String(pathFlex);
+  }
+
+  if (integrationOuterColumn){
+    integrationOuterColumn.style.flex = String(outerFlex);
+  }
 }
 
 function showReflectionSummaryMode(){
@@ -2669,7 +2693,7 @@ if (integrationExit){
   });
 }
 
- if (reflectionNextBtn){
+if (reflectionNextBtn){
   reflectionNextBtn.addEventListener("click", () => {
 
     if (reflectionSummaryMode){
@@ -2681,6 +2705,8 @@ if (integrationExit){
       if (integrationOuter){
         integrationOuter.textContent = String(pathwayOuterScore);
       }
+
+      updateIntegrationPathway();
 
       if (reflectionScreen) reflectionScreen.style.display = "none";
       if (integrationScreen) integrationScreen.style.display = "flex";
