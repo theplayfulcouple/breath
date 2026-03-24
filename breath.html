@@ -926,35 +926,32 @@ transition:opacity 520ms ease;
   </div>
 
   <div class="integrationContent">
+    <div class="integrationPathWrap">
 
-   <div class="integrationPathWrap">
+      <div class="integrationColumn">
+        <div class="integrationTopLabel">inner</div>
+        <div class="integrationSide integrationSideLeft">
+          <div id="integrationInner" style="display:none;">0</div>
+        </div>
+      </div>
 
-  <div class="integrationColumn">
-    <div class="integrationTopLabel">inner</div>
+      <div class="integrationColumn">
+        <div class="integrationTopLabel">path</div>
+        <div class="integrationPathCenter"></div>
+      </div>
 
-    <div class="integrationSide integrationSideLeft">
-      <div id="integrationInner" style="display:none;">0</div>
+      <div class="integrationColumn">
+        <div class="integrationTopLabel">outer</div>
+        <div class="integrationSide integrationSideRight">
+          <div id="integrationOuter" style="display:none;">0</div>
+        </div>
+      </div>
+
     </div>
-  </div>
 
-  <div class="integrationColumn">
-    <div class="integrationTopLabel">path</div>
-
-    <div class="integrationPathCenter"></div>
-  </div>
-
-  <div class="integrationColumn">
-    <div class="integrationTopLabel">outer</div>
-
-    <div class="integrationSide integrationSideRight">
-      <div id="integrationOuter" style="display:none;">0</div>
+    <div class="integrationBottom">
+      <button class="reflectionNextBtn" id="integrationDoneBtn" type="button">done</button>
     </div>
-  </div>
-
-</div>
-    
-  <div class="integrationBottom">
-    <button class="reflectionNextBtn" id="integrationDoneBtn" type="button">done</button>
   </div>
 </div>
     
@@ -1723,18 +1720,6 @@ function showReflectionSummaryMode(){
   if (reflectionScreen) reflectionScreen.classList.add("isSummaryMode");
   if (reflectionScoreDisplay) reflectionScoreDisplay.textContent = String(reflectionScore);
   if (reflectionNextBtn) reflectionNextBtn.textContent = "continue";
-}
-
-function calculateReflectionScore(){
-  reflectionScore =
-    (reflectionData.supportive * 1) +
-    (reflectionData.toward * 1) +
-    (reflectionData.paused * 1) +
-    (reflectionData.harsh * -1) +
-    (reflectionData.reacted * -2) +
-    (reflectionData.hurtful * -3);
-
-  return reflectionScore;
 }
     
 if (relearnBtn && personalBaseline){
