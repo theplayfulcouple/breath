@@ -1720,7 +1720,7 @@ function updateIntegrationPathway(){
   const innerScore = Math.max(0, Math.min(10, pathwayInnerScore));
   const outerScore = Math.max(0, Math.min(10, pathwayOuterScore));
 
-  const innerFlex = 2.2 - (innerScore * 0.14);
+  let innerFlex = 2.2 - (innerScore * 0.22);
   const pathFlex = 1.0;
 
   let outerFlex = 2.2 - (outerScore * 0.22);
@@ -1730,8 +1730,9 @@ function updateIntegrationPathway(){
   }
 
   if (integrationInnerColumn){
-    integrationInnerColumn.style.flex = String(innerFlex);
-  }
+  integrationInnerColumn.style.flex = String(innerFlex);
+  integrationInnerColumn.style.opacity = innerScore >= 10 ? "0" : "1";
+}
 
   if (integrationPathColumn){
     integrationPathColumn.style.flex = String(pathFlex);
