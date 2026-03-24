@@ -1235,22 +1235,27 @@ const integrationOuterColumn = document.getElementById("integrationOuterColumn")
 let reflectionLevel = 0.5; // starts half full
 
 const reflectionLiquid = document.getElementById("reflectionLiquid");
+const reflectionLowLine = document.querySelector(".reflectionLowLine");
 
 function updateReflectionLiquid(){
   if (!reflectionLiquid) return;
 
   const percent = Math.max(0, Math.min(1, reflectionLevel));
   reflectionLiquid.style.height = (percent * 100) + "%";
-reflectionLiquid.style.transform = "scaleY(1.02)";
+  reflectionLiquid.style.transform = "scaleY(1.02)";
 
-setTimeout(() => {
-  reflectionLiquid.style.transform = "scaleY(1)";
-}, 120);
+  setTimeout(() => {
+    reflectionLiquid.style.transform = "scaleY(1)";
+  }, 120);
 
   if (percent < 0.33){
     reflectionLiquid.classList.add("isLow");
   } else {
     reflectionLiquid.classList.remove("isLow");
+  }
+
+  if (reflectionLowLine){
+    reflectionLowLine.style.display = percent >= 0.98 ? "none" : "block";
   }
 }
 const saveSessionBtn = document.getElementById("saveSessionBtn");
@@ -1666,6 +1671,9 @@ function renderReflectionStep(){
 
   if (reflectionScreen) reflectionScreen.classList.remove("isSummaryMode");
   reflectionSummaryMode = false;
+
+  reflectionLevel = 0.5;
+  updateReflectionLiquid();
 
   if (reflectionTopTitle) reflectionTopTitle.textContent = step.title;
   if (reflectionQuestion) reflectionQuestion.textContent = step.question;
