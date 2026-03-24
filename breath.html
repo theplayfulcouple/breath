@@ -1625,6 +1625,8 @@ const summaryResilienceBars = document.getElementById("summaryResilienceBars");
     let pendingSession = null;
   let currentSessionScore = "";
 let reflectionScore = 0;
+let pathwayInnerScore = 0;
+let pathwayOuterScore = 0;
 let reflectionStepIndex = 0;
 let reflectionSummaryMode = false;
 
@@ -1689,8 +1691,32 @@ function calculateReflectionScore(){
   return reflectionScore;
 }
 
+function translateReflectionToPathwayScore(rawScore){
+  const minRaw = -6;
+  const maxRaw = 6;
+
+  const clamped = Math.max(minRaw, Math.min(maxRaw, rawScore));
+  const normalised = (clamped - minRaw) / (maxRaw - minRaw);
+
+  return Math.round(normalised * 10);
+}
+
+function translateTrainingToPathwayScore(rawScore){
+  const clamped = Math.max(0, Math.min(10, Number(rawScore) || 0));
+  return Math.round(clamped);
+}
+
 function showReflectionSummaryMode(){
   calculateReflectionScore();
+
+  pathwayOuterScore = translateReflectionToPathwayScore(reflectionScore);
+
+  if (pendingSession){
+    pathwayInnerScore = translateTrainingToPathwayScore(getSessionScore(pendingSession));
+    pendingSession.reflectionScore = reflectionScore;
+    pendingSession.pathwayInnerScore = pathwayInnerScore;
+    pendingSession.pathwayOuterScore = pathwayOuterScore;
+  }
 
   reflectionSummaryMode = true;
 
@@ -2502,25 +2528,28 @@ else resilienceBars = 1;
       debugResilience.textContent =
         (avgRecoveryMs / 1000).toFixed(1) + "s";
 
-           pendingSession = {
+                pendingSession = {
         resonance: Number((resonanceAverage * 10).toFixed(1)),
         drifts: stabilityDrops.length,
         resilience: avgRecoveryMs / 1000,
         duration: elapsedMs / 1000,
-        reflectionScore: null
+        reflectionScore: null,
+        pathwayInnerScore: null,
+        pathwayOuterScore: null
       };
 
     } else {
       debugResilience.textContent = "—";
 
-           pendingSession = {
+               pendingSession = {
         resonance: Number((resonanceAverage * 10).toFixed(1)),
         drifts: stabilityDrops.length,
         resilience: 0,
         duration: elapsedMs / 1000,
-        reflectionScore: null
+        reflectionScore: null,
+        pathwayInnerScore: null,
+        pathwayOuterScore: null
       };
-    }
 
     currentSessionScore = String(getSessionScore(pendingSession));
 
@@ -2661,12 +2690,12 @@ if (integrationExit){
 
     if (reflectionSummaryMode){
 
-      if (integrationInner && pendingSession){
-        integrationInner.textContent = String(pendingSession.resonance);
+      if (integrationInner){
+        integrationInner.textContent = String(pathwayInnerScore);
       }
 
       if (integrationOuter){
-        integrationOuter.textContent = String(reflectionScore);
+        integrationOuter.textContent = String(pathwayOuterScore);
       }
 
       if (reflectionScreen) reflectionScreen.style.display = "none";
@@ -2691,6 +2720,8 @@ if (integrationExit){
 
     reflectionStepIndex = 0;
     reflectionScore = 0;
+    pathwayInnerScore = 0;
+    pathwayOuterScore = 0;
     reflectionSummaryMode = false;
 
     reflectionData = {
