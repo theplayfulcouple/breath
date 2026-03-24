@@ -1692,14 +1692,16 @@ function translateReflectionToPathwayScore(rawScore){
   const minRaw = -6;
   const maxRaw = 6;
 
-  const clamped = Math.max(minRaw, Math.min(maxRaw, rawScore));
+  const safe = Number(rawScore) || 0;
+  const clamped = Math.max(minRaw, Math.min(maxRaw, safe));
   const normalised = (clamped - minRaw) / (maxRaw - minRaw);
 
   return Math.round(normalised * 10);
 }
 
 function translateTrainingToPathwayScore(rawScore){
-  const clamped = Math.max(0, Math.min(10, Number(rawScore) || 0));
+  const safe = Number(rawScore) || 0;
+  const clamped = Math.max(0, Math.min(10, safe));
   return Math.round(clamped);
 }
 
