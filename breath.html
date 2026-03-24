@@ -2484,21 +2484,17 @@ const debugResilience = document.getElementById("debugResilience");
 if (summaryResilienceBars){
 
   let resilienceBars = 3;
-  let resilienceText = "avgRecovery: none | recoveries: 0";
 
   if (recoveryTimes.length > 0){
 
     const avgRecoveryMs =
       recoveryTimes.reduce((a, b) => a + b, 0) / recoveryTimes.length;
 
-   if (avgRecoveryMs < 700) resilienceBars = 5;
-else if (avgRecoveryMs < 950) resilienceBars = 4;
-else if (avgRecoveryMs < 1400) resilienceBars = 3;
-else if (avgRecoveryMs < 2200) resilienceBars = 2;
-else resilienceBars = 1;
-
-    resilienceText =
-      "avgRecovery: " + Math.round(avgRecoveryMs) + "ms | recoveries: " + recoveryTimes.length;
+    if (avgRecoveryMs < 700) resilienceBars = 5;
+    else if (avgRecoveryMs < 950) resilienceBars = 4;
+    else if (avgRecoveryMs < 1400) resilienceBars = 3;
+    else if (avgRecoveryMs < 2200) resilienceBars = 2;
+    else resilienceBars = 1;
   }
 
   summaryResilienceBars.textContent =
@@ -2513,7 +2509,7 @@ else resilienceBars = 1;
       debugResilience.textContent =
         (avgRecoveryMs / 1000).toFixed(1) + "s";
 
-                pendingSession = {
+      pendingSession = {
         resonance: Number((resonanceAverage * 10).toFixed(1)),
         drifts: stabilityDrops.length,
         resilience: avgRecoveryMs / 1000,
@@ -2526,7 +2522,7 @@ else resilienceBars = 1;
     } else {
       debugResilience.textContent = "—";
 
-               pendingSession = {
+      pendingSession = {
         resonance: Number((resonanceAverage * 10).toFixed(1)),
         drifts: stabilityDrops.length,
         resilience: 0,
@@ -2535,6 +2531,7 @@ else resilienceBars = 1;
         pathwayInnerScore: null,
         pathwayOuterScore: null
       };
+    }
 
     currentSessionScore = String(getSessionScore(pendingSession));
 
