@@ -2670,14 +2670,13 @@ if (summaryResilienceBars){
       };
     }
 
-              expandSessionScore = getExpandOnlySessionScore();
+                  expandSessionScore = getExpandOnlySessionScore();
     liveExpandScore = expandSessionScore;
     currentSessionScore = String(expandSessionScore);
 
-    iif (summaryScoreOverlay){
-  const mappedReflection = translateReflectionToPathwayScore(reflectionScore);
-  summaryScoreOverlay.textContent = String(mappedReflection);
-}
+    if (summaryScoreOverlay){
+      summaryScoreOverlay.textContent = currentSessionScore;
+    }
   }
 }
 
