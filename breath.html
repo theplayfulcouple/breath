@@ -1700,8 +1700,8 @@ function calculateReflectionScore(){
 }
 
 function translateReflectionToPathwayScore(rawScore){
-  const minRaw = -6;
-  const maxRaw = 6;
+  const minRaw = -18;
+  const maxRaw = 18;
 
   const safe = Number(rawScore) || 0;
   const clamped = Math.max(minRaw, Math.min(maxRaw, safe));
