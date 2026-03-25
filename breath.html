@@ -1714,9 +1714,13 @@ function translateReflectionToPathwayScore(rawScore){
 }
 
 function translateTrainingToPathwayScore(rawScore){
+  const minRaw = 0;
+  const maxRaw = 10;
+
   const safe = Number(rawScore) || 0;
-  const clamped = Math.max(0, Math.min(10, safe));
-  return Math.round(clamped);
+  const clamped = Math.max(minRaw, Math.min(maxRaw, safe));
+
+  return Math.floor(clamped);
 }
 
 function updateIntegrationPathway(){
