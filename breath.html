@@ -246,6 +246,25 @@
   transition: opacity 2000ms ease;
 }
 
+.liveCapacityBadge{
+  position:absolute;
+  top:18px;
+  left:18px;
+  z-index:8;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(0,0,0,0.35);
+  color:rgba(255,255,255,0.92);
+  font:16px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  letter-spacing:0.01em;
+  backdrop-filter: blur(6px);
+  user-select:none;
+  pointer-events:none;
+  opacity:0;
+  transition: opacity 300ms ease;
+}
+
     /* -----------------------------
        Resonance bars (single source of truth)
        ----------------------------- */
@@ -794,10 +813,12 @@ transition:opacity 520ms ease;
     <div id="expandBox"></div>
     <div id="firefly"></div>
 
-    <!-- Resonance bars -->
+        <!-- Resonance bars -->
     <div class="resWrap">
       <div class="resBars" id="resBars"></div>
     </div>
+
+    <div class="liveCapacityBadge" id="liveCapacityBadge" style="display:none;">0</div>
 
  <button class="expandBtn" id="expandBtn" type="button">expand</button>
 <button class="relearnBtn" id="relearnBtn" type="button" style="display:none;">relearn</button>
@@ -1237,6 +1258,7 @@ const integrationSideLeft = document.querySelector(".integrationSideLeft");
 const integrationSideRight = document.querySelector(".integrationSideRight");
 const integrationInnerDebug = document.getElementById("integrationInnerDebug");
 const integrationOuterDebug = document.getElementById("integrationOuterDebug");
+const liveCapacityBadge = document.getElementById("liveCapacityBadge");
 
 let reflectionLevel = 0.5; // starts half full
 
@@ -2204,8 +2226,12 @@ const level = updateCapacityFromCoherence(raw);
     chaseLowest = raw;
   }
 
-  const level = updateCapacityFromCoherence(raw);
+    const level = updateCapacityFromCoherence(raw);
   setResonanceLevel(level);
+
+  if (expandMode && liveCapacityBadge){
+    liveCapacityBadge.textContent = String(level);
+  }
 
 if (recoveryPending){
   const recoveryMs = now - recoveryStartTime;
@@ -2408,45 +2434,62 @@ if (expandBtn){
 
     expandBtn.classList.toggle("active", expandMode);
 
-  if (expandMode){
+    if (expandMode){
 
-  const startBtn = document.getElementById("sensorBtn");
-  const sceneEl = document.querySelector(".scene");
+      if (liveCapacityBadge){
+        liveCapacityBadge.textContent = String(Math.floor(capacityLevel));
+        liveCapacityBadge.style.display = "";
+        requestAnimationFrame(() => {
+          liveCapacityBadge.style.opacity = "1";
+        });
+      }
 
-  if (startBtn && startBtn.style.display !== "none"){
-    const rect = startBtn.getBoundingClientRect();
-    expandBox.style.left = rect.left + rect.width / 2 + "px";
-    expandBox.style.top  = rect.bottom + 40 + "px";
-  } else {
-    const sceneRect = sceneEl.getBoundingClientRect();
-    expandBox.style.left = sceneRect.left + sceneRect.width / 2 + "px";
-    expandBox.style.top  = sceneRect.top + sceneRect.height / 2 + 40 + "px";
-  }
+      const startBtn = document.getElementById("sensorBtn");
+      const sceneEl = document.querySelector(".scene");
 
-expandBox.style.opacity = "1";
+      if (startBtn && startBtn.style.display !== "none"){
+        const rect = startBtn.getBoundingClientRect();
+        expandBox.style.left = rect.left + rect.width / 2 + "px";
+        expandBox.style.top  = rect.bottom + 40 + "px";
+      } else {
+        const sceneRect = sceneEl.getBoundingClientRect();
+        expandBox.style.left = sceneRect.left + sceneRect.width / 2 + "px";
+        expandBox.style.top  = sceneRect.top + sceneRect.height / 2 + 40 + "px";
+      }
 
-if (fireflyDelayTimeout) clearTimeout(fireflyDelayTimeout);
+      expandBox.style.opacity = "1";
 
-firefly.style.opacity = "0";
-firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
+      if (fireflyDelayTimeout) clearTimeout(fireflyDelayTimeout);
 
-fireflyDelayTimeout = setTimeout(() => {
-  if (!expandMode) return;
- spawnFirefly("first");
-}, 4000);
+      firefly.style.opacity = "0";
+      firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
 
-} else {
+      fireflyDelayTimeout = setTimeout(() => {
+        if (!expandMode) return;
+        spawnFirefly("first");
+      }, 4000);
 
-  expandBox.style.opacity = "0";
-  firefly.style.opacity = "0";
-  firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
+    } else {
 
-  if (fireflyDelayTimeout) {
-    clearTimeout(fireflyDelayTimeout);
-    fireflyDelayTimeout = null;
-  }
+      expandBox.style.opacity = "0";
+      firefly.style.opacity = "0";
+      firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
 
-}
+      if (liveCapacityBadge){
+        liveCapacityBadge.style.opacity = "0";
+        setTimeout(() => {
+          if (!expandMode){
+            liveCapacityBadge.style.display = "none";
+          }
+        }, 300);
+      }
+
+      if (fireflyDelayTimeout) {
+        clearTimeout(fireflyDelayTimeout);
+        fireflyDelayTimeout = null;
+      }
+
+    }
 
   });
 }
@@ -2462,6 +2505,11 @@ fireflyDelayTimeout = setTimeout(() => {
   expandBox.style.opacity = "0";
   firefly.style.opacity = "0";
   firefly.style.transform = "translate(-50%,-50%) scale(0.7)";
+
+  if (liveCapacityBadge){
+    liveCapacityBadge.style.opacity = "0";
+    liveCapacityBadge.style.display = "none";
+  }
 
   const resWrap = document.querySelector(".resWrap");
   const calLabel = document.getElementById("calibrationLabel");
