@@ -941,9 +941,10 @@ transition:opacity 520ms ease;
     <div class="integrationPathCenter"></div>
   </div>
 
-  <div class="integrationColumn" id="integrationOuterColumn">
+   <div class="integrationColumn" id="integrationOuterColumn">
     <div class="integrationTopLabel">outer</div>
     <div class="integrationSide integrationSideRight">
+      <div class="integrationSideValue" id="integrationOuterDebug">0</div>
       <div id="integrationOuter" style="display:none;">0</div>
     </div>
   </div>
@@ -1235,6 +1236,7 @@ const integrationOuterColumn = document.getElementById("integrationOuterColumn")
 const integrationSideLeft = document.querySelector(".integrationSideLeft");
 const integrationSideRight = document.querySelector(".integrationSideRight");
 const integrationInnerDebug = document.getElementById("integrationInnerDebug");
+const integrationOuterDebug = document.getElementById("integrationOuterDebug");
 
 let reflectionLevel = 0.5; // starts half full
 
@@ -2763,8 +2765,12 @@ if (reflectionNextBtn){
         integrationInnerDebug.textContent = String(pathwayInnerScore);
       }
 
-      if (integrationOuter){
+            if (integrationOuter){
         integrationOuter.textContent = String(pathwayOuterScore);
+      }
+
+      if (integrationOuterDebug){
+        integrationOuterDebug.textContent = String(pathwayOuterScore);
       }
 
       updateIntegrationPathway();
