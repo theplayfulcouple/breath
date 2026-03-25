@@ -1705,14 +1705,12 @@ function calculateReflectionScore(){
 }
 
 function translateReflectionToPathwayScore(rawScore){
-  const minRaw = -18;
-  const maxRaw = 18;
-
   const safe = Number(rawScore) || 0;
-  const clamped = Math.max(minRaw, Math.min(maxRaw, safe));
-  const normalised = (clamped - minRaw) / (maxRaw - minRaw);
 
-  return Math.round(normalised * 10);
+  if (safe <= 0) return 0;
+  if (safe >= 18) return 10;
+
+  return Math.round((safe / 18) * 10);
 }
 
 function translateTrainingToPathwayScore(rawScore){
@@ -2579,13 +2577,27 @@ if (summaryResilienceBars){
       };
     }
 
-       currentSessionScore = String(getSessionScore(pendingSession));
+          currentSessionScore = String(getSessionScore(pendingSession));
 
+    let expandResonance = 0;
     if (moveSamples > 0){
+      expandResonance = Number(((moveResonanceSum / moveSamples) * 10).toFixed(1));
+    }
+
+    let expandResilience = 0;
+    if (recoveryTimes.length > 0){
+      expandResilience =
+        recoveryTimes.reduce((a, b) => a + b, 0) / recoveryTimes.length / 1000;
+    }
+
+    const usedExpand =
+      moveSamples > 0 || stabilityDrops.length > 0 || recoveryTimes.length > 0;
+
+    if (usedExpand){
       const expandOnlySession = {
-        resonance: Number(((moveResonanceSum / moveSamples) * 10).toFixed(1)),
+        resonance: expandResonance,
         drifts: stabilityDrops.length,
-        resilience: pendingSession.resilience
+        resilience: expandResilience
       };
 
       expandSessionScore = getSessionScore(expandOnlySession);
