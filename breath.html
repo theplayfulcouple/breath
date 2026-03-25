@@ -1752,7 +1752,7 @@ function showReflectionSummaryMode(){
   calculateReflectionScore();
 
   pathwayOuterScore = translateReflectionToPathwayScore(reflectionScore);
-  pathwayInnerScore = translateTrainingToPathwayScore(currentSessionScore);
+ pathwayInnerScore = 2;   // test low
 
   if (pendingSession){
     pendingSession.reflectionScore = reflectionScore;
