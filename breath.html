@@ -1723,28 +1723,34 @@ function updateIntegrationPathway(){
   const innerScore = Math.max(0, Math.min(10, pathwayInnerScore));
   const outerScore = Math.max(0, Math.min(10, pathwayOuterScore));
 
-  let innerFlex = 2.2 - (innerScore * 0.22);
-  const pathFlex = 1.0;
+  const innerBlocked = 10 - innerScore;
+  const outerBlocked = 10 - outerScore;
 
-  let outerFlex = 2.2 - (outerScore * 0.22);
+  let innerFlex = 0.25 + (innerBlocked * 0.22);
+  const pathFlex = 1.0;
+  let outerFlex = 0.25 + (outerBlocked * 0.22);
+
+  if (innerScore >= 10){
+    innerFlex = 0.02;
+  }
 
   if (outerScore >= 10){
     outerFlex = 0.02;
   }
 
   if (integrationInnerColumn){
-  integrationInnerColumn.style.flex = String(innerFlex);
-  integrationInnerColumn.style.opacity = innerScore >= 10 ? "0" : "1";
-}
+    integrationInnerColumn.style.flex = String(innerFlex);
+    integrationInnerColumn.style.opacity = innerScore >= 10 ? "0" : "1";
+  }
 
   if (integrationPathColumn){
     integrationPathColumn.style.flex = String(pathFlex);
   }
 
- if (integrationOuterColumn){
-  integrationOuterColumn.style.flex = String(outerFlex);
-  integrationOuterColumn.style.opacity = outerScore >= 10 ? "0" : "1";
-}
+  if (integrationOuterColumn){
+    integrationOuterColumn.style.flex = String(outerFlex);
+    integrationOuterColumn.style.opacity = outerScore >= 10 ? "0" : "1";
+  }
 }
 
 function showReflectionSummaryMode(){
