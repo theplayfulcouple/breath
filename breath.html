@@ -1633,6 +1633,7 @@ const summaryResilienceBars = document.getElementById("summaryResilienceBars");
     let fireflyDelayTimeout = null;
     let pendingSession = null;
   let currentSessionScore = "";
+let expandSessionScore = 0;
 let reflectionScore = 0;
 let pathwayInnerScore = 0;
 let pathwayOuterScore = 0;
@@ -1752,7 +1753,7 @@ function showReflectionSummaryMode(){
   calculateReflectionScore();
 
   pathwayOuterScore = translateReflectionToPathwayScore(reflectionScore);
-pathwayInnerScore = translateTrainingToPathwayScore(currentSessionScore);
+pathwayInnerScore = translateTrainingToPathwayScore(expandSessionScore);
 
   if (pendingSession){
     pendingSession.reflectionScore = reflectionScore;
