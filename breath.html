@@ -1723,20 +1723,23 @@ function updateIntegrationPathway(){
   const innerScore = Math.max(0, Math.min(10, pathwayInnerScore));
   const outerScore = Math.max(0, Math.min(10, pathwayOuterScore));
 
-  const innerBlocked = 10 - innerScore;
-  const outerBlocked = 10 - outerScore;
+  function scoreToFlex(score){
+    if (score >= 10) return 0.02;
+    if (score >= 9) return 0.08;
+    if (score >= 8) return 0.14;
+    if (score >= 7) return 0.22;
+    if (score >= 6) return 0.34;
+    if (score >= 5) return 0.52;
+    if (score >= 4) return 0.82;
+    if (score >= 3) return 1.25;
+    if (score >= 2) return 1.75;
+    if (score >= 1) return 2.15;
+    return 2.45;
+  }
 
-  let innerFlex = 0.25 + (innerBlocked * 0.22);
+  const innerFlex = scoreToFlex(innerScore);
+  const outerFlex = scoreToFlex(outerScore);
   const pathFlex = 1.0;
-  let outerFlex = 0.25 + (outerBlocked * 0.22);
-
-  if (innerScore >= 10){
-    innerFlex = 0.02;
-  }
-
-  if (outerScore >= 10){
-    outerFlex = 0.02;
-  }
 
   if (integrationInnerColumn){
     integrationInnerColumn.style.flex = String(innerFlex);
