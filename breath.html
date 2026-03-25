@@ -1358,6 +1358,34 @@ function formatDuration(totalSeconds){
   return resonancePoints + stabilityPoints + resiliencePoints;
 }
 
+function getExpandOnlySessionScore(){
+  let expandResonance = 0;
+  if (moveSamples > 0){
+    expandResonance = Number(((moveResonanceSum / moveSamples) * 10).toFixed(1));
+  }
+
+  let expandResilience = 0;
+  if (recoveryTimes.length > 0){
+    expandResilience =
+      recoveryTimes.reduce((a, b) => a + b, 0) / recoveryTimes.length / 1000;
+  }
+
+  const usedExpand =
+    moveSamples > 0 || stabilityDrops.length > 0 || recoveryTimes.length > 0;
+
+  if (!usedExpand){
+    return 0;
+  }
+
+  const expandOnlySession = {
+    resonance: expandResonance,
+    drifts: stabilityDrops.length,
+    resilience: expandResilience
+  };
+
+  return getSessionScore(expandOnlySession);
+}
+
 function buildWeekViewsFromSessions(){
   const sessions = getSavedSessions();
   const now = new Date();
@@ -1658,6 +1686,7 @@ const summaryResilienceBars = document.getElementById("summaryResilienceBars");
     let pendingSession = null;
   let currentSessionScore = "";
 let expandSessionScore = 0;
+let liveExpandScore = 0;
 let reflectionScore = 0;
 let pathwayInnerScore = 0;
 let pathwayOuterScore = 0;
@@ -2226,11 +2255,12 @@ const level = updateCapacityFromCoherence(raw);
     chaseLowest = raw;
   }
 
-    const level = updateCapacityFromCoherence(raw);
+      const level = updateCapacityFromCoherence(raw);
   setResonanceLevel(level);
 
   if (expandMode && liveCapacityBadge){
-    liveCapacityBadge.textContent = String(level);
+    liveExpandScore = getExpandOnlySessionScore();
+    liveCapacityBadge.textContent = String(liveExpandScore);
   }
 
 if (recoveryPending){
@@ -2640,33 +2670,9 @@ if (summaryResilienceBars){
       };
     }
 
-          currentSessionScore = String(getSessionScore(pendingSession));
-
-    let expandResonance = 0;
-    if (moveSamples > 0){
-      expandResonance = Number(((moveResonanceSum / moveSamples) * 10).toFixed(1));
-    }
-
-    let expandResilience = 0;
-    if (recoveryTimes.length > 0){
-      expandResilience =
-        recoveryTimes.reduce((a, b) => a + b, 0) / recoveryTimes.length / 1000;
-    }
-
-    const usedExpand =
-      moveSamples > 0 || stabilityDrops.length > 0 || recoveryTimes.length > 0;
-
-    if (usedExpand){
-      const expandOnlySession = {
-        resonance: expandResonance,
-        drifts: stabilityDrops.length,
-        resilience: expandResilience
-      };
-
-      expandSessionScore = getSessionScore(expandOnlySession);
-    } else {
-      expandSessionScore = 0;
-    }
+              expandSessionScore = getExpandOnlySessionScore();
+    liveExpandScore = expandSessionScore;
+    currentSessionScore = String(expandSessionScore);
 
     if (summaryScoreOverlay){
       summaryScoreOverlay.textContent = currentSessionScore;
