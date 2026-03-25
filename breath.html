@@ -1817,7 +1817,7 @@ function showReflectionSummaryMode(){
   calculateReflectionScore();
 
   pathwayOuterScore = translateReflectionToPathwayScore(reflectionScore);
-pathwayInnerScore = translateTrainingToPathwayScore(expandSessionScore);
+  pathwayInnerScore = translateTrainingToPathwayScore(expandSessionScore);
 
   if (pendingSession){
     pendingSession.reflectionScore = reflectionScore;
@@ -1828,7 +1828,7 @@ pathwayInnerScore = translateTrainingToPathwayScore(expandSessionScore);
   reflectionSummaryMode = true;
 
   if (reflectionScreen) reflectionScreen.classList.add("isSummaryMode");
-  if (reflectionScoreDisplay) reflectionScoreDisplay.textContent = String(reflectionScore);
+  if (reflectionScoreDisplay) reflectionScoreDisplay.textContent = String(pathwayOuterScore);
   if (reflectionNextBtn) reflectionNextBtn.textContent = "continue";
 }
     
@@ -2674,9 +2674,10 @@ if (summaryResilienceBars){
     liveExpandScore = expandSessionScore;
     currentSessionScore = String(expandSessionScore);
 
-    if (summaryScoreOverlay){
-      summaryScoreOverlay.textContent = currentSessionScore;
-    }
+    iif (summaryScoreOverlay){
+  const mappedReflection = translateReflectionToPathwayScore(reflectionScore);
+  summaryScoreOverlay.textContent = String(mappedReflection);
+}
   }
 }
 
