@@ -85,8 +85,8 @@
       padding:16px 22px;
       border:none;
       border-radius:26px;
-      background:rgba(255,255,255,0.92);
-      color:#2a0a0a;
+     background:rgba(255,255,255,0.18);
+color:#7a1a1a;
       font-size:18px;
       line-height:1.2;
       cursor:pointer;
@@ -107,6 +107,12 @@
       padding:8px 12px;
     }
 
+.secondaryRow{
+  width:100%;
+  display:flex;
+  justify-content:flex-end;
+}
+    
     .topBar{
       position:absolute;
       top:22px;
@@ -147,31 +153,24 @@
     <div class="vignette"></div>
 
     <div class="topBar">
-      relationship pathway
+      Relationship Pathway
     </div>
 
     <div class="content">
       <div class="introWrap">
 
-        <div class="introText">
-          This helps you see the patterns that shape conflict, and begin shifting them through practice.
-        </div>
-
         <button class="primaryBtn" onclick="goBaseline()">
           See your pattern<br>(7 days)
         </button>
 
-        <button class="secondaryBtn" onclick="goTraining()">
-          Start training now
-        </button>
+        <div class="secondaryRow">
+  <button class="secondaryBtn" onclick="goTraining()">
+    Skip →
+  </button>
+</div>
 
       </div>
     </div>
-
-    <div class="bottomNote">
-      baseline first or begin the training directly
-    </div>
-  </div>
 
   <script>
     function goBaseline(){
