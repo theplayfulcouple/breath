@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Start</title>
+
+  <style>
+    body{
+      margin:0;
+      font-family:sans-serif;
+      background:#2a0a0a;
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+    }
+
+    .wrap{
+      width:80%;
+      max-width:320px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:20px;
+    }
+
+    .title{
+      text-align:center;
+      font-size:18px;
+      line-height:1.4;
+      opacity:0.9;
+    }
+
+    .primary{
+      width:100%;
+      padding:14px;
+      border-radius:12px;
+      border:none;
+      background:#ffffff;
+      color:#2a0a0a;
+      font-size:16px;
+    }
+
+    .secondary{
+      background:none;
+      border:none;
+      color:#ffffff;
+      opacity:0.6;
+      font-size:14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="wrap">
+
+    <div class="title">
+      This helps you see and shift the patterns in your relationship.
+    </div>
+
+    <button class="primary" onclick="goBaseline()">
+      See your pattern (7 days)
+    </button>
+
+    <button class="secondary" onclick="goTraining()">
+      Start training now
+    </button>
+
+  </div>
+
+  <script>
+    function goBaseline(){
+      window.location.href = "baseline.html";
+    }
+
+    function goTraining(){
+      window.location.href = "index.html"; // your current app
+    }
+  </script>
+
+</body>
+</html>
