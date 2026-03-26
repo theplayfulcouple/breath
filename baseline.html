@@ -309,26 +309,107 @@ color:#ffffff;
         How present was the inner critic today?
       </div>
 
-      <div class="baselineNextWrap">
-        <button class="baselineNextBtn" type="button">next</button>
+          <div class="baselineNextWrap">
+        <button class="baselineNextBtn" id="baselineNextBtn" type="button">next</button>
       </div>
 
-      <div class="baselineScaleWrap">
-        <button class="baselineChoiceBtn" type="button">0</button>
-        <button class="baselineChoiceBtn" type="button">1</button>
-        <button class="baselineChoiceBtn" type="button">2</button>
-        <button class="baselineChoiceBtn" type="button">3</button>
+            <div class="baselineScaleWrap">
+        <button class="baselineChoiceBtn" id="baselineChoice0" type="button">0</button>
+        <button class="baselineChoiceBtn" id="baselineChoice1" type="button">1</button>
+        <button class="baselineChoiceBtn" id="baselineChoice2" type="button">2</button>
+        <button class="baselineChoiceBtn" id="baselineChoice3" type="button">3</button>
       </div>
     </div>
 
-     <script>
+         <script>
+    const baselineQuestions = [
+      "How present was the inner critic today?",
+      "How activated did conflict feel today?",
+      "Could you pause before reacting today?"
+    ];
+
+    let baselineDayIndex = 0;
+    let baselineQuestionIndex = 0;
+    let baselineSelectedValue = null;
+
+    const baselineAnswers = [
+      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+      { innerCritic: null, conflictActivation: null, pauseCapacity: null }
+    ];
+
+    const baselineQuestion = document.getElementById("baselineQuestion");
+    const baselineDayLabel = document.getElementById("baselineDayLabel");
+    const baselineNextBtn = document.getElementById("baselineNextBtn");
+
+    const baselineChoiceButtons = [
+      document.getElementById("baselineChoice0"),
+      document.getElementById("baselineChoice1"),
+      document.getElementById("baselineChoice2"),
+      document.getElementById("baselineChoice3")
+    ];
+
+    function updateBaselineScreen(){
+      baselineDayLabel.textContent = "Day " + (baselineDayIndex + 1) + " of 7";
+      baselineQuestion.textContent = baselineQuestions[baselineQuestionIndex];
+      baselineSelectedValue = null;
+    }
+
     function openBaseline(){
+      baselineDayIndex = 0;
+      baselineQuestionIndex = 0;
+      baselineSelectedValue = null;
+      updateBaselineScreen();
       document.getElementById("baselineScreen").style.display = "flex";
     }
 
     function closeBaseline(){
       document.getElementById("baselineScreen").style.display = "none";
     }
+
+    baselineChoiceButtons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        baselineSelectedValue = index;
+      });
+    });
+
+    baselineNextBtn.addEventListener("click", () => {
+      if (baselineSelectedValue === null) return;
+
+      const currentDay = baselineAnswers[baselineDayIndex];
+
+      if (baselineQuestionIndex === 0){
+        currentDay.innerCritic = baselineSelectedValue;
+      }
+
+      if (baselineQuestionIndex === 1){
+        currentDay.conflictActivation = baselineSelectedValue;
+      }
+
+      if (baselineQuestionIndex === 2){
+        currentDay.pauseCapacity = baselineSelectedValue;
+      }
+
+      if (baselineQuestionIndex < 2){
+        baselineQuestionIndex++;
+        updateBaselineScreen();
+        return;
+      }
+
+      if (baselineDayIndex < 6){
+        baselineDayIndex++;
+        baselineQuestionIndex = 0;
+        updateBaselineScreen();
+        return;
+      }
+
+      alert("7 day baseline complete");
+      closeBaseline();
+    });
 
     function goTraining(){
       window.location.href = "index.html";
