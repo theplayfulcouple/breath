@@ -23,14 +23,13 @@
       background:#2a0a0a;
     }
 
-    .field{
-  position:absolute;
-  inset:0;
-  background-image:url("https://static.wixstatic.com/media/2a3958_45829dc354f54bdfa01f4413e2aec0f7~mv2.png");
-  background-size:contain;
-  background-repeat:no-repeat;
-  background-position:center 40%;
-}
+       .field{
+      position:absolute;
+      inset:0;
+      background-image:url("https://static.wixstatic.com/media/2a3958_45829dc354f54bdfa01f4413e2aec0f7~mv2.png");
+      background-size:contain;
+      background-repeat:no-repeat;
+      background-position:center 40%;
       transform:translate3d(0,0,0) scale(1.05);
       filter:saturate(1.07) contrast(1.04) brightness(0.92);
       z-index:1;
@@ -146,6 +145,96 @@ color:#ffffff;
       color:rgba(255,255,255,0.42);
       font-size:13px;
       line-height:1.35;
+
+          .baselineScreen{
+      position:absolute;
+      inset:0;
+      z-index:10;
+      display:none;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      color:rgba(255,255,255,0.95);
+    }
+
+    .baselineQuestion{
+      position:absolute;
+      top:112px;
+      left:50%;
+      transform:translateX(-50%);
+      width:78%;
+      min-height:120px;
+      text-align:center;
+      color:rgba(255,255,255,0.88);
+      font-size:20px;
+      line-height:1.35;
+    }
+
+    .baselineDayLabel{
+      position:absolute;
+      top:86px;
+      left:50%;
+      transform:translateX(-50%);
+      color:rgba(255,255,255,0.58);
+      font-size:14px;
+      line-height:1;
+    }
+
+    .baselineScaleWrap{
+      position:absolute;
+      left:18px;
+      right:18px;
+      bottom:32px;
+      z-index:21;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .baselineChoiceBtn{
+      min-height:56px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(255,255,255,0.12);
+      color:rgba(255,255,255,0.92);
+      font-size:17px;
+      line-height:1;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .baselineNextWrap{
+      position:absolute;
+      left:50%;
+      bottom:104px;
+      transform:translateX(-50%);
+      z-index:21;
+    }
+
+    .baselineNextBtn{
+      padding:8px 16px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(255,255,255,0.12);
+      color:rgba(255,255,255,0.92);
+      font-size:16px;
+      line-height:1;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .baselineBackBtn{
+      border:none;
+      background:transparent;
+      color:rgba(255,255,255,0.92);
+      font-size:16px;
+      line-height:1;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+
     }
   </style>
 </head>
@@ -162,7 +251,7 @@ color:#ffffff;
     <div class="content">
       <div class="introWrap">
 
-        <button class="primaryBtn" onclick="goBaseline()">
+                <button class="primaryBtn" onclick="openBaseline()">
           See your pattern<br>(7 days)
         </button>
 
@@ -175,9 +264,41 @@ color:#ffffff;
       </div>
     </div>
 
-  <script>
-    function goBaseline(){
-      window.location.href = "baseline.html";
+        <div class="baselineScreen" id="baselineScreen">
+      <div class="topBar">
+        <button class="baselineBackBtn" onclick="closeBaseline()" type="button">back</button>
+        <div style="position:absolute; left:0; right:0; text-align:center; pointer-events:none;">
+          7 day baseline
+        </div>
+      </div>
+
+      <div class="baselineDayLabel" id="baselineDayLabel">
+        Day 1 of 7
+      </div>
+
+      <div class="baselineQuestion" id="baselineQuestion">
+        How present was the inner critic today?
+      </div>
+
+      <div class="baselineNextWrap">
+        <button class="baselineNextBtn" type="button">next</button>
+      </div>
+
+      <div class="baselineScaleWrap">
+        <button class="baselineChoiceBtn" type="button">0</button>
+        <button class="baselineChoiceBtn" type="button">1</button>
+        <button class="baselineChoiceBtn" type="button">2</button>
+        <button class="baselineChoiceBtn" type="button">3</button>
+      </div>
+    </div>
+
+     <script>
+    function openBaseline(){
+      document.getElementById("baselineScreen").style.display = "flex";
+    }
+
+    function closeBaseline(){
+      document.getElementById("baselineScreen").style.display = "none";
     }
 
     function goTraining(){
@@ -185,5 +306,6 @@ color:#ffffff;
     }
   </script>
 
+  </div>
 </body>
 </html>
