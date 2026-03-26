@@ -146,7 +146,7 @@ color:#ffffff;
       font-size:13px;
       line-height:1.35;
 
-          .baselineScreen{
+             .baselineScreen{
       position:absolute;
       inset:0;
       z-index:10;
@@ -155,11 +155,12 @@ color:#ffffff;
       align-items:center;
       justify-content:flex-start;
       color:rgba(255,255,255,0.95);
+      background:#2a0a0a;
     }
 
-    .baselineQuestion{
+      .baselineQuestion{
       position:absolute;
-      top:112px;
+      top:160px;
       left:50%;
       transform:translateX(-50%);
       width:78%;
@@ -168,16 +169,18 @@ color:#ffffff;
       color:rgba(255,255,255,0.88);
       font-size:20px;
       line-height:1.35;
+      z-index:21;
     }
 
-    .baselineDayLabel{
+        .baselineDayLabel{
       position:absolute;
-      top:86px;
+      top:126px;
       left:50%;
       transform:translateX(-50%);
       color:rgba(255,255,255,0.58);
       font-size:14px;
       line-height:1;
+      z-index:21;
     }
 
     .baselineScaleWrap{
@@ -225,16 +228,21 @@ color:#ffffff;
       -webkit-tap-highlight-color: transparent;
     }
 
-    .baselineBackBtn{
+        .baselineBackBtn{
+      position:absolute;
+      top:88px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:21;
       border:none;
       background:transparent;
-      color:rgba(255,255,255,0.92);
+      color:rgba(255,255,255,0.72);
       font-size:16px;
       line-height:1;
       cursor:pointer;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
-
+      padding:8px 12px;
     }
   </style>
 </head>
@@ -264,14 +272,18 @@ color:#ffffff;
       </div>
     </div>
 
-        <div class="baselineScreen" id="baselineScreen">
-      <div class="topBar">
-        <button class="baselineBackBtn" onclick="closeBaseline()" type="button">back</button>
-        <div style="position:absolute; left:0; right:0; text-align:center; pointer-events:none;">
-          7 day baseline
-        </div>
+           <div class="baselineScreen" id="baselineScreen">
+      <div class="field"></div>
+      <div class="vignette"></div>
+
+            <div class="topBar">
+        7 day baseline
       </div>
 
+                   <button class="baselineBackBtn" onclick="closeBaseline()" type="button">
+        back
+      </button>
+             
       <div class="baselineDayLabel" id="baselineDayLabel">
         Day 1 of 7
       </div>
