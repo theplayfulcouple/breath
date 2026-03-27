@@ -165,24 +165,33 @@
     0 0 0 1px rgba(255,255,255,0.08) inset;
   overflow:hidden;
 }
-
-.compareFill{
+    .compareGlow{
   position:absolute;
-  bottom:0;
-  left:0;
-  right:0;
-  height:0%;
-  border-radius:28px;
-  background:rgba(180,40,40,0.6);
-  box-shadow:
-    0 0 30px rgba(180,40,40,0.2);
-  transition:height 600ms ease;
+  left:50%;
+  top:50%;
+  width:70px;
+  height:70px;
+  transform:translate(-50%, -50%);
+  border-radius:46% 54% 50% 50% / 52% 48% 56% 44%;
+  background:radial-gradient(
+    circle at 48% 42%,
+    rgba(255,255,255,0.60) 0%,
+    rgba(255,255,255,0.32) 32%,
+    rgba(255,255,255,0.14) 58%,
+    rgba(255,255,255,0.00) 78%
+  );
+  filter:blur(10px);
+  opacity:0.96;
+  transition:
+    width 700ms ease,
+    height 700ms ease,
+    opacity 700ms ease,
+    filter 700ms ease;
 }
 
-.compareFill.now{
-  background:rgba(255,255,255,0.75);
-  box-shadow:
-    0 0 40px rgba(255,255,255,0.25);
+.compareGlow.now{
+  opacity:1;
+  filter:blur(12px);
 }
     
   </style>
@@ -211,12 +220,12 @@
     <div class="compareCylinderWrap">
 
   <div class="compareCylinder" id="thenCylinder">
-    <div class="compareFill" id="thenFill"></div>
-  </div>
+  <div class="compareGlow" id="thenGlow"></div>
+</div>
 
-  <div class="compareCylinder" id="nowCylinder">
-    <div class="compareFill now" id="nowFill"></div>
-  </div>
+<div class="compareCylinder" id="nowCylinder">
+  <div class="compareGlow now" id="nowGlow"></div>
+</div>
 
 </div>
 
@@ -250,19 +259,30 @@
     if (reviewRecord && typeof reviewRecord.patternScore === "number"){
       nowValue.textContent = reviewRecord.patternScore;
     }
-function setCylinderHeights(){
+function setCylinderGlow(){
+  function applyGlow(el, score){
+    const safe = Math.max(0, Math.min(10, Number(score) || 0));
+
+    const size = 46 + (safe * 16);
+    const blur = 8 + (safe * 0.8);
+    const opacity = 0.70 + (safe * 0.03);
+
+    el.style.width = size + "px";
+    el.style.height = size + "px";
+    el.style.filter = "blur(" + blur + "px)";
+    el.style.opacity = String(Math.min(1, opacity));
+  }
+
   if (baselineRecord && typeof baselineRecord.patternScore === "number"){
-    const percent = (baselineRecord.patternScore / 10) * 100;
-    document.getElementById("thenFill").style.height = percent + "%";
+    applyGlow(document.getElementById("thenGlow"), baselineRecord.patternScore);
   }
 
   if (reviewRecord && typeof reviewRecord.patternScore === "number"){
-    const percent = (reviewRecord.patternScore / 10) * 100;
-    document.getElementById("nowFill").style.height = percent + "%";
+    applyGlow(document.getElementById("nowGlow"), reviewRecord.patternScore);
   }
 }
 
-setCylinderHeights();
+setCylinderGlow();
     
   </script>
 
