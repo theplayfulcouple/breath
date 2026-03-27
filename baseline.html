@@ -135,6 +135,49 @@ color:#ffffff;
       letter-spacing:0.01em;
     }
 
+        .weekTrackWrap{
+      position:absolute;
+      top:90px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:4;
+      width:220px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+    }
+
+    .weekTrackBars{
+      width:100%;
+      display:grid;
+      grid-template-columns:repeat(8, 1fr);
+      gap:6px;
+    }
+
+    .weekTrackBar{
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.10);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.08) inset;
+      transition: background 240ms ease, box-shadow 240ms ease, opacity 240ms ease;
+    }
+
+    .weekTrackBar.isFilled{
+      background:rgba(255,255,255,0.28);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.12) inset,
+        0 0 10px rgba(255,255,255,0.08);
+    }
+
+    .weekTrackLabel{
+      color:rgba(255,255,255,0.48);
+      font-size:12px;
+      line-height:1;
+      letter-spacing:0.08em;
+      text-transform:lowercase;
+    }
         .bottomNote{
       position:absolute;
       left:24px;
@@ -421,10 +464,24 @@ color:#ffffff;
       Relationship Pathway
     </div>
 
+        <div class="weekTrackWrap">
+      <div class="weekTrackBars" id="weekTrackBars">
+        <div class="weekTrackBar"></div>
+        <div class="weekTrackBar"></div>
+        <div class="weekTrackBar"></div>
+        <div class="weekTrackBar"></div>
+        <div class="weekTrackBar"></div>
+        <div class="weekTrackBar"></div>
+        <div class="weekTrackBar"></div>
+        <div class="weekTrackBar"></div>
+      </div>
+      <div class="weekTrackLabel">weeks</div>
+    </div>
+    
     <div class="content">
       <div class="introWrap">
 
-                <button class="primaryBtn" onclick="openBaseline()">
+                                <button class="primaryBtn" id="startJourneyBtn" type="button">
           See your pattern<br>(7 days)
         </button>
 
@@ -539,6 +596,71 @@ color:#ffffff;
     const baselineNextBtn = document.getElementById("baselineNextBtn");
     const baselineStatus = document.getElementById("baselineStatus");
 
+                    const startJourneyBtn = document.getElementById("startJourneyBtn");
+    const weekTrackBarEls = document.querySelectorAll(".weekTrackBar");
+
+    let isReviewMode = false;
+
+    function getBaselineRecord(){
+      return JSON.parse(localStorage.getItem("baselineRecord") || "null");
+    }
+
+    function getWeeksElapsedFromBaseline(){
+      const baselineRecord = getBaselineRecord();
+      if (!baselineRecord || !baselineRecord.baselineCompletedAt) return 0;
+
+      const startDate = new Date(baselineRecord.baselineCompletedAt);
+      const nowDate = new Date();
+
+      const diffMs = nowDate - startDate;
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      return Math.max(0, Math.min(8, Math.floor(diffDays / 7) + 1));
+    }
+
+    function beginBaseline(){
+      isReviewMode = false;
+      openBaseline();
+    }
+
+    function beginReview(){
+      isReviewMode = true;
+      openBaseline();
+    }
+
+    function updateWeekTrack(){
+      const filledWeeks = getWeeksElapsedFromBaseline();
+
+      weekTrackBarEls.forEach((bar, index) => {
+        bar.classList.toggle("isFilled", index < filledWeeks);
+      });
+    }
+
+    function updateStartJourneyButton(){
+      const baselineRecord = getBaselineRecord();
+      const filledWeeks = getWeeksElapsedFromBaseline();
+
+      if (!baselineRecord){
+        startJourneyBtn.innerHTML = "See your pattern<br>(7 days)";
+        startJourneyBtn.onclick = beginBaseline;
+        return;
+      }
+
+      if (filledWeeks < 8){
+        startJourneyBtn.textContent = "Start";
+        startJourneyBtn.onclick = goTraining;
+        return;
+      }
+
+      startJourneyBtn.textContent = "Begin 7 day review";
+      startJourneyBtn.onclick = beginReview;
+    }
+
+    function updateStartPageState(){
+      updateWeekTrack();
+      updateStartJourneyButton();
+    }
+
     const baselineChoiceButtons = [
       document.getElementById("baselineChoice0"),
       document.getElementById("baselineChoice1"),
@@ -578,7 +700,7 @@ color:#ffffff;
       baselineNextBtn.textContent = "continue";
     }
 
-       function openBaseline(){
+              function openBaseline(){
       baselineDayIndex = 0;
       baselineQuestionIndex = 0;
       baselineSelectedValue = null;
@@ -696,25 +818,43 @@ baselineNoteBtn.style.display = "inline-block";
       document.getElementById("baselineScreen").style.display = "none";
       document.getElementById("baselineFinal").style.display = "flex";
     }
-                baselineContinueBtn.addEventListener("click", () => {
+                               baselineContinueBtn.addEventListener("click", () => {
   saveBaseline();
+
+  if (isReviewMode){
+    closeBaseline();
+    updateStartPageState();
+    return;
+  }
+
+  updateStartPageState();
   goTraining();
 });
                 
     function saveBaseline(){
-  const baselineRecord = {
-    date: new Date().toISOString(),
+  const nowIso = new Date().toISOString();
+
+  const record = {
+    date: nowIso,
     patternScore: getBaselineFinalScore(),
     relationshipFeel: baselineFeelValue,
     reflection: baselineNoteInput.value.trim()
   };
 
-  localStorage.setItem("baselineRecord", JSON.stringify(baselineRecord));
+  if (isReviewMode){
+    record.reviewCompletedAt = nowIso;
+    localStorage.setItem("reviewRecord", JSON.stringify(record));
+  } else {
+    record.baselineCompletedAt = nowIso;
+    localStorage.setItem("baselineRecord", JSON.stringify(record));
+  }
 }
 
 function goTraining(){
   window.location.href = "breath.html";
 }
+
+updateStartPageState();
   </script>
   </div>
 </body>
