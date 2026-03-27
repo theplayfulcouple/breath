@@ -460,8 +460,8 @@ color:#ffffff;
       <div class="baselineStatus" id="baselineStatus"></div>
 
       <div class="baselineNextWrap">
-        <button class="baselineNextBtn" id="baselineNextBtn" type="button">next</button>
-      </div>
+  <button class="baselineNextBtn" id="baselineContinueBtn" type="button">continue</button>
+</div>
 
       <div class="baselineScaleWrap">
         <button class="baselineChoiceBtn" id="baselineChoice0" type="button">0</button>
@@ -676,6 +676,7 @@ color:#ffffff;
     });
                 const baselineNoteBtn = document.getElementById("baselineNoteBtn");
 const baselineNoteInput = document.getElementById("baselineNoteInput");
+                const baselineContinueBtn = document.getElementById("baselineContinueBtn");
 
 baselineNoteBtn.addEventListener("click", () => {
   baselineNoteInput.style.display = "block";
@@ -698,10 +699,25 @@ baselineNoteBtn.style.display = "inline-block";
       document.getElementById("baselineScreen").style.display = "none";
       document.getElementById("baselineFinal").style.display = "flex";
     }
+                baselineContinueBtn.addEventListener("click", () => {
+  saveBaseline();
+  goTraining();
+});
                 
-    function goTraining(){
-      window.location.href = "index.html";
-    }
+    function saveBaseline(){
+  const baselineRecord = {
+    date: new Date().toISOString(),
+    patternScore: getBaselineFinalScore(),
+    relationshipFeel: baselineFeelValue,
+    reflection: baselineNoteInput.value.trim()
+  };
+
+  localStorage.setItem("baselineRecord", JSON.stringify(baselineRecord));
+}
+
+function goTraining(){
+  window.location.href = "index.html";
+}
   </script>
   </div>
 </body>
