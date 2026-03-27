@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Compare</title>
+
+  <style>
+    html, body {
+      width:100%;
+      height:100%;
+      margin:0;
+      overflow:hidden;
+      background:#2a0a0a;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .scene{
+      position:relative;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 50% 46%,
+          rgb(170,22,22) 0%,
+          rgb(120,10,10) 34%,
+          rgb(70,8,8) 68%,
+          rgb(42,10,10) 100%);
+    }
+
+    .topBar{
+      position:absolute;
+      top:22px;
+      left:18px;
+      right:18px;
+      z-index:4;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:56px;
+      padding:0 18px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(42,10,10,0.55);
+      backdrop-filter: blur(6px);
+      color:rgba(255,255,255,0.92);
+      font-size:17px;
+      letter-spacing:0.01em;
+    }
+
+    .compareNumbers{
+      position:absolute;
+      top:120px;
+      left:50%;
+      transform:translateX(-50%);
+      width:78%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:20px;
+      color:rgba(255,255,255,0.95);
+      z-index:5;
+    }
+
+    .compareNumberBlock{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+    }
+
+    .compareLabel{
+      font-size:14px;
+      line-height:1;
+      color:rgba(255,255,255,0.56);
+      text-transform:lowercase;
+      letter-spacing:0.04em;
+    }
+
+    .compareValue{
+      font-size:48px;
+      line-height:1;
+      color:rgba(255,255,255,0.96);
+      font-weight:300;
+      letter-spacing:-0.03em;
+    }
+
+    .compareArrow{
+      font-size:34px;
+      line-height:1;
+      color:rgba(255,255,255,0.72);
+      transform:translateY(10px);
+    }
+
+    .compareChartWrap{
+      position:absolute;
+      left:0;
+      right:0;
+      top:250px;
+      height:320px;
+      z-index:4;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .compareSvg{
+      width:86%;
+      height:100%;
+      overflow:visible;
+    }
+
+    .weekNumbers{
+      position:absolute;
+      left:50%;
+      bottom:120px;
+      transform:translateX(-50%);
+      width:72%;
+      display:flex;
+      justify-content:space-between;
+      color:rgba(255,255,255,0.34);
+      font-size:12px;
+      line-height:1;
+      z-index:5;
+    }
+
+    .doneWrap{
+      position:absolute;
+      left:50%;
+      bottom:36px;
+      transform:translateX(-50%);
+      z-index:5;
+    }
+
+    .doneBtn{
+      padding:10px 18px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(255,255,255,0.12);
+      color:rgba(255,255,255,0.92);
+      font-size:16px;
+      line-height:1;
+      cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scene">
+    <div class="topBar">
+      compare
+    </div>
+
+    <div class="compareNumbers">
+      <div class="compareNumberBlock">
+        <div class="compareLabel">then</div>
+        <div class="compareValue" id="thenValue">0</div>
+      </div>
+
+      <div class="compareArrow">→</div>
+
+      <div class="compareNumberBlock">
+        <div class="compareLabel">now</div>
+        <div class="compareValue" id="nowValue">0</div>
+      </div>
+    </div>
+
+    <div class="compareChartWrap">
+      <svg class="compareSvg" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="compareLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="rgba(140,20,20,0.95)" />
+            <stop offset="45%" stop-color="rgba(205,110,60,0.95)" />
+            <stop offset="75%" stop-color="rgba(235,200,120,0.95)" />
+            <stop offset="100%" stop-color="rgba(255,255,255,0.96)" />
+          </linearGradient>
+        </defs>
+
+        <path
+          id="comparePath"
+          d="M 30 150 C 110 140, 180 105, 330 70"
+          fill="none"
+          stroke="url(#compareLineGradient)"
+          stroke-width="4"
+          stroke-linecap="round"
+        />
+
+        <circle cx="30" cy="150" r="7" fill="rgba(150,25,25,0.96)" />
+        <circle cx="330" cy="70" r="7" fill="rgba(255,255,255,0.96)" />
+
+        <circle cx="60" cy="145" r="3.5" fill="rgba(170,40,40,0.72)" />
+        <circle cx="95" cy="138" r="3.5" fill="rgba(185,58,40,0.72)" />
+        <circle cx="130" cy="128" r="3.5" fill="rgba(200,78,45,0.72)" />
+        <circle cx="165" cy="116" r="3.5" fill="rgba(214,110,58,0.72)" />
+        <circle cx="200" cy="104" r="3.5" fill="rgba(225,145,72,0.78)" />
+        <circle cx="235" cy="93" r="3.5" fill="rgba(235,178,95,0.82)" />
+        <circle cx="270" cy="83" r="3.5" fill="rgba(245,212,125,0.88)" />
+        <circle cx="300" cy="76" r="3.5" fill="rgba(255,245,220,0.92)" />
+      </svg>
+    </div>
+
+    <div class="weekNumbers">
+      <span>1</span>
+      <span>2</span>
+      <span>3</span>
+      <span>4</span>
+      <span>5</span>
+      <span>6</span>
+      <span>7</span>
+      <span>8</span>
+    </div>
+
+    <div class="doneWrap">
+      <button class="doneBtn" onclick="window.location.href='baseline.html'">done</button>
+    </div>
+  </div>
+
+  <script>
+    const baselineRecord = JSON.parse(localStorage.getItem("baselineRecord") || "null");
+    const reviewRecord = JSON.parse(localStorage.getItem("reviewRecord") || "null");
+
+    const thenValue = document.getElementById("thenValue");
+    const nowValue = document.getElementById("nowValue");
+
+    if (baselineRecord && typeof baselineRecord.patternScore === "number"){
+      thenValue.textContent = baselineRecord.patternScore;
+    }
+
+    if (reviewRecord && typeof reviewRecord.patternScore === "number"){
+      nowValue.textContent = reviewRecord.patternScore;
+    }
+  </script>
+
+</body>
+</html>
