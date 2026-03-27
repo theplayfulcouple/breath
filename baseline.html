@@ -507,7 +507,7 @@ color:#ffffff;
      <div class="baselineNoteWrap">
   <button class="baselineNoteBtn" id="baselineNoteBtn">add reflection</button>
 
-  <textarea class="baselineNoteInput" id="baselineNoteInput" placeholder="Write a few words..." ></textarea>
+  <textarea class="baselineNoteInput" id="baselineNoteInput" placeholder="reflect on your week..." ></textarea>
 </div>
 
 <div class="baselineNextWrap">
@@ -679,6 +679,7 @@ const baselineNoteInput = document.getElementById("baselineNoteInput");
 
 baselineNoteBtn.addEventListener("click", () => {
   baselineNoteInput.style.display = "block";
+  baselineNoteBtn.style.display = "none";
   baselineNoteInput.focus();
 });
                        function showBaselineFinalScore(){
