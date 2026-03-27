@@ -274,20 +274,24 @@ color:#ffffff;
   align-items:center;
   justify-content:flex-start;
   padding-top:120px;
-      background:
-        radial-gradient(circle at 50% 46%,
-          rgb(170,22,22) 0%,
-          rgb(120,10,10) 34%,
-          rgb(70,8,8) 68%,
-          rgb(42,10,10) 100%);
-      color:rgba(255,255,255,0.95);
-    }
+  box-sizing:border-box;
+  background:
+    radial-gradient(circle at 50% 46%,
+      rgb(170,22,22) 0%,
+      rgb(120,10,10) 34%,
+      rgb(70,8,8) 68%,
+      rgb(42,10,10) 100%);
+  color:rgba(255,255,255,0.95);
+}
 
      .baselineFinal{
       .baselineFinal .baselineNextWrap{
-  position:static;
-  transform:none;
-  margin-top:56px;
+  position:absolute;
+  left:50%;
+  bottom:180px;
+  transform:translateX(-50%);
+  z-index:23;
+  margin-top:0;
 }
   position:absolute;
 
@@ -332,12 +336,13 @@ color:#ffffff;
    .baselineNoteWrap{
   position:absolute;
   left:50%;
-  bottom:120px;
+  bottom:28px;
   transform:translateX(-50%);
-  width:80%;
+  width:calc(100% - 36px);
   display:flex;
   flex-direction:column;
   align-items:center;
+  z-index:22;
 }
 
 .baselineNoteBtn{
@@ -353,14 +358,16 @@ color:#ffffff;
 .baselineNoteInput{
   width:100%;
   margin-top:12px;
-  border-radius:16px;
+  border-radius:20px;
   border:none;
-  padding:12px;
+  padding:16px;
   font-size:14px;
+  line-height:1.4;
   background:rgba(255,255,255,0.12);
   color:white;
   resize:none;
-  min-height:80px;
+  min-height:120px;
+  box-sizing:border-box;
   display:none;
 }
     .baselineFeelBtn{
@@ -672,7 +679,7 @@ const baselineNoteInput = document.getElementById("baselineNoteInput");
 
 baselineNoteBtn.addEventListener("click", () => {
   baselineNoteInput.style.display = "block";
-  baselineNoteBtn.style.display = "none";
+  baselineNoteInput.focus();
 });
                        function showBaselineFinalScore(){
       const score = getBaselineFinalScore();
