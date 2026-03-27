@@ -603,20 +603,7 @@ color:#ffffff;
       const averageRaw = totalRaw / baselineAnswers.length;
       return Math.round((averageRaw / 9) * 10);
     }
-                let baselineFeelValue = null;
-
-const baselineFeelButtons = document.querySelectorAll(".baselineFeelBtn");
-
-baselineFeelButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    baselineFeelValue = Number(button.dataset.value);
-
-    baselineFeelButtons.forEach(b => b.classList.remove("isSelected"));
-    button.classList.add("isSelected");
-  });
-});
-
-                    let baselineFeelValue = null;
+                  let baselineFeelValue = null;
 
     const baselineFeelButtons = document.querySelectorAll(".baselineFeelBtn");
 
