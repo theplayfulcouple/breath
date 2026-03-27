@@ -244,7 +244,11 @@ color:#ffffff;
     }
 
       .baselineNextWrap{
-  margin-top:20px;
+  position:absolute;
+  left:50%;
+  bottom:174px;
+  transform:translateX(-50%);
+  z-index:21;
 }
 
     .baselineNextBtn{
@@ -278,6 +282,14 @@ color:#ffffff;
           rgb(42,10,10) 100%);
       color:rgba(255,255,255,0.95);
     }
+
+     .baselineFinal{
+      .baselineFinal .baselineNextWrap{
+  position:static;
+  transform:none;
+  margin-top:20px;
+}
+  position:absolute;
 
     .baselineFinalScore{
       font-size:64px;
