@@ -143,6 +143,12 @@
       cursor:pointer;
       -webkit-tap-highlight-color: transparent;
     }
+
+    .doneBtn.secondary{
+  background:transparent;
+  color:rgba(255,255,255,0.62);
+  border:1px solid rgba(255,255,255,0.12);
+}
 .compareCylinderWrap{
   position:absolute;
   left:50%;
@@ -241,8 +247,9 @@
     </div>
 
     <div class="doneWrap">
-      <button class="doneBtn" onclick="window.location.href='baseline.html'">done</button>
-    </div>
+  <button class="doneBtn" onclick="goHome()">done</button>
+  <button class="doneBtn secondary" onclick="beginNewRound()">begin a new round</button>
+</div>
   </div>
 
   <script>
@@ -283,6 +290,16 @@ function setCylinderGlow(){
 }
 
 setCylinderGlow();
+function beginNewRound(){
+  localStorage.removeItem("baselineRecord");
+  localStorage.removeItem("reviewRecord");
+
+  window.location.href = "baseline.html";
+}
+
+function goHome(){
+  window.location.href = "baseline.html";
+}
     
   </script>
 
