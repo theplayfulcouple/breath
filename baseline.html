@@ -636,11 +636,11 @@ color:#ffffff;
       });
     }
 
-    function updateStartJourneyButton(){
+        function updateStartJourneyButton(){
       const baselineRecord = getBaselineRecord();
       const filledWeeks = getWeeksElapsedFromBaseline();
 
-      if (!baselineRecord){
+      if (!baselineRecord || !baselineRecord.baselineCompletedAt){
         startJourneyBtn.innerHTML = "See your pattern<br>(7 days)";
         startJourneyBtn.onclick = beginBaseline;
         return;
