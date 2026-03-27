@@ -345,12 +345,12 @@ color:#ffffff;
       </div>
     </div>
 
-               <div class="baselineScreen" id="baselineScreen">
+                              <div class="baselineScreen" id="baselineScreen">
       <div class="topBar">
         7 day pattern
       </div>
 
-                   <button class="baselineBackBtn" onclick="closeBaseline()" type="button">
+      <button class="baselineBackBtn" onclick="closeBaseline()" type="button">
         back
       </button>
              
@@ -361,20 +361,22 @@ color:#ffffff;
       <div class="baselineQuestion" id="baselineQuestion">
         How present was the inner critic today?
       </div>
-                       <div class="baselineStatus" id="baselineStatus"></div>
 
-          <div class="baselineNextWrap">
+      <div class="baselineStatus" id="baselineStatus"></div>
+
+      <div class="baselineNextWrap">
         <button class="baselineNextBtn" id="baselineNextBtn" type="button">next</button>
       </div>
 
-            <div class="baselineScaleWrap">
+      <div class="baselineScaleWrap">
         <button class="baselineChoiceBtn" id="baselineChoice0" type="button">0</button>
         <button class="baselineChoiceBtn" id="baselineChoice1" type="button">1</button>
         <button class="baselineChoiceBtn" id="baselineChoice2" type="button">2</button>
         <button class="baselineChoiceBtn" id="baselineChoice3" type="button">3</button>
       </div>
-   
-                  <div class="baselineFinal" id="baselineFinal" style="display:none;">
+    </div>
+
+    <div class="baselineFinal" id="baselineFinal" style="display:none;">
       <div class="topBar">7 day pattern</div>
 
       <div class="baselineFinalScore" id="baselineFinalScore">
@@ -388,9 +390,7 @@ color:#ffffff;
       <div class="baselineNextWrap">
         <button class="baselineNextBtn" onclick="goTraining()">continue</button>
       </div>
-    </div> 
-               
-               </div>
+    </div>
 
               <script>
     const baselineQuestions = [
@@ -458,17 +458,19 @@ color:#ffffff;
       baselineNextBtn.textContent = "continue";
     }
 
-    function openBaseline(){
+       function openBaseline(){
       baselineDayIndex = 0;
       baselineQuestionIndex = 0;
       baselineSelectedValue = null;
       baselineDayComplete = false;
       updateBaselineScreen();
+      document.getElementById("baselineFinal").style.display = "none";
       document.getElementById("baselineScreen").style.display = "flex";
     }
 
-    function closeBaseline(){
+       function closeBaseline(){
       document.getElementById("baselineScreen").style.display = "none";
+      document.getElementById("baselineFinal").style.display = "none";
     }
 
     baselineChoiceButtons.forEach((button, index) => {
