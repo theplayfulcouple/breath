@@ -264,6 +264,37 @@ color:#ffffff;
       -webkit-tap-highlight-color: transparent;
     }
 
+
+    .baselineFinal{
+      position:absolute;
+      inset:0;
+      z-index:11;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(circle at 50% 46%,
+          rgb(170,22,22) 0%,
+          rgb(120,10,10) 34%,
+          rgb(70,8,8) 68%,
+          rgb(42,10,10) 100%);
+      color:rgba(255,255,255,0.95);
+    }
+
+    .baselineFinalScore{
+      font-size:64px;
+      line-height:1;
+      margin-bottom:12px;
+      color:rgba(255,255,255,0.95);
+    }
+
+    .baselineFinalLabel{
+      font-size:16px;
+      color:rgba(255,255,255,0.7);
+      margin-bottom:40px;
+    }
+    
            .baselineBackBtn{
       position:absolute;
       top:88px;
@@ -342,7 +373,24 @@ color:#ffffff;
         <button class="baselineChoiceBtn" id="baselineChoice2" type="button">2</button>
         <button class="baselineChoiceBtn" id="baselineChoice3" type="button">3</button>
       </div>
-    </div>
+   
+                  <div class="baselineFinal" id="baselineFinal" style="display:none;">
+      <div class="topBar">7 day pattern</div>
+
+      <div class="baselineFinalScore" id="baselineFinalScore">
+        0
+      </div>
+
+      <div class="baselineFinalLabel">
+        Your pattern score
+      </div>
+
+      <div class="baselineNextWrap">
+        <button class="baselineNextBtn" onclick="goTraining()">continue</button>
+      </div>
+    </div> 
+               
+               </div>
 
               <script>
     const baselineQuestions = [
@@ -443,8 +491,7 @@ color:#ffffff;
           return;
         }
 
-        alert("7 day pattern complete");
-        closeBaseline();
+                showBaselineFinalScore();
         return;
       }
 
@@ -473,6 +520,30 @@ color:#ffffff;
       showBaselineDayComplete();
     });
 
+       function getBaselineDailyRaw(dayData){
+      return (3 - dayData.innerCritic) + (3 - dayData.conflictActivation) + dayData.pauseCapacity;
+    }
+
+    function getBaselineFinalScore(){
+      let totalRaw = 0;
+
+      for (const day of baselineAnswers){
+        totalRaw += getBaselineDailyRaw(day);
+      }
+
+      const averageRaw = totalRaw / baselineAnswers.length;
+      return Math.round((averageRaw / 9) * 10);
+    }
+
+                    function showBaselineFinalScore(){
+      const score = getBaselineFinalScore();
+
+      document.getElementById("baselineFinalScore").textContent = score;
+
+      document.getElementById("baselineScreen").style.display = "none";
+      document.getElementById("baselineFinal").style.display = "flex";
+    }
+                
     function goTraining(){
       window.location.href = "index.html";
     }
