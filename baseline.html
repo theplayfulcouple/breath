@@ -818,12 +818,11 @@ baselineNoteBtn.style.display = "inline-block";
       document.getElementById("baselineScreen").style.display = "none";
       document.getElementById("baselineFinal").style.display = "flex";
     }
-                               baselineContinueBtn.addEventListener("click", () => {
+                                               baselineContinueBtn.addEventListener("click", () => {
   saveBaseline();
 
   if (isReviewMode){
-    closeBaseline();
-    updateStartPageState();
+    window.location.href = "compare.html";
     return;
   }
 
