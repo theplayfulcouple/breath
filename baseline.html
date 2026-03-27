@@ -311,17 +311,34 @@ color:#ffffff;
       margin-bottom:40px;
       width:80%;
     }
-
+.baselineFeelGuide{
+  display:flex;
+  justify-content:space-between;
+  width:80%;
+  margin-top:-24px;
+  margin-bottom:32px;
+  font-size:13px;
+  color:rgba(255,255,255,0.5);
+}
     .baselineFeelBtn{
-      min-width:36px;
-      height:36px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,0.18);
-      background:rgba(255,255,255,0.12);
-      color:rgba(255,255,255,0.92);
-      font-size:14px;
-      cursor:pointer;
-    }
+  min-width:36px;
+  height:36px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.92);
+  font-size:14px;
+  cursor:pointer;
+  transition: background 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.baselineFeelBtn.isSelected{
+  background:rgba(255,255,255,0.22);
+  border-color:rgba(255,255,255,0.32);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.10) inset,
+    0 0 12px rgba(255,255,255,0.10);
+}
     
            .baselineBackBtn{
       position:absolute;
@@ -420,17 +437,22 @@ color:#ffffff;
       </div>
 
       <div class="baselineFeelScale">
-        <button class="baselineFeelBtn">1</button>
-        <button class="baselineFeelBtn">2</button>
-        <button class="baselineFeelBtn">3</button>
-        <button class="baselineFeelBtn">4</button>
-        <button class="baselineFeelBtn">5</button>
-        <button class="baselineFeelBtn">6</button>
-        <button class="baselineFeelBtn">7</button>
-        <button class="baselineFeelBtn">8</button>
-        <button class="baselineFeelBtn">9</button>
-        <button class="baselineFeelBtn">10</button>
-      </div>
+  <button class="baselineFeelBtn" data-value="1">1</button>
+  <button class="baselineFeelBtn" data-value="2">2</button>
+  <button class="baselineFeelBtn" data-value="3">3</button>
+  <button class="baselineFeelBtn" data-value="4">4</button>
+  <button class="baselineFeelBtn" data-value="5">5</button>
+  <button class="baselineFeelBtn" data-value="6">6</button>
+  <button class="baselineFeelBtn" data-value="7">7</button>
+  <button class="baselineFeelBtn" data-value="8">8</button>
+  <button class="baselineFeelBtn" data-value="9">9</button>
+  <button class="baselineFeelBtn" data-value="10">10</button>
+</div>
+
+<div class="baselineFeelGuide">
+  <span>stuck</span>
+  <span>flow</span>
+</div>
 
       <div class="baselineNextWrap">
         <button class="baselineNextBtn" onclick="goTraining()">continue</button>
@@ -581,6 +603,18 @@ color:#ffffff;
       const averageRaw = totalRaw / baselineAnswers.length;
       return Math.round((averageRaw / 9) * 10);
     }
+                let baselineFeelValue = null;
+
+const baselineFeelButtons = document.querySelectorAll(".baselineFeelBtn");
+
+baselineFeelButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    baselineFeelValue = Number(button.dataset.value);
+
+    baselineFeelButtons.forEach(b => b.classList.remove("isSelected"));
+    button.classList.add("isSelected");
+  });
+});
 
                     function showBaselineFinalScore(){
       const score = getBaselineFinalScore();
