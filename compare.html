@@ -143,6 +143,48 @@
       cursor:pointer;
       -webkit-tap-highlight-color: transparent;
     }
+.compareCylinderWrap{
+  position:absolute;
+  left:50%;
+  top:240px;
+  transform:translateX(-50%);
+  width:70%;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  z-index:4;
+}
+
+.compareCylinder{
+  position:relative;
+  width:42%;
+  height:260px;
+  border-radius:28px;
+  background:rgba(255,255,255,0.06);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08) inset;
+  overflow:hidden;
+}
+
+.compareFill{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  height:0%;
+  border-radius:28px;
+  background:rgba(180,40,40,0.6);
+  box-shadow:
+    0 0 30px rgba(180,40,40,0.2);
+  transition:height 600ms ease;
+}
+
+.compareFill.now{
+  background:rgba(255,255,255,0.75);
+  box-shadow:
+    0 0 40px rgba(255,255,255,0.25);
+}
+    
   </style>
 </head>
 <body>
@@ -166,39 +208,17 @@
       </div>
     </div>
 
-    <div class="compareChartWrap">
-      <svg class="compareSvg" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="compareLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="rgba(140,20,20,0.95)" />
-            <stop offset="45%" stop-color="rgba(205,110,60,0.95)" />
-            <stop offset="75%" stop-color="rgba(235,200,120,0.95)" />
-            <stop offset="100%" stop-color="rgba(255,255,255,0.96)" />
-          </linearGradient>
-        </defs>
+    <div class="compareCylinderWrap">
 
-        <path
-          id="comparePath"
-          d="M 30 150 C 110 140, 180 105, 330 70"
-          fill="none"
-          stroke="url(#compareLineGradient)"
-          stroke-width="4"
-          stroke-linecap="round"
-        />
+  <div class="compareCylinder" id="thenCylinder">
+    <div class="compareFill" id="thenFill"></div>
+  </div>
 
-        <circle cx="30" cy="150" r="7" fill="rgba(150,25,25,0.96)" />
-        <circle cx="330" cy="70" r="7" fill="rgba(255,255,255,0.96)" />
+  <div class="compareCylinder" id="nowCylinder">
+    <div class="compareFill now" id="nowFill"></div>
+  </div>
 
-        <circle cx="60" cy="145" r="3.5" fill="rgba(170,40,40,0.72)" />
-        <circle cx="95" cy="138" r="3.5" fill="rgba(185,58,40,0.72)" />
-        <circle cx="130" cy="128" r="3.5" fill="rgba(200,78,45,0.72)" />
-        <circle cx="165" cy="116" r="3.5" fill="rgba(214,110,58,0.72)" />
-        <circle cx="200" cy="104" r="3.5" fill="rgba(225,145,72,0.78)" />
-        <circle cx="235" cy="93" r="3.5" fill="rgba(235,178,95,0.82)" />
-        <circle cx="270" cy="83" r="3.5" fill="rgba(245,212,125,0.88)" />
-        <circle cx="300" cy="76" r="3.5" fill="rgba(255,245,220,0.92)" />
-      </svg>
-    </div>
+</div>
 
     <div class="weekNumbers">
       <span>1</span>
@@ -230,6 +250,20 @@
     if (reviewRecord && typeof reviewRecord.patternScore === "number"){
       nowValue.textContent = reviewRecord.patternScore;
     }
+function setCylinderHeights(){
+  if (baselineRecord && typeof baselineRecord.patternScore === "number"){
+    const percent = (baselineRecord.patternScore / 10) * 100;
+    document.getElementById("thenFill").style.height = percent + "%";
+  }
+
+  if (reviewRecord && typeof reviewRecord.patternScore === "number"){
+    const percent = (reviewRecord.patternScore / 10) * 100;
+    document.getElementById("nowFill").style.height = percent + "%";
+  }
+}
+
+setCylinderHeights();
+    
   </script>
 
 </body>
