@@ -320,6 +320,37 @@ color:#ffffff;
   font-size:13px;
   color:rgba(255,255,255,0.5);
 }
+    .baselineNoteWrap{
+  width:80%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.baselineNoteBtn{
+  padding:8px 16px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.10);
+  color:rgba(255,255,255,0.7);
+  font-size:14px;
+  cursor:pointer;
+}
+
+.baselineNoteInput{
+  width:100%;
+  margin-top:12px;
+  border-radius:16px;
+  border:none;
+  padding:12px;
+  font-size:14px;
+  background:rgba(255,255,255,0.12);
+  color:white;
+  resize:none;
+  min-height:80px;
+  display:none;
+}
     .baselineFeelBtn{
   min-width:36px;
   height:36px;
@@ -454,9 +485,15 @@ color:#ffffff;
   <span>flow</span>
 </div>
 
-      <div class="baselineNextWrap">
-        <button class="baselineNextBtn" onclick="goTraining()">continue</button>
-      </div>
+     <div class="baselineNoteWrap">
+  <button class="baselineNoteBtn" id="baselineNoteBtn">add reflection</button>
+
+  <textarea class="baselineNoteInput" id="baselineNoteInput" placeholder="Write a few words..." ></textarea>
+</div>
+
+<div class="baselineNextWrap">
+  <button class="baselineNextBtn" onclick="goTraining()">continue</button>
+</div>
     </div>
 
               <script>
@@ -618,7 +655,13 @@ color:#ffffff;
         button.classList.add("isSelected");
       });
     });
-                
+                const baselineNoteBtn = document.getElementById("baselineNoteBtn");
+const baselineNoteInput = document.getElementById("baselineNoteInput");
+
+baselineNoteBtn.addEventListener("click", () => {
+  baselineNoteInput.style.display = "block";
+  baselineNoteBtn.style.display = "none";
+});
                        function showBaselineFinalScore(){
       const score = getBaselineFinalScore();
 
@@ -628,6 +671,9 @@ color:#ffffff;
       baselineFeelButtons.forEach((button) => {
         button.classList.remove("isSelected");
       });
+                         baselineNoteInput.value = "";
+baselineNoteInput.style.display = "none";
+baselineNoteBtn.style.display = "inline-block";
 
       document.getElementById("baselineScreen").style.display = "none";
       document.getElementById("baselineFinal").style.display = "flex";
