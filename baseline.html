@@ -601,15 +601,37 @@ color:#ffffff;
 
     let isReviewMode = false;
 
+                function getBaselineProgress(){
+  return JSON.parse(localStorage.getItem("baselineProgress") || "null");
+}
+
+function getBaselineStartedAt(){
+  const progress = getBaselineProgress();
+  return progress && progress.startedAt ? progress.startedAt : null;
+}
+
+function ensureBaselineStarted(){
+  if (isReviewMode) return;
+
+  const progress = getBaselineProgress() || {};
+  if (!progress.startedAt){
+    progress.startedAt = new Date().toISOString();
+    localStorage.setItem("baselineProgress", JSON.stringify(progress));
+  }
+}
+
     function getBaselineRecord(){
       return JSON.parse(localStorage.getItem("baselineRecord") || "null");
     }
 
-    function getWeeksElapsedFromBaseline(){
+   function getWeeksElapsedFromBaseline(){
   const baselineRecord = getBaselineRecord();
-  if (!baselineRecord) return 0;
+  const progressStartedAt = getBaselineStartedAt();
 
-  const startValue = baselineRecord.baselineCompletedAt || baselineRecord.date;
+  const startValue =
+    (baselineRecord && (baselineRecord.baselineCompletedAt || baselineRecord.date)) ||
+    progressStartedAt;
+
   if (!startValue) return 0;
 
   const startDate = new Date(startValue);
@@ -703,15 +725,18 @@ color:#ffffff;
       baselineNextBtn.textContent = "continue";
     }
 
-              function openBaseline(){
-      baselineDayIndex = 0;
-      baselineQuestionIndex = 0;
-      baselineSelectedValue = null;
-      baselineDayComplete = false;
-      updateBaselineScreen();
-      document.getElementById("baselineFinal").style.display = "none";
-      document.getElementById("baselineScreen").style.display = "flex";
-    }
+           function openBaseline(){
+  ensureBaselineStarted();
+  updateStartPageState();
+
+  baselineDayIndex = 0;
+  baselineQuestionIndex = 0;
+  baselineSelectedValue = null;
+  baselineDayComplete = false;
+  updateBaselineScreen();
+  document.getElementById("baselineFinal").style.display = "none";
+  document.getElementById("baselineScreen").style.display = "flex";
+}
 
        function closeBaseline(){
       document.getElementById("baselineScreen").style.display = "none";
@@ -835,6 +860,7 @@ baselineNoteBtn.style.display = "inline-block";
                 
     function saveBaseline(){
   const nowIso = new Date().toISOString();
+  const progressStartedAt = getBaselineStartedAt();
 
   const record = {
     date: nowIso,
@@ -847,7 +873,7 @@ baselineNoteBtn.style.display = "inline-block";
     record.reviewCompletedAt = nowIso;
     localStorage.setItem("reviewRecord", JSON.stringify(record));
   } else {
-    record.baselineCompletedAt = nowIso;
+    record.baselineCompletedAt = progressStartedAt || nowIso;
     localStorage.setItem("baselineRecord", JSON.stringify(record));
   }
 }
