@@ -47,7 +47,7 @@
       rgba(0,0,0,0.15) 100%);
 }
 
-    .content{
+      .content{
       position:relative;
       z-index:3;
       width:100%;
@@ -55,9 +55,9 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-    justify-content:flex-end;
-padding-bottom:120px;
+      justify-content:flex-end;
       padding:24px;
+      padding-bottom:120px;
       box-sizing:border-box;
     }
 
@@ -135,14 +135,14 @@ color:#ffffff;
       letter-spacing:0.01em;
     }
 
-        .weekTrackWrap{
+              .weekTrackWrap{
       position:absolute;
       top:90px;
       left:50%;
       transform:translateX(-50%);
       z-index:4;
       width:220px;
-      display:flex;
+      display:none;
       flex-direction:column;
       align-items:center;
       gap:8px;
@@ -656,7 +656,15 @@ color:#ffffff;
       startJourneyBtn.onclick = beginReview;
     }
 
-    function updateStartPageState(){
+      function updateStartPageState(){
+      const baselineRecord = getBaselineRecord();
+      const weekTrackWrap = document.querySelector(".weekTrackWrap");
+
+      if (weekTrackWrap){
+        weekTrackWrap.style.display =
+          (baselineRecord && baselineRecord.baselineCompletedAt) ? "flex" : "none";
+      }
+
       updateWeekTrack();
       updateStartJourneyButton();
     }
