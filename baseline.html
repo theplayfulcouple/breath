@@ -581,15 +581,19 @@ color:#ffffff;
     let baselineSelectedValue = null;
     let baselineDayComplete = false;
 
-    const baselineAnswers = [
-      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
-      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
-      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
-      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
-      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
-      { innerCritic: null, conflictActivation: null, pauseCapacity: null },
-      { innerCritic: null, conflictActivation: null, pauseCapacity: null }
-    ];
+   function createEmptyBaselineAnswers(){
+  return [
+    { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+    { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+    { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+    { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+    { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+    { innerCritic: null, conflictActivation: null, pauseCapacity: null },
+    { innerCritic: null, conflictActivation: null, pauseCapacity: null }
+  ];
+}
+
+let baselineAnswers = createEmptyBaselineAnswers();
 
     const baselineQuestion = document.getElementById("baselineQuestion");
     const baselineDayLabel = document.getElementById("baselineDayLabel");
@@ -603,6 +607,42 @@ color:#ffffff;
 
                 function getBaselineProgress(){
   return JSON.parse(localStorage.getItem("baselineProgress") || "null");
+}
+
+function saveBaselineProgressState(){
+  const existingProgress = getBaselineProgress() || {};
+
+  localStorage.setItem("baselineProgress", JSON.stringify({
+    ...existingProgress,
+    baselineDayIndex,
+    baselineQuestionIndex,
+    baselineAnswers
+  }));
+}
+
+function loadBaselineProgressState(){
+  const progress = getBaselineProgress();
+  if (!progress) return false;
+
+  baselineDayIndex = typeof progress.baselineDayIndex === "number" ? progress.baselineDayIndex : 0;
+  baselineQuestionIndex = typeof progress.baselineQuestionIndex === "number" ? progress.baselineQuestionIndex : 0;
+  baselineAnswers = Array.isArray(progress.baselineAnswers) ? progress.baselineAnswers : createEmptyBaselineAnswers();
+
+  return true;
+}
+
+function clearBaselineProgressState(){
+  const progress = getBaselineProgress();
+  if (!progress) return;
+
+  if (progress.startedAt){
+    localStorage.setItem("baselineProgress", JSON.stringify({
+      startedAt: progress.startedAt
+    }));
+    return;
+  }
+
+  localStorage.removeItem("baselineProgress");
 }
 
 function getBaselineStartedAt(){
@@ -725,12 +765,18 @@ function ensureBaselineStarted(){
       baselineNextBtn.textContent = "continue";
     }
 
-           function openBaseline(){
+         function openBaseline(){
   ensureBaselineStarted();
   updateStartPageState();
 
-  baselineDayIndex = 0;
-  baselineQuestionIndex = 0;
+  const hasSavedProgress = !isReviewMode && loadBaselineProgressState();
+
+  if (!hasSavedProgress){
+    baselineDayIndex = 0;
+    baselineQuestionIndex = 0;
+    baselineAnswers = createEmptyBaselineAnswers();
+  }
+
   baselineSelectedValue = null;
   baselineDayComplete = false;
   updateBaselineScreen();
@@ -756,16 +802,17 @@ function ensureBaselineStarted(){
 
     baselineNextBtn.addEventListener("click", () => {
       if (baselineDayComplete){
-        if (baselineDayIndex < 6){
-          baselineDayIndex++;
-          baselineQuestionIndex = 0;
-          updateBaselineScreen();
-          return;
-        }
+  if (baselineDayIndex < 6){
+    baselineDayIndex++;
+    baselineQuestionIndex = 0;
+    saveBaselineProgressState();
+    updateBaselineScreen();
+    return;
+  }
 
-                showBaselineFinalScore();
-        return;
-      }
+  showBaselineFinalScore();
+  return;
+}
 
       if (baselineSelectedValue === null) return;
 
@@ -784,12 +831,14 @@ function ensureBaselineStarted(){
       }
 
       if (baselineQuestionIndex < 2){
-        baselineQuestionIndex++;
-        updateBaselineScreen();
-        return;
-      }
+  baselineQuestionIndex++;
+  saveBaselineProgressState();
+  updateBaselineScreen();
+  return;
+}
 
-      showBaselineDayComplete();
+saveBaselineProgressState();
+showBaselineDayComplete();
     });
 
        function getBaselineDailyRaw(dayData){
@@ -875,6 +924,7 @@ baselineNoteBtn.style.display = "inline-block";
   } else {
     record.baselineCompletedAt = progressStartedAt || nowIso;
     localStorage.setItem("baselineRecord", JSON.stringify(record));
+    clearBaselineProgressState();
   }
 }
 
