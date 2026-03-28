@@ -234,6 +234,20 @@ color:#ffffff;
       min-height:22px;
     }
 
+    .baselineScaleGuide{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:162px;
+  z-index:21;
+  display:flex;
+  justify-content:space-between;
+  color:rgba(255,255,255,0.52);
+  font-size:13px;
+  line-height:1;
+  pointer-events:none;
+}
+
                    .baselineDayLabel{
       position:absolute;
       top:88px;
@@ -517,6 +531,11 @@ color:#ffffff;
   <button class="baselineNextBtn" id="baselineNextBtn" type="button">next</button>
 </div>
 
+                                <div class="baselineScaleGuide">
+  <span>low</span>
+  <span>high</span>
+</div>
+                                
       <div class="baselineScaleWrap">
         <button class="baselineChoiceBtn" id="baselineChoice0" type="button">0</button>
         <button class="baselineChoiceBtn" id="baselineChoice1" type="button">1</button>
@@ -573,7 +592,7 @@ color:#ffffff;
     const baselineQuestions = [
       "How present was the inner critic today?",
       "How activated did conflict feel today?",
-      "Could you pause before reacting today?"
+      "How hard was it to pause before reacting today?"
     ];
 
     let baselineDayIndex = 0;
