@@ -606,17 +606,20 @@ color:#ffffff;
     }
 
     function getWeeksElapsedFromBaseline(){
-      const baselineRecord = getBaselineRecord();
-      if (!baselineRecord || !baselineRecord.baselineCompletedAt) return 0;
+  const baselineRecord = getBaselineRecord();
+  if (!baselineRecord) return 0;
 
-      const startDate = new Date(baselineRecord.baselineCompletedAt);
-      const nowDate = new Date();
+  const startValue = baselineRecord.baselineCompletedAt || baselineRecord.date;
+  if (!startValue) return 0;
 
-      const diffMs = nowDate - startDate;
-      const diffDays = Math.floor(diffMs / 86400000);
+  const startDate = new Date(startValue);
+  const nowDate = new Date();
 
-      return Math.max(0, Math.min(8, Math.floor(diffDays / 7) + 1));
-    }
+  const diffMs = nowDate - startDate;
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  return Math.max(0, Math.min(8, Math.floor(diffDays / 7) + 1));
+}
 
     function beginBaseline(){
       isReviewMode = false;
