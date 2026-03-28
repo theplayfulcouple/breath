@@ -531,7 +531,7 @@ color:#ffffff;
   <button class="baselineNextBtn" id="baselineNextBtn" type="button">next</button>
 </div>
 
-                                <div class="baselineScaleGuide">
+                                <div class="baselineScaleGuide" id="baselineScaleGuide">
   <span>low</span>
   <span>high</span>
 </div>
@@ -618,6 +618,7 @@ let baselineAnswers = createEmptyBaselineAnswers();
     const baselineDayLabel = document.getElementById("baselineDayLabel");
     const baselineNextBtn = document.getElementById("baselineNextBtn");
     const baselineStatus = document.getElementById("baselineStatus");
+                const baselineScaleGuide = document.getElementById("baselineScaleGuide");
 
                     const startJourneyBtn = document.getElementById("startJourneyBtn");
     const weekTrackBarEls = document.querySelectorAll(".weekTrackBar");
@@ -764,25 +765,27 @@ function ensureBaselineStarted(){
       });
     }
 
-    function updateBaselineScreen(){
-      baselineDayLabel.textContent = "Day " + (baselineDayIndex + 1) + " of 7";
-      baselineQuestion.textContent = baselineQuestions[baselineQuestionIndex];
-      baselineStatus.textContent = "";
-      baselineNextBtn.textContent = "next";
-      baselineSelectedValue = null;
-      baselineDayComplete = false;
-      clearBaselineSelection();
-      setBaselineChoicesVisible(true);
-    }
+   function updateBaselineScreen(){
+  baselineDayLabel.textContent = "Day " + (baselineDayIndex + 1) + " of 7";
+  baselineQuestion.textContent = baselineQuestions[baselineQuestionIndex];
+  baselineStatus.textContent = "";
+  baselineNextBtn.textContent = "next";
+  baselineSelectedValue = null;
+  baselineDayComplete = false;
+  clearBaselineSelection();
+  setBaselineChoicesVisible(true);
+  baselineScaleGuide.style.display = "flex";
+}
 
     function showBaselineDayComplete(){
-      baselineDayComplete = true;
-      clearBaselineSelection();
-      setBaselineChoicesVisible(false);
-      baselineQuestion.textContent = "";
-      baselineStatus.textContent = "Day " + (baselineDayIndex + 1) + " complete";
-      baselineNextBtn.textContent = "continue";
-    }
+  baselineDayComplete = true;
+  clearBaselineSelection();
+  setBaselineChoicesVisible(false);
+  baselineScaleGuide.style.display = "none";
+  baselineQuestion.textContent = "";
+  baselineStatus.textContent = "Day " + (baselineDayIndex + 1) + " complete";
+  baselineNextBtn.textContent = "continue";
+}
 
          function openBaseline(){
   ensureBaselineStarted();
